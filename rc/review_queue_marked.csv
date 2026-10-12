@@ -1,0 +1,915 @@
+entity_name,isos,eqr_customer_norm,score,status,eqr_power_contracts,eqr_sellers,eqr_delivery_scopes,eqr_spellings,decision_y_n,claude_confidence,claude_reason
+"Dominion Energy Generation Marketing, Inc.",PJM,DOMINION ENERGY MARKETING,0.915,needs decision,28,31,,"Dominion Energy Marketing, Inc. ; Dominion Energy Marketing Inc ; DOMINION ENERGY MARKETING, INC. ; DOMINION ENERGY MARKETING INC. ; DOMINION ENERGY MARKETING INC ; Dominion Energy Marketing ; Dominio",n,judgment,"Couldn't confirm Dominion Energy Marketing, Inc. is the same company as Dominion Energy Generation Marketing, Inc.; left unmatched"
+Louisville Gas and Electric Company/Kentucky Utilities Company,PJM,LOUISVILLE GAS AND ELECTRIC,0.9,needs decision,22,23,,Louisville Gas & Electric Co ; LOUISVILLE GAS & ELECTRIC COMPANY ; LOUISVILLE GAS AND ELECTRIC COMPANY ; Louisville Gas And Electric Company ; Louisville Gas and Electric Company ; Louisville Gas & El,y,judgment,LG&E is half of the joint 'LG&E / KU' roster entry
+Northern States Power Company,MISO+PJM,NORTHERN STATES POWER COMPANY A MINNESOTA,0.902,needs decision,22,7,MISO+PJM,"NORTHERN STATES POWER COMPANY, A MINNESOTA CORPORATION ; Northern States Power Company a Minnesota corporation ; Northern States Power Company a Minnesota Corporation ; Northern States Power Company, ",n,judgment,The roster name doesn't say which Northern States Power (the Minnesota and Wisconsin companies share the legal name); the Minnesota row is matched to the Minnesota entry instead
+"RWE CLEAN ENERGY WHOLESALE SERVICES, INC.",PJM,RWE CLEAN ENERGY WHOLESALE,0.949,needs decision,5,4,,"RWE Clean Energy Wholesale, Inc. ; RWE Clean Energy Wholesale",n,judgment,"Can't confirm 'RWE Clean Energy Wholesale, Inc.' is RWE Clean Energy Wholesale Services; left unmatched"
+Rainbow Energy Marketing Corporation,PJM,RAINBOW ENERGY,0.917,needs decision,5,4,,RAINBOW ENERGY CORP ; Rainbow Energy,n,judgment,'Rainbow Energy Corp' can't be tied to a specific Rainbow Energy company
+Rainbow Energy Ventures LLC,PJM,RAINBOW ENERGY,0.922,needs decision,5,4,,RAINBOW ENERGY CORP ; Rainbow Energy,n,judgment,'Rainbow Energy Corp' can't be tied to a specific Rainbow Energy company
+Altop Energy Trading LLC,PJM,ALTOP ENERGY,0.92,needs decision,4,5,,Altop Energy ; ALTOP Energy ; ALTOP ENERGY LLC ; ALTOP ENERGY,n,judgment,Can't confirm 'Altop Energy LLC' is Altop Energy Trading LLC; left unmatched
+City Water and Light Plant,MISO,CITY WATER AND LIGHT,0.954,needs decision,4,4,,"City Water & Light ; City Water & Light (Jonesboro, AR) ; City, Water & Light (Jonesboro, AR)",y,judgment,City Water & Light of Jonesboro; the sellers' fuller spellings say Jonesboro
+"City of Dover, Delaware",PJM,CITY OF DOVER,0.918,needs decision,4,5,,CITY OF DOVER ; City of Dover,n,judgment,"Dover, Delaware or Dover, Ohio; the EQR name doesn't say"
+City of Independence,MISO,CITY OF INDEPENDENCE MISSOURI,0.938,needs decision,4,5,,"City of Independence, Missouri",n,judgment,"Independence, Missouri is in SPP; the MISO list's City of Independence is probably another Independence"
+Karbone Energy LLC,PJM,KARBONE,0.9,needs decision,4,3,,"Karbone Inc. ; KARBONE, Inc. ; Karbone",n,judgment,"Karbone Inc. is the parent brokerage, not Karbone Energy LLC"
+"KeyTex Energy Solutions, LLC",PJM,KEYTEX ENERGY,0.913,needs decision,4,2,PJM,Keytex Energy LLC ; KeyTex Energy LLC,n,judgment,"Different company name: KeyTex Energy LLC vs KeyTex Energy Solutions, LLC"
+"City of Batavia, Illinois",PJM,CITY OF BATAVIA,0.925,needs decision,3,3,,City of Batavia ; CITY OF BATAVIA,y,judgment,"Batavia, Illinois; no other municipal power buyer of that name"
+City of Independence,MISO,CITY OF INDEPENDENCE POWER AND LIGHT,0.911,needs decision,3,3,,City of Independence Power and Light ; City of Independence Power & Light,n,judgment,"Independence Power & Light is Independence, Missouri (SPP); the MISO list's City of Independence is probably another Independence"
+Northern States Power Company,MISO+PJM,NORTHERN STATES POWER COMPANY MINNESOTA,0.908,needs decision,3,3,,Northern States Power Company Minnesota ; NORTHERN STATES POWER COMPANY - MINNESOTA ; Northern States Power Company - Minnesota,n,judgment,The roster name doesn't say which Northern States Power (the Minnesota and Wisconsin companies share the legal name); the Minnesota row is matched to the Minnesota entry instead
+Viridity Energy Solutions Inc.,PJM,VIRIDITY ENERGY,0.92,needs decision,3,4,,"VIRIDITY ENERGY INC. ; Viridity Energy ; Viridity Energy, Inc.",n,judgment,"Viridity Energy, Inc. may be the parent of Viridity Energy Solutions; can't confirm"
+Tennessee Valley Authority (The),PJM,TENNESSEE VALLEY AUTHORITY ESO,0.973,auto-accepted,3,2,,Tennessee Valley Authority ESO,y,judgment,Same company: TVA is one legal entity; ESO is an internal unit
+"Boston Energy Group, Inc.",PJM,BOSTON ENERGY,0.937,needs decision,2,1,,Boston Energy,n,judgment,'Boston Energy' can't be tied to Boston Energy Group
+"Citizens' Electric Company of Lewisburg, PA",PJM,CITIZENS ELECTRIC COMPANY OF LEWISBURG PA AND WELLSBOROUGH ELECTRIC,0.922,needs decision,2,2,,"Citizens Electric Company of Lewisburg, PA and Wellsborough Elec Co ; Citizens' Electric Company of Lewisburg, PA and Wellsborough Electric",y,judgment,Joint purchase by Citizens' Electric and Wellsboro Electric (sister utilities)
+"City of Rochelle, Illinois",PJM,CITY OF ROCHELLE,0.928,needs decision,2,2,,City of Rochelle ; CITY OF ROCHELLE,y,judgment,"Rochelle, Illinois; no other municipal power buyer of that name"
+Indiana Municipal Power Agency,MISO+PJM,INDIANA MUNICIPAL POWER ASSOCIATION,0.927,needs decision,2,2,,Indiana Municipal Power Association,y,judgment,Same agency (IMPA); the seller wrote 'Association' for 'Agency'
+"MAG Energy Solutions, Inc.",PJM,MAG ENERGY,0.9,needs decision,2,2,,MAG Energy,n,judgment,'MAG Energy' is a short brand name; can't confirm the legal company
+"Mercuria Energy America, LLC",PJM,MERCURIA ENERGY,0.93,needs decision,2,1,,MERCURIA ENERGY,n,judgment,"EQR gives only the group's brand name (Mercuria Energy); can't tell which company in the group, so left unmatched"
+Northeastern REMC,PJM,NORTHEASTERN REMC STEEL DYNAMICS,0.906,needs decision,2,2,,"Northeastern REMC, Steel Dynamics, Inc.",n,judgment,Joint name with Steel Dynamics; can't tell who the buyer is
+Northern States Power Company,MISO+PJM,NORTHERN STATES POWER COMPANY A WISCONSIN,0.902,needs decision,2,2,,"NORTHERN STATES POWER COMPANY, A WISCONSIN CORPORATION ; Northern States Power Company, a Wisconsin corporation",n,judgment,The roster name doesn't say which Northern States Power (the Minnesota and Wisconsin companies share the legal name); the Minnesota row is matched to the Minnesota entry instead
+Northern States Power Company,MISO+PJM,NORTHERN STATES POWER COMPANY MN,0.931,needs decision,2,2,,NORTHERN STATES POWER COMPANY - MN ; Northern States Power Company - MN,n,judgment,The roster name doesn't say which Northern States Power (the Minnesota and Wisconsin companies share the legal name); the Minnesota row is matched to the Minnesota entry instead
+Tractebel Energy Marketing Inc,MISO,TRACTEBEL ENERGY,0.923,needs decision,2,1,,Tractebel Energy,n,judgment,"EQR gives only the group's brand name (Tractebel Energy); can't tell which company in the group, so left unmatched"
+"American PowerNet Management, LLC",PJM,AMERICAN POWERNET,0.921,needs decision,1,1,PJM,American PowerNet,n,judgment,'American PowerNet' is a short brand name; can't confirm the legal company
+Basin Electric Power Coop,MISO,BASIN ELECTRIC POWER MARKETING,0.928,needs decision,1,1,,BASIN ELECTRIC POWER MARKETING,n,judgment,Can't confirm 'Basin Electric Power Marketing' is the co-op; left unmatched
+Bluebird Solar LLC,PJM,BLUEBIRD SOLAR POWER,0.94,needs decision,1,1,,"Bluebird Solar Power, LLC",n,judgment,Different project names: Bluebird Solar vs Bluebird Solar Power
+City of Auburn,PJM,CITY OF AUBURN INDIANA,0.927,needs decision,1,1,PJM,"City of Auburn, Indiana",y,judgment,"Auburn, Indiana; the contract delivers in PJM"
+DRW Energy Trading LLC,PJM,DRW ENERGY,0.911,needs decision,1,1,,DRW Energy LLC,n,judgment,Can't confirm 'DRW Energy LLC' is DRW Energy Trading LLC; left unmatched
+"Harvey Solar I, LLC",PJM,HARNEY SOLAR I,0.967,needs decision,1,1,,Harney Solar I LLC,n,judgment,"Harvey vs Harney: both are real place names, likely two different solar projects"
+Interstate Power and Light Company,MISO+PJM,INTERSTATE POWER,0.923,needs decision,1,2,,Interstate Power Co. ; Interstate Power Company,y,judgment,"Same utility, old name: Interstate Power Company merged into Interstate Power and Light in 2002"
+Lake Country Power,MISO,LAKE COUNTRY,0.933,needs decision,1,1,,Lake Country,y,judgment,Same co-op: Lake Country Power
+"Merrill Lynch Commodities, Inc.",MISO+PJM,MERRILL LYNCH EEI,0.904,needs decision,1,1,,Merrill Lynch - EEI,n,judgment,"EQR gives only the group's brand name (Merrill Lynch); can't tell which company in the group, so left unmatched"
+"Merrill Lynch Commodities, Inc.",MISO+PJM,MERRILL LYNCH ISDA,0.913,needs decision,1,1,,Merrill Lynch - ISDA,n,judgment,"EQR gives only the group's brand name (Merrill Lynch); can't tell which company in the group, so left unmatched"
+Missouri Basin Muni Power Agny,MISO,MISSOURI BASIN POWER AGENCY,0.903,needs decision,1,1,,Missouri Basin Power Agency,n,judgment,'Missouri Basin Power Agency' isn't the municipal agency's name; can't confirm
+Northern States Power Company,MISO+PJM,NORTHERN STATES POWER CO MINN,0.945,needs decision,1,1,,NORTHERN STATES POWER CO MINN,n,judgment,The roster name doesn't say which Northern States Power (the Minnesota and Wisconsin companies share the legal name); the Minnesota row is matched to the Minnesota entry instead
+Northern States Power Company,MISO+PJM,NORTH STATES POWER,0.905,needs decision,1,1,,NORTH STATES POWER COMPANY,n,judgment,The roster name doesn't say which Northern States Power (the Minnesota and Wisconsin companies share the legal name); the Minnesota row is matched to the Minnesota entry instead
+Phillips 66 Energy Trading LLC,PJM,PHILLIPS 66 ENERGY,0.938,needs decision,1,1,,PHILLIPS 66 ENERGY,n,judgment,Can't confirm 'Phillips 66 Energy' is Phillips 66 Energy Trading LLC; left unmatched
+Southern Illinois Power Coop,MISO,SOUTHERN ILLINOIS POWER COOPERATIVE MARKETING,0.956,needs decision,1,1,,Southern Illinois Power Cooperative Marketing,y,judgment,Same co-op; 'Marketing' after the full legal name is a department
+City of Independence,MISO,CITY OF INDEPENDENCE MO,0.974,auto-accepted,1,2,,"City of Independence, MO",n,judgment,"Independence, Missouri is in SPP, not MISO; the MISO list's City of Independence is probably another Independence (likely Iowa)"
+Brookfield Renewable Energy Marketing US LLC,PJM,BROOKFIELD RENEWABLE ENERGY MARKETING,0.985,auto-accepted,1,1,,Brookfield Renewable Energy Marketing LP,n,judgment,EQR spelling ends in LP but the roster company is the US LLC; can't confirm it's the same Brookfield company
+"Direct Energy Business, LLC",PJM,DIRECT ENERGY BUSINESS MARKETING,0.938,needs decision,67,59,NYISO+PJM,"Direct Energy  Business Marketing ; Direct Energy Business Marketing, LLC. ; Direct Energy Business Marketing, LLC ; DIRECT ENERGY BUSINESS MARKETING LLC ; Direct Energy Business Marketing LLC ; Direc",n,checked,"Different company in the same group (Direct Energy Business Marketing, LLC is its own company, with its own DOE export authorization)"
+"NextEra Energy Marketing, LLC",PJM,NEXTERA ENERGY POWER MARKETING,0.943,needs decision,47,52,MISO+NYISO,"NextEra Energy Power Marketing, LLC f/k/a FPL Energy ; NextEra Energy Power Marketing  LLC ; NextEra Energy Power Marketing LLC ; NEXTERA ENERGY POWER MARKETING, LLC ; NextEra Energy Power Marketing, ",y,checked,"Same company, old name: NextEra Energy Marketing, LLC was formerly NextEra Energy Power Marketing, LLC (Federal Register, Feb 27, 2019)"
+"Direct Energy Business, LLC",PJM,DIRECT ENERGY BUS MARKETING,0.92,needs decision,7,1,,Direct Energy Bus Marketing LLC,n,checked,"Different company in the same group (Direct Energy Business Marketing, LLC)"
+"Wabash Valley Power Association, Inc.",MISO+PJM,WABASH VALLEY POWER ALLIANCE,0.924,needs decision,2,3,MISO,Wabash Valley Power Alliance ; Wabash Valley  Power Alliance,y,checked,"Same co-op: Wabash Valley Power Association, Inc. does business as Wabash Valley Power Alliance"
+"Direct Energy Business, LLC",PJM,DIRECT ENERGY BUSINESS MARKETING LLC2,0.919,needs decision,1,1,,"Direct Energy Business Marketing, LLC2",n,checked,"Different company in the same group (Direct Energy Business Marketing, LLC)"
+Mille Lacs Electric Coop,MISO,MILLE LACS ENERGY COOPERATIVE,0.909,needs decision,1,1,,Mille Lacs Energy Cooperative,y,checked,"Same co-op, old name: Mille Lacs Electric Cooperative is now Mille Lacs Energy Cooperative"
+"NextEra Energy Bluff Point, LLC",PJM,NEXTERA ENERGY,0.908,needs decision,20273,1,,NextEra Energy,n,clear,The roster name adds 'Bluff Point': a different company
+"NextEra Energy Marketing, LLC",PJM,NEXTERA ENERGY,0.917,needs decision,20273,1,,NextEra Energy,n,clear,"EQR gives only the group's brand name (NextEra Energy); can't tell which company in the group, so left unmatched"
+"NextEra Energy Services, LLC",PJM,NEXTERA ENERGY,0.922,needs decision,20273,1,,NextEra Energy,n,clear,"EQR gives only the group's brand name (NextEra Energy); can't tell which company in the group, so left unmatched"
+"NextEra Energy Transmission, LLC",PJM,NEXTERA ENERGY,0.904,needs decision,20273,1,,NextEra Energy,n,clear,"The roster name adds 'Transmission': a project or wires company, not the same buyer"
+"Marina Energy, LLC",PJM,MARIN CLEAN ENERGY,0.929,needs decision,80,56,,Marin Clean Energy ; Marin Clean Energy Company ; MARIN CLEAN ENERGY ; Marin Clean Energy (MCE),n,clear,Different names: Marina vs Marin Clean
+Northeastern REMC,PJM,NORTHWESTERN,0.913,needs decision,60,36,,NorthWestern ; NORTHWESTERN CORPORATION ; Northwestern Corporation dba Northwestern Energy ; NorthWestern Corporation (NorthWestern Energy) ; NORTHWESTERN CORPORATION (DBA NORTHWESTERN ENERGY) ; North,n,clear,Different names: Northeastern Remc vs Northwestern
+City of Ames - (IA),MISO,CITY OF SAN JOSE,0.903,needs decision,57,36,,City of San Jose ; CITY OF SAN JOSE ; City of San Jose d/b/a Community Energy ; City of San Jose (San Jose Clean Energy),n,clear,Different names: Ames vs SAN Jose
+City of Anoka,MISO,CITY OF SAN JOSE,0.907,needs decision,57,36,,City of San Jose ; CITY OF SAN JOSE ; City of San Jose d/b/a Community Energy ; City of San Jose (San Jose Clean Energy),n,clear,Different names: Anoka vs SAN Jose
+City of Jasper - (IN),MISO,CITY OF SAN JOSE,0.905,needs decision,57,36,,City of San Jose ; CITY OF SAN JOSE ; City of San Jose d/b/a Community Energy ; City of San Jose (San Jose Clean Energy),n,clear,Different names: Jasper vs SAN Jose
+City of Anoka,MISO,CITY OF BURBANK,0.916,needs decision,56,48,,CITY OF BURBANK ; City of Burbank,n,clear,Different names: Anoka vs Burbank
+City of Auburn,PJM,CITY OF BURBANK,0.944,needs decision,56,48,,CITY OF BURBANK ; City of Burbank,n,clear,Different names: Auburn vs Burbank
+City of Frankfort,MISO,CITY OF BURBANK,0.901,needs decision,56,48,,CITY OF BURBANK ; City of Burbank,n,clear,Different names: Frankfort vs Burbank
+Union Electric Company d/b/a Ameren Missouri,PJM,UNS ELECTRIC,0.921,needs decision,53,42,,"Uns Electric Inc. ; UNS Electric Incorporated ; UNS Electric, Inc. ; UNS Electric Inc. ; Uns Electric Inc ; UNS ELECTRIC INC ; UNS ELECTRIC, INC ; UNS Electric ; UNS ELECTRIC INC. ; UNS ELECTRIC ; UNS",n,clear,Different names: Union vs UNS
+Municipal Energy Agency of MS,MISO,MUNICIPAL ENERGY AGENCY OF NEBRASKA,0.953,needs decision,52,30,,Municipal ENERGY Agency of Nebraska ; Municipal Energy Agency of Nebraska ; MUNICIPAL ENERGY AGENCY OF NEBRASKA,n,clear,Different state: MS vs NE
+City of Elk River,MISO,CITY OF ROSEVILLE,0.901,needs decision,42,29,,City of Roseville ; City Of Roseville ; City of Roseville (Electric System) ; CITY OF ROSEVILLE,n,clear,Different names: ELK River vs Roseville
+City of River Falls,MISO,CITY OF ROSEVILLE,0.908,needs decision,42,29,,City of Roseville ; City Of Roseville ; City of Roseville (Electric System) ; CITY OF ROSEVILLE,n,clear,Different names: River Falls vs Roseville
+City of Rolla,MISO,CITY OF ROSEVILLE,0.926,needs decision,42,29,,City of Roseville ; City Of Roseville ; City of Roseville (Electric System) ; CITY OF ROSEVILLE,n,clear,Different names: Rolla vs Roseville
+Northern Municipal Power Agency,MISO,NORTHERN CALIFORNIA POWER AGENCY,0.913,needs decision,38,31,,Northern California Power Agency (NCPA ) ; NORTHERN CALIFORNIA POWER AGENCY ; Northern California Power Agency,n,clear,Different names: Municipal vs California
+City of Alexandria - (MN),MISO,CITY OF ANAHEIM,0.902,needs decision,30,30,,City of Anaheim ; CITY OF ANAHEIM,n,clear,Different names: Alexandria vs Anaheim
+City of Ames - (IA),MISO,CITY OF ANAHEIM,0.912,needs decision,30,30,,City of Anaheim ; CITY OF ANAHEIM,n,clear,Different names: Ames vs Anaheim
+City of Anoka,MISO,CITY OF ANAHEIM,0.916,needs decision,30,30,,City of Anaheim ; CITY OF ANAHEIM,n,clear,Different names: Anoka vs Anaheim
+City of Hannibal,MISO,CITY OF ANAHEIM,0.905,needs decision,30,30,,City of Anaheim ; CITY OF ANAHEIM,n,clear,Different names: Hannibal vs Anaheim
+City of Lebanon,MISO,CITY OF VERNON,0.931,needs decision,30,32,,The City of Vernon ; City of Vernon ; CITY OF VERNON,n,clear,Different names: Lebanon vs Vernon
+City of New Richmond,MISO,CITY OF VERNON,0.9,needs decision,30,32,,The City of Vernon ; City of Vernon ; CITY OF VERNON,n,clear,Different names: NEW Richmond vs Vernon
+City of Peru - (IL),MISO,CITY OF VERNON,0.91,needs decision,30,32,,The City of Vernon ; City of Vernon ; CITY OF VERNON,n,clear,Different names: Peru vs Vernon
+City of River Falls,MISO,CITY OF RIVERSIDE,0.912,needs decision,30,29,,City of Riverside ; CITY OF RIVERSIDE,n,clear,Different names: River Falls vs Riverside
+"Duke Energy Carolinas, LLC",PJM,DUKE ENERGY INDIANA,0.908,needs decision,30,28,MISO+PJM,"Duke Energy Indiana LLC ; Duke Energy Indiana ; Duke Energy Indiana Inc. ; Duke Energy Indiana, LLC ; DUKE ENERGY INDIANA, INC. F/K/A PSI ENERGY, INC. ; Duke Energy Indiana, Inc. ; DUKE ENERGY INDIANA",n,clear,Different names: Carolinas vs Indiana
+"Duke Energy Florida, LLC",PJM,DUKE ENERGY INDIANA,0.916,needs decision,30,28,MISO+PJM,"Duke Energy Indiana LLC ; Duke Energy Indiana ; Duke Energy Indiana Inc. ; Duke Energy Indiana, LLC ; DUKE ENERGY INDIANA, INC. F/K/A PSI ENERGY, INC. ; Duke Energy Indiana, Inc. ; DUKE ENERGY INDIANA",n,clear,Different state: FL vs IN
+City of Lodi,MISO,CITY OF REDDING,0.9,needs decision,29,20,,CITY OF REDDING ; City of Redding,n,clear,Different names: Lodi vs Redding
+City of Springfield - (IL),MISO,CITY OF REDDING,0.905,needs decision,29,20,,CITY OF REDDING ; City of Redding,n,clear,Different names: Springfield vs Redding
+"Seward Generation, LLC",PJM,SEMPRA GENERATION,0.919,needs decision,26,17,,"SEMPRA GENERATION LLC ; Sempra Generation ; Sempra Generation, Inc ; SEMPRA GENERATION, LLC ; Sempra Generation LLC ; Sempra Generation, LLC",n,clear,Different names: Seward vs Sempra
+City of Gladstone,MISO,CITY OF GLENDALE,0.911,needs decision,25,24,,CITY OF GLENDALE ; City of Glendale,n,clear,Different names: Gladstone vs Glendale
+City of Greenfield,MISO,CITY OF GLENDALE,0.916,needs decision,25,24,,CITY OF GLENDALE ; City of Glendale,n,clear,Different names: Greenfield vs Glendale
+City of Holland,MISO,CITY OF GLENDALE,0.905,needs decision,25,24,,CITY OF GLENDALE ; City of Glendale,n,clear,Different names: Holland vs Glendale
+City of Negaunee,MISO,CITY OF GLENDALE,0.91,needs decision,25,24,,CITY OF GLENDALE ; City of Glendale,n,clear,Different names: Negaunee vs Glendale
+"Constellation Energy Generation, LLC",PJM,CONSTELLATION ENERGY SERVICES,0.926,needs decision,25,22,,"Constellation Energy Services, Inc. ; Constellation Energy Services Inc ; CONSTELLATION Energy SERVICES, INC. ; CONSTELLATION ENERGY SERVICES, INC. ; CONSTELLATION ENERGY SERVICES INC ; Constellation ",n,clear,Different names: Generation vs Services
+"DTE Energy Trading, Inc.",MISO+PJM,DB ENERGY TRADING,0.912,needs decision,25,18,,"DB Energy Trading LLC ; DB ENERGY TRADING LLC ; DB Energy Trading, LLC",n,clear,Different names: DTE vs DB
+Green Mountain Energy Company,PJM,GREEN MOUNTAIN POWER,0.932,needs decision,25,31,,Green Mountain Power Inc. ; Green Mountain Power Corporation ; Green Mountain Power ; GREEN MOUNTAIN POWER CORPORATION,n,clear,Different names: Energy vs Power
+The City of Geneva,PJM,CITY OF GLENDALE,0.933,needs decision,25,24,,CITY OF GLENDALE ; City of Glendale,n,clear,Different names: Geneva vs Glendale
+TransAlta Energy Marketing (U.S.) Inc.,MISO+PJM,TRANSALTA ENERGY MARKETING US,0.979,auto-accepted,25,21,,"TransAlta Energy Marketing US Inc ; TransAlta Energy Marketing US, Inc. ; TRANSALTA ENERGY MARKETING US INC ; Transalta Energy Marketing US Inc ; TransAlta Energy Marketing, U.S., Inc. ; TransAlta Ene",y,clear,Same company; both names carry the (US) tag
+City of Alexandria - (MN),MISO,CITY OF PASADENA,0.902,needs decision,24,20,,CITY OF PASADENA ; City of Pasadena ; The City of Pasadena,n,clear,Different names: Alexandria vs Pasadena
+City of Ames - (IA),MISO,CITY OF PASADENA,0.903,needs decision,24,20,,CITY OF PASADENA ; City of Pasadena ; The City of Pasadena,n,clear,Different names: Ames vs Pasadena
+City of Jasper - (IN),MISO,CITY OF PASADENA,0.905,needs decision,24,20,,CITY OF PASADENA ; City of Pasadena ; The City of Pasadena,n,clear,Different names: Jasper vs Pasadena
+City of Kaukauna,MISO,CITY OF PASADENA,0.9,needs decision,24,20,,CITY OF PASADENA ; City of Pasadena ; The City of Pasadena,n,clear,Different names: Kaukauna vs Pasadena
+Minnesota Municipal Power Agny,MISO,MINNESOTA POWER,0.9,needs decision,24,21,MISO,"Minnesota Power, Inc. ; MINNESOTA POWER ; Minnesota Power (ALLETE, Inc. d/b/a) ; Minnesota Power ; MINNESOTA POWER COMPANY",n,clear,The roster name adds 'Municipal Agny': a different company
+Northern States Power Co - Minnesota,MISO,NORTHERN STATES POWER COMPANY A MINNESOTA,0.936,needs decision,22,7,MISO+PJM,"NORTHERN STATES POWER COMPANY, A MINNESOTA CORPORATION ; Northern States Power Company a Minnesota corporation ; Northern States Power Company a Minnesota Corporation ; Northern States Power Company, ",y,clear,"Same company: Northern States Power Company, a Minnesota corporation"
+City of Gladstone,MISO,CITY OF LANCASTER,0.915,needs decision,21,15,,City of Lancaster dba Lancaster Choice Energy ; City Of Lancaster ; City of Lancaster ; CITY OF LANCASTER,n,clear,Different names: Gladstone vs Lancaster
+City of Jasper - (IN),MISO,CITY OF LANCASTER,0.913,needs decision,21,15,,City of Lancaster dba Lancaster Choice Energy ; City Of Lancaster ; City of Lancaster ; CITY OF LANCASTER,n,clear,Different names: Jasper vs Lancaster
+City of Lake Crystal - (MN),MISO,CITY OF LANCASTER,0.911,needs decision,21,15,,City of Lancaster dba Lancaster Choice Energy ; City Of Lancaster ; City of Lancaster ; CITY OF LANCASTER,n,clear,Different names: Lake Crystal vs Lancaster
+City of Logansport - (IN),MISO,CITY OF LANCASTER,0.906,needs decision,21,15,,City of Lancaster dba Lancaster Choice Energy ; City Of Lancaster ; City of Lancaster ; CITY OF LANCASTER,n,clear,Different names: Logansport vs Lancaster
+City of Ames - (IA),MISO,CITY OF AZUSA,0.921,needs decision,20,20,,CITY OF AZUSA ; City of Azusa,n,clear,Different names: Ames vs Azusa
+City of Anoka,MISO,CITY OF AZUSA,0.908,needs decision,20,20,,CITY OF AZUSA ; City of Azusa,n,clear,Different names: Anoka vs Azusa
+City of Austin - (MN),MISO,CITY OF AZUSA,0.926,needs decision,20,20,,CITY OF AZUSA ; City of Azusa,n,clear,Different names: Austin vs Azusa
+City of Chaska - (MN),MISO,CITY OF AZUSA,0.926,needs decision,20,20,,CITY OF AZUSA ; City of Azusa,n,clear,Different names: Chaska vs Azusa
+City of Hannibal,MISO,CITY OF BANNING,0.905,needs decision,20,19,,City of Banning ; CITY OF BANNING,n,clear,Different names: Hannibal vs Banning
+City of Kaukauna,MISO,CITY OF AZUSA,0.907,needs decision,20,20,,CITY OF AZUSA ; City of Azusa,n,clear,Different names: Kaukauna vs Azusa
+City of Lebanon,MISO,CITY OF BANNING,0.92,needs decision,20,19,,City of Banning ; CITY OF BANNING,n,clear,Different names: Lebanon vs Banning
+City of Marshall - (MN),MISO,CITY OF AZUSA,0.907,needs decision,20,20,,CITY OF AZUSA ; City of Azusa,n,clear,Different names: Marshall vs Azusa
+City of Rolla,MISO,CITY OF PALO ALTO,0.909,needs decision,18,15,,CITY OF PALO ALTO ; The City of Palo Alto ; City of Palo Alto,n,clear,Different names: Rolla vs Palo Alto
+Southeastern Power Administration,PJM,SOUTHWESTERN POWER ADMINISTRATION,0.944,needs decision,18,18,,SOUTHWESTERN POWER ADMINISTRATION ; Southwestern Power Administration,n,clear,Different names: Southeastern vs Southwestern
+Midwest Energy Cooperative,MISO,MIDWEST ENERGY,0.908,needs decision,17,12,,"Midwest Energy, Inc. ; MIDWEST ENERGY, INC. ; Midwest Energy, Inc ; Midwest Energy Inc.",n,clear,"Different company: Midwest Energy, Inc. is the Kansas utility; the roster's is the Michigan co-op"
+"Midwest Energy Trading East, LLC",PJM,MIDWEST ENERGY,0.904,needs decision,17,12,,"Midwest Energy, Inc. ; MIDWEST ENERGY, INC. ; Midwest Energy, Inc ; Midwest Energy Inc.",n,clear,The roster name adds 'Trading East': a different company
+"Sheetz Energy, Inc.",PJM,SELECT ENERGY,0.908,needs decision,15,17,,"Select Energy Inc. ; SELECT ENERGY, INC. ; SELECT ENERGY INC. ; SELECT ENERGY INC ; Select Energy, Inc. ; Select Energy, Incorporated",n,clear,Different names: Sheetz vs Select
+Pearl River Valley El Pwr Assn,MISO,PEARL RIVER VALLEY ELECTRIC POWER ASSOCIATION,0.932,needs decision,14,1,,Pearl River Valley Electric Power Association,y,clear,Same co-op: El Pwr Assn = Electric Power Association
+Minnesota Municipal Power Agny,MISO,MINNESOTA MUNICIPAL POWER AGENCY,0.987,auto-accepted,14,14,MISO,Minnesota Municipal Power Agency ; MINNESOTA MUNICIPAL POWER AGENCY,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Astral Energy LLC,PJM,AVISTA ENERGY,0.908,needs decision,13,13,,"AVISTA ENERGY INC ; Avista Energy, Inc. ; Avista Energy Inc ; Avista Energy Inc.",n,clear,Different names: Astral vs Avista
+City of Ames - (IA),MISO,CITY OF CHANUTE KS,0.906,needs decision,13,3,,"City of Chanute, KS ; City Of Chanute, KS",n,clear,Different state: IA vs KS
+City of Austin - (MN),MISO,CITY OF CHANUTE KS,0.915,needs decision,13,3,,"City of Chanute, KS ; City Of Chanute, KS",n,clear,Different state: MN vs KS
+City of Chaska - (MN),MISO,CITY OF CHANUTE KS,0.915,needs decision,13,3,,"City of Chanute, KS ; City Of Chanute, KS",n,clear,Different state: MN vs KS
+City of Holland,MISO,CITY OF COLTON,0.904,needs decision,13,14,,CITY OF COLTON ; City of Colton,n,clear,Different names: Holland vs Colton
+City of Owatonna - (MN),MISO,CITY OF COLTON,0.921,needs decision,13,14,,CITY OF COLTON ; City of Colton,n,clear,Different names: Owatonna vs Colton
+City of River Falls,MISO,CITY OF IDAHO FALLS,0.902,needs decision,13,8,,CITY OF IDAHO FALLS ; City of Idaho Falls dba Idaho Falls Power ; City of Idaho Falls,n,clear,Different names: River vs Idaho
+"Shell Energy North America (US), L.P.",PJM,SHELL ENERGY NORTH AMERICA US,0.979,auto-accepted,12,11,,"Shell Energy North America US L.P. ; Shell Energy North America US ; SHELL ENERGY NORTH AMERICA US LP ; SHELL ENERGY NORTH AMERICA US ; Shell Energy North America US LP ; Shell Energy North America, U",y,clear,Same company; both names carry the (US) tag
+Palm Energy LLC,PJM,PPM ENERGY,0.915,needs decision,11,9,,"PPM Energy Inc. ; PPM Energy, Inc. ; PPM Energy ; PPM Energy Inc",n,clear,Different names: Palm vs PPM
+"Borough of Columbia, PA",PJM,BOROUGH OF CHAMBERSBURG PA,0.908,needs decision,10,9,PJM,"Borough Of Chambersburg PA ; Borough of Chambersburg, PA ; BOROUGH OF CHAMBERSBURG PA",n,clear,Different names: Columbia vs Chambersburg
+Highland North LLC,PJM,HIGHLAND ENERGY,0.904,needs decision,10,8,,"Highland Energy LLC ; HIGHLAND Energy LLC ; HIGHLAND ENERGY LLC ; Highland Energy ; Highland Energy, LLC",n,clear,Different names: North vs Energy
+Just Energy Limited,PJM,JUST ENERGY SOLUTIONS,0.905,needs decision,10,9,,"Just Energy Solutions Inc. ; Just Energy Solutions Inc ; JUST ENERGY SOLUTIONS INC ; Just Energy Solutions, Inc. ; JUST ENERGY SOLUTIONS INC.",n,clear,"Different company in the same group (a Just Energy subsidiary, not Just Energy Limited)"
+"The Highlands Energy Group, LLC",PJM,HIGHLAND ENERGY,0.936,needs decision,10,8,,"Highland Energy LLC ; HIGHLAND Energy LLC ; HIGHLAND ENERGY LLC ; Highland Energy ; Highland Energy, LLC",n,clear,Different names: Highland Energy LLC vs The Highlands Energy Group
+Borough of Chambersburg,PJM,BOROUGH OF CHAMBERSBURG PA,0.977,auto-accepted,10,9,PJM,"Borough Of Chambersburg PA ; Borough of Chambersburg, PA ; BOROUGH OF CHAMBERSBURG PA",y,clear,Same place; one name adds the state
+City of Anoka,MISO,CITY OF CORONA,0.908,needs decision,9,12,,City of Corona ; CITY OF CORONA,n,clear,Different names: Anoka vs Corona
+City of Norway,MISO,CITY OF CORONA,0.926,needs decision,9,12,,City of Corona ; CITY OF CORONA,n,clear,Different names: Norway vs Corona
+City of Owatonna - (MN),MISO,CITY OF CORONA,0.905,needs decision,9,12,,City of Corona ; CITY OF CORONA,n,clear,Different names: Owatonna vs Corona
+City of Rolla,MISO,CITY OF CORONA,0.908,needs decision,9,12,,City of Corona ; CITY OF CORONA,n,clear,Different names: Rolla vs Corona
+Tenaska Power Services Co.,PJM,TENASKA POWER SERVICE,0.991,auto-accepted,9,9,,Tenaska Power Service Company ; Tenaska Power Service Co. ; TENASKA POWER SERVICE CO.,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"American Mun Power-Ohio, Inc",MISO,AMERICAN MUNICIPAL POWER OHIO,0.924,needs decision,8,11,PJM,"American Municipal Power- Ohio, Inc. ; American Municipal Power-Ohio, Inc. ; American Municipal Power-Ohio ; American Municipal Power - Ohio, Inc.",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"American Municipal Power, Inc.",PJM,AMERICAN MUNICIPAL POWER OHIO,0.966,needs decision,8,11,PJM,"American Municipal Power- Ohio, Inc. ; American Municipal Power-Ohio, Inc. ; American Municipal Power-Ohio ; American Municipal Power - Ohio, Inc.",y,clear,"Same agency: American Municipal Power, Inc. was formerly American Municipal Power-Ohio"
+City of Ames - (IA),MISO,CITY OF TACOMA,0.91,needs decision,8,9,,CITY OF TACOMA DBA TACOMA POWER ; City of Tacoma d.b.a. Tacoma Power ; City Of Tacoma ; City of Tacoma ; City of Tacoma dba Tacoma Power,n,clear,Different names: Ames vs Tacoma
+City of Ames - (IA),MISO,CITY OF MESA,0.967,needs decision,8,8,,CITY OF MESA ; City Of Mesa ; City of Mesa,n,clear,Different names: Ames vs Mesa
+City of Anoka,MISO,CITY OF TACOMA,0.926,needs decision,8,9,,CITY OF TACOMA DBA TACOMA POWER ; City of Tacoma d.b.a. Tacoma Power ; City Of Tacoma ; City of Tacoma ; City of Tacoma dba Tacoma Power,n,clear,Different names: Anoka vs Tacoma
+City of Jasper - (IN),MISO,CITY OF MESA,0.922,needs decision,8,8,,CITY OF MESA ; City Of Mesa ; City of Mesa,n,clear,Different names: Jasper vs Mesa
+City of Lebanon,MISO,CITY OF MESA,0.9,needs decision,8,8,,CITY OF MESA ; City Of Mesa ; City of Mesa,n,clear,Different names: Lebanon vs Mesa
+City of Marshall - (MN),MISO,CITY OF MESA,0.903,needs decision,8,8,,CITY OF MESA ; City Of Mesa ; City of Mesa,n,clear,Different names: Marshall vs Mesa
+City of Marshfield - (WI),MISO,CITY OF MESA,0.917,needs decision,8,8,,CITY OF MESA ; City Of Mesa ; City of Mesa,n,clear,Different names: Marshfield vs Mesa
+City of Owatonna - (MN),MISO,CITY OF TACOMA,0.905,needs decision,8,9,,CITY OF TACOMA DBA TACOMA POWER ; City of Tacoma d.b.a. Tacoma Power ; City Of Tacoma ; City of Tacoma ; City of Tacoma dba Tacoma Power,n,clear,Different names: Owatonna vs Tacoma
+City of Peru - (IL),MISO,CITY OF MESA,0.9,needs decision,8,8,,CITY OF MESA ; City Of Mesa ; City of Mesa,n,clear,Different names: Peru vs Mesa
+City of Preston,MISO,CITY OF MESA,0.9,needs decision,8,8,,CITY OF MESA ; City Of Mesa ; City of Mesa,n,clear,Different names: Preston vs Mesa
+City of River Falls,MISO,CITY OF RIVERSIDE CALIFORNIA,0.907,needs decision,8,5,,"City of Riverside California ; CITY OF RIVERSIDE, CALIFORNIA ; City of Riverside, California ; CITY OF RIVERSIDE CALIFORNIA",n,clear,Different names: River Falls vs Riverside California
+City of Westby,MISO,CITY OF MESA,0.91,needs decision,8,8,,CITY OF MESA ; City Of Mesa ; City of Mesa,n,clear,Different names: Westby vs Mesa
+Edison Mission Marktg & Trdg Inc,MISO,EDISON MISSION MARKETING AND TRADING,0.953,needs decision,8,9,,"Edison Mission Marketing & Trading, Inc. ; Edison Mission Marketing & Trading, Inc ; EDISON MISSION MARKETING & TRADING, INC ; Edison Mission Marketing & Trading Inc. ; Edison Mission Marketing and Tr",y,clear,Same company: Marktg & Trdg = Marketing & Trading
+Southern Minnesota Mun P Agny,MISO,SOUTHERN MINNESOTA MUNICIPAL POWER AGENCY,0.935,needs decision,8,13,MISO,SOUTHERN MINNESOTA MUNICIPAL POWER AGENCY ; Southern Minnesota Municipal Power Agency,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+The City of Geneva,PJM,CITY OF MESA,0.91,needs decision,8,8,,CITY OF MESA ; City Of Mesa ; City of Mesa,n,clear,Different names: Geneva vs Mesa
+Wisconsin Public Service Corp,MISO,WISCONSIN PUBLIC POWER,0.931,needs decision,8,5,,Wisconsin Public Power Inc. ; Wisconsin Public Power Inc ; WISCONSIN PUBLIC POWER INC.,n,clear,Different names: Service vs Power
+CP Energy Marketing (US) Inc.,PJM,CP ENERGY MARKETING US,0.973,auto-accepted,8,8,PJM,CP Energy Marketing U.S. Inc. ; CP Energy Marketing US Inc ; CP ENERGY MKTG US INC ; CP ENERGY MARKETING US INC ; CP Energy Marketing US Inc.,y,clear,Same company; both names carry the (US) tag
+City of Alexandria - (MN),MISO,CITY OF LAKELAND,0.916,needs decision,7,3,,City of Lakeland,n,clear,Different names: Alexandria vs Lakeland
+City of Ames - (IA),MISO,CITY OF PALMDALE,0.921,needs decision,7,7,,City of Palmdale ; City of Palmdale (CCEA) ; CITY OF PALMDALE ; City of Palmdale (DBA Energy for Palmdale?s Independent Choice) ; City of Palmdale (DBA Energy for Palmdale s Independent Choice) ; City,n,clear,Different names: Ames vs Palmdale
+City of Ames - (IA),MISO,CITY OF IOLA KS,0.9,needs decision,7,1,,"City of Iola, KS",n,clear,Different state: IA vs KS
+City of Anoka,MISO,CITY OF POMONA,0.908,needs decision,7,7,,City of Pomona dba Pomona Choice Energy ; City of Pomona (DBA Pomona Choice Energy) ; City of Pomona (CCEA) ; City of Pomona,n,clear,Different names: Anoka vs Pomona
+City of Anoka,MISO,CITY OF LAKELAND,0.918,needs decision,7,3,,City of Lakeland,n,clear,Different names: Anoka vs Lakeland
+City of Austin - (MN),MISO,CITY OF INDUSTRY,0.917,needs decision,7,7,,City of Industry ; CITY OF INDUSTRY,n,clear,Different names: Austin vs Industry
+City of Austin - (MN),MISO,CITY OF WEST PLAINS,0.907,needs decision,7,1,,CITY OF WEST PLAINS ; City of West Plains,n,clear,Different names: Austin vs West Plains
+City of Gladstone,MISO,CITY OF LAKELAND,0.9,needs decision,7,3,,City of Lakeland,n,clear,Different names: Gladstone vs Lakeland
+City of Holland,MISO,CITY OF LAKELAND,0.92,needs decision,7,3,,City of Lakeland,n,clear,Different names: Holland vs Lakeland
+City of Lake Crystal - (MN),MISO,CITY OF LAKELAND,0.901,needs decision,7,3,,City of Lakeland,n,clear,Different names: Lake Crystal vs Lakeland
+City of Lodi,MISO,CITY OF IOLA KS,0.912,needs decision,7,1,,"City of Iola, KS",n,clear,Different names: Lodi vs Iola KS
+City of Owatonna - (MN),MISO,CITY OF POMONA,0.905,needs decision,7,7,,City of Pomona dba Pomona Choice Energy ; City of Pomona (DBA Pomona Choice Energy) ; City of Pomona (CCEA) ; City of Pomona,n,clear,Different names: Owatonna vs Pomona
+City of Preston,MISO,CITY OF POMONA,0.904,needs decision,7,7,,City of Pomona dba Pomona Choice Energy ; City of Pomona (DBA Pomona Choice Energy) ; City of Pomona (CCEA) ; City of Pomona,n,clear,Different names: Preston vs Pomona
+City of Rolla,MISO,CITY OF IOLA KS,0.916,needs decision,7,1,,"City of Iola, KS",n,clear,Different names: Rolla vs Iola KS
+City of Ruston,MISO,CITY OF INDUSTRY,0.933,needs decision,7,7,,City of Industry ; CITY OF INDUSTRY,n,clear,Different names: Ruston vs Industry
+"Constellation NewEnergy, Inc.",PJM,CONSTELLATION,0.913,needs decision,7,3,MISO,Constellation,n,clear,"EQR gives only the group's brand name (Constellation); can't tell which company in the group, so left unmatched"
+"East Coast Power Linden Holding, L.L.C.",PJM,EAST COAST POWER AND GAS,0.91,needs decision,7,6,,"EAST COAST POWER AND GAS, LLC ; East Coast Power and Gas, LLC ; East Coast Power & Gas, LLC",n,clear,Different names: Linden Holding vs GAS
+People's Cooperative Services,MISO,PEOPLES ELECTRIC COOPERATIVE,0.901,needs decision,7,5,,People's Electric Cooperative ; Peoples Electric Cooperative,n,clear,Different names: Services vs Electric
+Southern Illinois Power Coop,MISO,SOUTHERN ILLINOIS GENERATION,0.905,needs decision,7,7,MISO,"Southern Illinois Generation Company, LLC ; Southern Illinois Generation Company LLC",n,clear,Different names: Power Cooperative vs Generation
+Ameren Energy Marketing,MISO,AMEREN ENERGY,0.913,needs decision,6,7,,"Ameren Energy Inc ; Ameren Energy, Inc.",n,clear,"Different company in the same group (Ameren Energy, Inc. is not Ameren Energy Marketing)"
+"Ames Energy, LLC",PJM,AMEREN ENERGY,0.902,needs decision,6,7,,"Ameren Energy Inc ; Ameren Energy, Inc.",n,clear,Different names: Ames vs Ameren
+City of Ames - (IA),MISO,CITY OF HOMESTEAD,0.908,needs decision,6,6,,CITY OF HOMESTEAD ; City of Homestead,n,clear,Different names: Ames vs Homestead
+City of Ames - (IA),MISO,CITY OF MESA AZ,0.927,needs decision,6,1,,"City of Mesa, AZ",n,clear,Different state: IA vs AZ
+City of Gladstone,MISO,CITY OF HOMESTEAD,0.901,needs decision,6,6,,CITY OF HOMESTEAD ; City of Homestead,n,clear,Different names: Gladstone vs Homestead
+City of Holland,MISO,CITY OF HOMESTEAD,0.901,needs decision,6,6,,CITY OF HOMESTEAD ; City of Homestead,n,clear,Different names: Holland vs Homestead
+City of Marshall - (MN),MISO,CITY OF MARTINSVILLE,0.915,needs decision,6,5,,CITY OF MARTINSVILLE ; City of Martinsville,n,clear,Different names: Marshall vs Martinsville
+"Direct Energy Business, LLC",PJM,DIRECT ENERGY,0.918,needs decision,6,6,,"DIRECT ENERGY, LP ; Direct Energy ; DIRECT Energy, LP",n,clear,The roster name adds 'Business': a different company
+"Direct Energy Services, LLC",MISO+PJM,DIRECT ENERGY,0.918,needs decision,6,6,,"DIRECT ENERGY, LP ; Direct Energy ; DIRECT Energy, LP",n,clear,"Different company in the same group (Direct Energy, LP is not Direct Energy Services, LLC)"
+"Evergy Metro, Inc.",PJM,EVERGY,0.9,needs decision,6,4,,"Evergy, Inc ; Evergy ; Evergy Inc ; Evergy, Incorporated",n,clear,The roster name adds 'Metro': a different company
+Morgan Stanley Capital Group Inc.,PJM,MORGAN STANLEY,0.9,needs decision,6,9,PJM,MORGAN STANLEY ; Morgan Stanley,n,clear,"EQR gives only the group's brand name (Morgan Stanley); can't tell which company in the group, so left unmatched"
+Municipal Energy Agency of MS,MISO,MUNICIPAL ENERGY AGENCY OF MISSISSIPPI,0.953,needs decision,6,4,,Municipal Energy Agency of Mississippi,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Michigan South Central Pwr Agy,MISO,MICHIGAN SOUTH CENTRAL POWER AGENCY,0.983,auto-accepted,6,8,,Michigan South Central Power Agency (MSCPA) ; Michigan South Central Power Agency,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Sam Rayburn Municipal Pwr Agny,MISO,SAM RAYBURN MUNICIPAL POWER AGENCY,0.988,auto-accepted,6,2,MISO,Sam Rayburn Municipal Power Agency,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+City of Alexandria - (MN),MISO,CITY OF CENTRALIA,0.903,needs decision,5,2,,City of Centralia,n,clear,Different names: Alexandria vs Centralia
+City of Alexandria - (MN),MISO,CITY OF GARLAND,0.914,needs decision,5,5,,City of Garland ; CITY OF GARLAND,n,clear,Different names: Alexandria vs Garland
+City of Ames - (IA),MISO,CITY OF NIXA MO,0.9,needs decision,5,2,,"City of Nixa, MO",n,clear,Different state: IA vs MO
+City of Auburn,PJM,CITY OF GARLAND,0.904,needs decision,5,5,,City of Garland ; CITY OF GARLAND,n,clear,Different names: Auburn vs Garland
+City of Boscobel,MISO,CITY OF CROSWELL,0.91,needs decision,5,3,,City of Croswell ; The City of Croswell,n,clear,Different names: Boscobel vs Croswell
+City of Grand Haven - (MI),MISO,CITY OF GARLAND,0.905,needs decision,5,5,,City of Garland ; CITY OF GARLAND,n,clear,Different names: Grand Haven vs Garland
+City of Greenfield,MISO,CITY OF GARLAND,0.902,needs decision,5,5,,City of Garland ; CITY OF GARLAND,n,clear,Different names: Greenfield vs Garland
+City of Holland,MISO,CITY OF GARLAND,0.903,needs decision,5,5,,City of Garland ; CITY OF GARLAND,n,clear,Different names: Holland vs Garland
+City of Lodi,MISO,CITY OF GARLAND,0.9,needs decision,5,5,,City of Garland ; CITY OF GARLAND,n,clear,Different names: Lodi vs Garland
+City of Marshall - (MN),MISO,CITY OF CROSWELL,0.9,needs decision,5,3,,City of Croswell ; The City of Croswell,n,clear,Different names: Marshall vs Croswell
+City of Rolla,MISO,CITY OF CROSWELL,0.935,needs decision,5,3,,City of Croswell ; The City of Croswell,n,clear,Different names: Rolla vs Croswell
+Cloverland Electric Co-op,MISO,CENTRAL ELECTRIC COOPERATIVE,0.906,needs decision,5,2,,"Central Electric Cooperative  Inc. ; Central Electric Cooperative, Inc. ; Central Electric Cooperative Inc. ; Central Electric Cooperative  Inc.",n,clear,Different names: Cloverland vs Central
+Florida Power & Light Company,PJM,FLORIDA POWER,0.913,needs decision,5,6,,"Florida Power Corporation ; Florida Power Corporation d/b/a Progress Energy Florida, Inc. ; Florida Power Corporation, d/b/a Progress Energy Florida, Inc. ; FLORIDA POWER CORPORATION",n,clear,"Different company: Florida Power Corporation is Duke Energy Florida, not Florida Power & Light"
+Kentucky Municipal Energy Agency,PJM,KENTUCKY MUNICIPAL POWER AGENCY,0.934,needs decision,5,8,,Kentucky Municipal Power Agency ; KENTUCKY MUNICIPAL POWER AGENCY,n,clear,Different names: Energy vs Power
+Maryland Solar LLC,PJM,MCFARLAND SOLAR B,0.908,needs decision,5,4,,"McFarland Solar B ; McFarland Solar B, LLC",n,clear,Different names: Maryland vs Mcfarland B
+"AEP Energy, Inc.",PJM,APPLE ENERGY,0.92,needs decision,4,4,,"Apple Energy, LLC ; Apple Energy LLC",n,clear,Different names: AEP vs Apple
+Ameren Energy Marketing,MISO,AMEREN ENERGY GENERATING,0.929,needs decision,4,4,,Ameren Energy Generating Company ; AMEREN ENERGY GENERATING COMPANY,n,clear,Different names: Marketing vs Generating
+"Atlantic Energy MD, LLC",PJM,ATLANTIC ENERGY,0.967,needs decision,4,4,,"Atlantic Energy, LLC ; ATLANTIC ENERGY, LLC ; ATLANTIC ENERGY LLC",n,clear,The roster name adds 'MD': a different company
+Brookfield Renewable Energy Marketing US LLC,PJM,BROOKFIELD RENEWABLE PARTNERS,0.912,needs decision,4,4,,"Brookfield Renewable Partners ; Brookfield Renewable Partners, LP",n,clear,Different names: Energy Marketing US vs Partners
+Cass County Electric Coop Inc,MISO,COOS CURRY ELECTRIC COOPERATIVE,0.901,needs decision,4,2,,"Coos-Curry Electric Cooperative Inc. ; Coos-Curry Electric Cooperative, Inc. ; Coos-Curry Electric Cooperative  Inc. ; Coos-Curry Electric Cooperative  Inc.",n,clear,Different names: Cass County vs Coos Curry
+City of Alexandria - (MN),MISO,CITY OF ARCADIA,0.928,needs decision,4,1,,City of Arcadia,n,clear,Different names: Alexandria vs Arcadia
+City of Ames - (IA),MISO,CITY OF AXTELL,0.91,needs decision,4,1,,City of Axtell,n,clear,Different names: Ames vs Axtell
+City of Columbia - (MO),MISO,CITY OF COLUMBIA MISSOURI,0.928,needs decision,4,6,MISO,"City Of Columbia, Missouri ; City of Columbia, Missouri ; CITY OF COLUMBIA, MISSOURI",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+City of Columbia - (MO),MISO,CITY OF COLUMBUS OHIO,0.93,needs decision,4,2,,"City of Columbus, Ohio",n,clear,Different state: MO vs OH
+City of Columbia - (MO),MISO,CITY OF COLUMBIA MO,0.968,needs decision,4,3,MISO,"City of Columbia, MO",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+City of Columbus,MISO,CITY OF COLUMBUS OHIO,0.952,needs decision,4,2,,"City of Columbus, Ohio",n,clear,"Columbus, Ohio is in PJM; the MISO list's City of Columbus is a different Columbus"
+City of Columbus,MISO,CITY OF COLUMBIA MO,0.922,needs decision,4,3,MISO,"City of Columbia, MO",n,clear,Different names: Columbus vs Columbia MO
+City of Columbus,MISO,CITY OF COLUMBIA MISSOURI,0.916,needs decision,4,6,MISO,"City Of Columbia, Missouri ; City of Columbia, Missouri ; CITY OF COLUMBIA, MISSOURI",n,clear,Different names: Columbus vs Columbia Missouri
+City of Kirkwood,MISO,CITY OF KIRKWOOD MISSOURI,0.928,needs decision,4,5,,"City of Kirkwood, Missouri ; CITY OF KIRKWOOD, MISSOURI ; CITY OF KIRKWOOD MISSOURI",y,clear,"Same city: Kirkwood, Missouri (in MISO)"
+City of Lake Crystal - (MN),MISO,CITY OF AXTELL,0.9,needs decision,4,1,,City of Axtell,n,clear,Different names: Lake Crystal vs Axtell
+City of Lodi,MISO,CITY OF DOVER,0.901,needs decision,4,5,,CITY OF DOVER ; City of Dover,n,clear,Different names: Lodi vs Dover
+City of Lodi,MISO,CITY OF ARCADIA,0.9,needs decision,4,1,,City of Arcadia,n,clear,Different names: Lodi vs Arcadia
+City of New Holstein,MISO,CITY OF NEWTON ILLINOIS,0.903,needs decision,4,4,MISO,"CITY OF NEWTON ILLINOIS ; City Of Newton, Illinois ; City of Newton, Illinois",n,clear,Different names: NEW Holstein vs Newton Illinois
+City of New Holstein,MISO,CITY OF NEWTON TEXAS,0.916,needs decision,4,2,MISO,"City of Newton, Texas",n,clear,Different names: NEW Holstein vs Newton Texas
+City of Peru - (IL),MISO,CITY OF DOVER,0.921,needs decision,4,5,,CITY OF DOVER ; City of Dover,n,clear,Different names: Peru vs Dover
+City of River Falls,MISO,CITY OF RIVERSIDE CA,0.916,needs decision,4,5,,"City of Riverside, CA",n,clear,Different names: River Falls vs Riverside CA
+City of Rolla,MISO,CITY OF AXTELL,0.908,needs decision,4,1,,City of Axtell,n,clear,Different names: Rolla vs Axtell
+City of Traverse City,MISO,CITY OF RIVERSIDE CA,0.94,needs decision,4,5,,"City of Riverside, CA",n,clear,Different names: Traverse vs Riverside CA
+"Constellation Energy Generation, LLC",PJM,CONSTELLATION ENERGY,0.929,needs decision,4,2,,Constellation Energy,n,clear,"EQR gives only the group's brand name (Constellation Energy); can't tell which company in the group, so left unmatched"
+"Constellation NewEnergy, Inc.",PJM,CONSTELLATION ENERGY,0.964,needs decision,4,2,,Constellation Energy,n,clear,Different names: Newenergy vs Energy
+Consumers Energy Company,MISO+PJM,CONSUMERS POWER,0.91,needs decision,4,2,,"Consumers Power  Inc. ; Consumers Power, Inc. ; Consumers Power  Inc. ; Consumers Power Inc.",n,clear,Different names: Energy vs Power
+"Entergy Power, Inc",MISO,ENTERGY POWER MARKETING,0.913,needs decision,4,8,,"Entergy Power Marketing Corporation ; Entergy  Power Marketing, Corporation ; Entergy Power Marketing Corp ; Entergy Power Marketing Corp. ; ENTERGY POWER MARKETING CORPORATION",n,clear,"Different company in the same group (Entergy Power Marketing Corp. is not Entergy Power, Inc.)"
+Maryland Solar LLC,PJM,MCFARLAND SOLAR A,0.908,needs decision,4,5,,"MCFARLAND SOLAR A, LLC ; McFarland Solar A, LLC ; McFarland Solar A",n,clear,Different names: Maryland vs Mcfarland A
+"New Road Power, LLC",PJM,NEW ENGLAND POWER,0.913,needs decision,4,16,,NEW ENGLAND POWER COMPANY ; New England Power ; The New England Power Company ; New England Power Company ; NEW ENGLAND POWER COMPANY DBA NATIONAL GRID,n,clear,Different names: Road vs England
+Southern Power Company,PJM,SOUTHERN,0.914,needs decision,4,5,,Southern Company ; THE SOUTHERN COMPANY,n,clear,"EQR gives only the group's brand name (Southern Company); can't tell which company in the group, so left unmatched"
+TEC Energy Inc.,PJM,TC ENERGY,0.903,needs decision,4,3,,TC ENERGY ; TC Energy Corporation,n,clear,Different names: TEC vs TC
+Basin Electric Power Coop,MISO,BASIN ELECTIC POWER COOPERATIVE,0.949,needs decision,3,1,MISO,BASIN ELECTIC POWER COOPERATIVE,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"Borough of Park Ridge, New Jersey",PJM,BOROUGH OF PARK RIDGE NJ,0.95,needs decision,3,3,,"Borough of Park Ridge, NJ ; BOROUGH OF PARK RIDGE, NJ",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Brookfield Renewable Energy Marketing US LLC,PJM,BROOKFIELD RENEWABLE TRADING,0.913,needs decision,3,3,,BROOKFIELD RENEWABLE TRADING ; Brookfield Renewable Trading,n,clear,Different names: Energy Marketing US vs Trading
+Brookfield Renewable Trading and Marketing LP,PJM,BROOKFIELD RENEWABLE TRADING,0.933,needs decision,3,3,,BROOKFIELD RENEWABLE TRADING ; Brookfield Renewable Trading,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Carroll Electric Coop Corp,MISO,CARROLL ELECTRIC MEMBERSHIP,0.911,needs decision,3,2,,Carroll Electric Membership Corporation ; THE CARROLL ELECTRIC MEMBERSHIP CORPORATION,n,clear,Different names: Cooperative vs Membership
+"Chief Keystone Power, LLC",PJM,CHIEF ENERGY POWER,0.9,needs decision,3,3,,"Chief Energy Power LLC ; CHIEF ENERGY POWER LLC ; Chief Energy Power, LLC",n,clear,Different names: Keystone vs Energy
+City of Alexandria - (MN),MISO,CITY OF GARLAND TEXAS,0.915,needs decision,3,4,,"City of Garland, Texas ; CITY OF GARLAND, TEXAS",n,clear,Different state: MN vs TX
+City of Alexandria - (MN),MISO,CITY OF PAGE ARIZONA,0.903,needs decision,3,1,,"CITY OF PAGE, ARIZONA",n,clear,Different state: MN vs AZ
+City of Ames - (IA),MISO,CITY OF AZTEC NM,0.903,needs decision,3,2,,"City of Aztec, NM ; CITY OF AZTEC, NM",n,clear,Different state: IA vs NM
+City of Ames - (IA),MISO,CITY OF SEATTLE,0.912,needs decision,3,7,,City of Seattle ; City of Seattle (City Light Department),n,clear,Different names: Ames vs Seattle
+City of Austin - (MN),MISO,CITY OF BATAVIA,0.904,needs decision,3,3,,City of Batavia ; CITY OF BATAVIA,n,clear,Different names: Austin vs Batavia
+"City of Cleveland, DPU, Division of Cleveland Public Power",PJM,CITY OF CLEVELAND CLEVELAND PUBLIC POWER,0.903,needs decision,3,3,,"CITY OF CLEVELAND, CLEVELAND PUBLIC POWER ; City of Cleveland, Cleveland Public Power",y,clear,Same utility: Cleveland Public Power
+City of Crystal Falls,MISO,CITY OF KLAMATH FALLS,0.9,needs decision,3,3,,City of Klamath Falls,n,clear,Different names: Crystal vs Klamath
+City of Gladstone,MISO,CITY OF GARLAND TEXAS,0.903,needs decision,3,4,,"City of Garland, Texas ; CITY OF GARLAND, TEXAS",n,clear,Different names: Gladstone vs Garland Texas
+City of Lodi,MISO,CITY OF BOULDER CITY,0.903,needs decision,3,3,,City of Boulder City,n,clear,Different names: Lodi vs Boulder
+City of Marquette - (MI),MISO,CITY OF SEATTLE,0.911,needs decision,3,7,,City of Seattle ; City of Seattle (City Light Department),n,clear,Different names: Marquette vs Seattle
+City of Marshall - (MN),MISO,CITY OF KLAMATH FALLS,0.904,needs decision,3,3,,City of Klamath Falls,n,clear,Different names: Marshall vs Klamath Falls
+"Constellation Energy Generation, LLC",PJM,CONSTELLATION ENERGY GEN,0.955,needs decision,3,1,,Constellation Energy Gen LLC ; Constellation Energy Gen,y,clear,Same company: Gen = Generation
+"Constellation NewEnergy, Inc.",PJM,CONSTELLATION ENERGY GEN,0.947,needs decision,3,1,,Constellation Energy Gen LLC ; Constellation Energy Gen,n,clear,Different names: Newenergy vs Energy GEN
+"Constellation NewEnergy, Inc.",PJM,CONSTELLATION AN EXELON,0.913,needs decision,3,1,,"CONSTELLATION, AN EXELON COMPANY",n,clear,"EQR gives only the group's brand name (Constellation); can't tell which company in the group, so left unmatched"
+"Grand Ridge Energy, LLC",PJM,GRANITE RIDGE ENERGY,0.9,needs decision,3,6,,"Granite Ridge Energy, LLC ; GRANITE RIDGE ENERGY, LLC",n,clear,Different names: Grand vs Granite
+"Heritage Power Marketing, LLC",PJM,HERITAGE POWER,0.917,needs decision,3,2,,"Heritage Power, LLC ; Heritage Power LLC",n,clear,"Different company in the same group (Heritage Power, LLC is not Heritage Power Marketing)"
+Illinois Power Marketing Company,PJM,ILLINOIS POWER,0.917,needs decision,3,6,,Illinois Power Company ; Illinois Power Company d/b/a AmerenIP ; Illinois Power Company dba Ameren IP,n,clear,Different company: Illinois Power Company (the old Ameren utility) is not Illinois Power Marketing
+Just Energy Limited,PJM,JUST ENERGY NEW YORK,0.91,needs decision,3,2,,JUST ENERGY NEW YORK CORP ; JUST ENERGY NEW YORK CORP.,n,clear,Different company in the same group (Just Energy New York)
+Louisville Gas and Electric Company/Kentucky Utilities Company,PJM,LOUISVILLE GAS AND ELECTRIC KENTUCKY UTILITIES,0.953,needs decision,3,3,,Louisville Gas & Electric/Kentucky Utilities ; Louisville Gas & Electric_Kentucky Utilities,y,clear,Same joint entry: LG&E / KU
+Northern States Power Co - Minnesota,MISO,NORTHERN STATES POWER COMPANY MINNESOTA,0.945,needs decision,3,3,,Northern States Power Company Minnesota ; NORTHERN STATES POWER COMPANY - MINNESOTA ; Northern States Power Company - Minnesota,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Southeastern Power Administration,PJM,SOUTHWEST POWER ADMINISTRATION,0.9,needs decision,3,2,,SOUTHWEST POWER ADMINISTRATION ; Southwest Power Administration,n,clear,Different names: Southeastern vs Southwest
+Southern Minnesota Mun P Agny,MISO,SOUTHERN MINNESOTA MUNICIPAL POWER,0.911,needs decision,3,2,,Southern Minnesota Municipal Power,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"Summer Energy Midwest, LLC",PJM,SUMMER ENERGY,0.924,needs decision,3,3,,"Summer Energy, LLC ; SUMMER ENERGY LLC",n,clear,The roster name adds 'Midwest': a different company
+TEC Energy Inc.,PJM,TECO ENERGYSOURCE,0.904,needs decision,3,3,,"TECO ENERGYSOURCE INC ; TECO EnergySource, Inc.",n,clear,Different names: TEC Energy vs Teco Energysource
+The City of Geneva,PJM,CITY OF GAINESVILLE FL,0.913,needs decision,3,2,,"City of Gainesville, FL ; City of Gainesville, FL d/b/a Gainesville Regional Utilities",n,clear,Different names: Geneva vs Gainesville FL
+Tractebel Energy Marketing Inc,MISO,TRAILSTONE ENERGY MARKETING,0.908,needs decision,3,7,,"TrailStone Energy Marketing, LLC ; TrailStone Energy Marketing LLC ; Trailstone Energy Marketing, LLC",n,clear,Different names: Tractebel vs Trailstone
+TransAlta Energy Marketing (U.S.) Inc.,MISO+PJM,TRAILSTONE ENERGY MARKETING,0.927,needs decision,3,7,,"TrailStone Energy Marketing, LLC ; TrailStone Energy Marketing LLC ; Trailstone Energy Marketing, LLC",n,clear,Different names: Transalta vs Trailstone
+Pointe Coupee Elec Member Corp,MISO,POINTE COUPEE ELECTRIC MEMBERSHIP,0.976,auto-accepted,3,4,MISO,Pointe Coupee Electric Membership Corporation,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Long Island Power Authority,PJM,LONG LSLAND POWER AUTHORITY,0.977,auto-accepted,3,1,NYISO,Long Lsland Power Authority (LIPA),y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Missouri Basin Muni Power Agny,MISO,MISSOURI BASIN MUNICIPAL POWER AGENCY,0.989,auto-accepted,3,3,,Missouri Basin Municipal Power Agency ; Missouri Basin Municipal Power Agency (dba MRES) ; Missouri Basin Municipal Power Agency d.b.a Missouri River Energy,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"Calpine Energy Services, L.P.",PJM,CALPINE ENERGY SERVICE,0.991,auto-accepted,3,2,,"Calpine Energy Service, L.P. ; Calpine Energy Service, LP",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Potomac Electric Power Company,PJM,POTOMAC ELECTRI POWER,0.991,auto-accepted,3,1,,Potomac Electri Power Company,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"AC Energy, LLC",PJM,ACACIA ENERGY,0.918,needs decision,2,2,,"Acacia Energy, LLC ; Acacia Energy Inc",n,clear,Different names: AC vs Acacia
+"Alliant Energy Corporate Services, Inc.",PJM,ALLIANT ENERGY CORPORATE SERVICES INC AS AGENT FOR WISCONSIN POWER,0.9,needs decision,2,2,,"Alliant Energy Corporate Services Inc as agent for Wisconsin Power ; Alliant Energy Corporate Services, Inc. as agent for Wisconsin Power ; Alliant Energy Corporate Services, Inc., as agent for Wiscon",y,clear,Same company; the EQR name adds 'as agent'
+Alliant Energy Resources LLC,PJM,ALLIANT ENERGY,0.917,needs decision,2,4,,ALLIANT ENERGY CORPORATION ; ALLIANT ENERGY ; Alliant Energy,n,clear,"EQR gives only the group's brand name (Alliant Energy Corporation); can't tell which company in the group, so left unmatched"
+Ameripro Energy Corp.,PJM,AMERIGREEN ENERGY,0.911,needs decision,2,3,,"AMERIGREEN ENERGY INC ; Amerigreen Energy, Inc.",n,clear,Different names: Ameripro vs Amerigreen
+Astral Energy LLC,PJM,ATLAS ENERGY,0.952,needs decision,2,2,,"Atlas Energy, LLC ; ATLAS ENERGY LLC",n,clear,Different names: Astral vs Atlas
+Basin Electric Power Coop,MISO,BASIN ELECTRIC COOPERATIVE,0.924,needs decision,2,1,MISO,BASIN ELECTRIC COOPERATIVE,y,clear,Same co-op: Basin Electric Power Cooperative
+Boone Electric Coop,MISO,BASIN ELECTRIC COOPERATIVE,0.905,needs decision,2,1,MISO,BASIN ELECTRIC COOPERATIVE,n,clear,Different names: Boone vs Basin
+"Borough of Lavallette, New Jersey",PJM,BOROUGH OF LAVALLETTE NJ,0.95,needs decision,2,2,,"Borough of Lavallette, NJ",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"Borough of Lavallette, New Jersey",PJM,BOROUGH OF LAVALLETTE,0.931,needs decision,2,2,,BOROUGH OF LAVALLETTE,y,clear,Same New Jersey borough; the roster adds the state
+"Borough of Madison, New Jersey",PJM,BOROUGH OF MADISON NJ,0.945,needs decision,2,2,,"BOROUGH OF MADISON, NJ ; Borough of Madison, NJ",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"Borough of Milltown, New Jersey",PJM,BOROUGH OF MILLTOWN NJ,0.947,needs decision,2,2,,"Borough of Milltown, NJ ; BOROUGH OF MILLTOWN, NJ",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"Borough of Seaside Heights, New Jersey",PJM,BOROUGH OF SEASIDE HEIGHTS,0.941,needs decision,2,2,,BOROUGH OF SEASIDE HEIGHTS,y,clear,Same New Jersey borough; the roster adds the state
+"Borough of Seaside Heights, New Jersey",PJM,BOROUGH OF SEASIDE HEIGHTS NJ,0.957,needs decision,2,2,,"Borough of Seaside Heights, NJ",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"Borough of South River, New Jersey",PJM,BOROUGH OF SOUTH RIVER,0.933,needs decision,2,2,,BOROUGH OF SOUTH RIVER,y,clear,Same New Jersey borough; the roster adds the state
+"Borough of South River, New Jersey",PJM,BOROUGH OF SOUTH RIVER NJ,0.952,needs decision,2,2,,"Borough of South River, NJ",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Brookfield Renewable Trading and Marketing LP,PJM,BROOKFIELD REWEWABLE TRADING AND MARKETING,0.927,needs decision,2,1,,Brookfield Rewewable Trading and Marketing LP,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Castleton Commodities Energy Trading LLC,PJM,CASTLETON COMMODITIES INTERNATIONAL,0.906,needs decision,2,1,PJM,Castleton Commodities International LLC,n,clear,"EQR names the parent, Castleton Commodities International; can't tell which trading company"
+Castleton Commodities Merchant Trading L.P.,PJM,CASTLETON COMMODITIES INTERNATIONAL,0.914,needs decision,2,1,PJM,Castleton Commodities International LLC,n,clear,"EQR names the parent, Castleton Commodities International; can't tell which trading company"
+City of Alexandria - (MN),MISO,CITY OF ALAMEDA,0.928,needs decision,2,2,,City of Alameda,n,clear,Different names: Alexandria vs Alameda
+City of Alexandria - (MN),MISO,CITY OF VINELAND,0.902,needs decision,2,3,PJM,The City of Vineland ; City of Vineland (Vineland Municipal Electric Utility) ; CITY OF VINELAND,n,clear,Different names: Alexandria vs Vineland
+City of Alexandria - (MN),MISO,CITY OF AVENAL,0.915,needs decision,2,1,,City of Avenal,n,clear,Different names: Alexandria vs Avenal
+City of Ames - (IA),MISO,CITY OF MULVANE KS,0.917,needs decision,2,1,,"City of Mulvane, KS",n,clear,Different state: IA vs KS
+City of Ames - (IA),MISO,CITY OF ALAMEDA,0.93,needs decision,2,2,,City of Alameda,n,clear,Different names: Ames vs Alameda
+City of Ames - (IA),MISO,CITY OF WAMEGO KS,0.941,needs decision,2,1,,"City of Wamego, KS",n,clear,Different state: IA vs KS
+City of Ames - (IA),MISO,CITY OF WATHENA KS,0.906,needs decision,2,1,,"City of Wathena, KS",n,clear,Different state: IA vs KS
+City of Ames - (IA),MISO,CITY OF BURLINGAME KS,0.914,needs decision,2,1,,"City of Burlingame, KS",n,clear,Different state: IA vs KS
+City of Ames - (IA),MISO,CITY OF NEEDLES,0.9,needs decision,2,2,,City of Needles,n,clear,Different names: Ames vs Needles
+City of Ames - (IA),MISO,CITY OF ALMA KS,0.93,needs decision,2,1,,"City of Alma, KS",n,clear,Different state: IA vs KS
+City of Ames - (IA),MISO,CITY OF WILLIAMS,0.921,needs decision,2,3,,City of Williams,n,clear,Different names: Ames vs Williams
+City of Ames - (IA),MISO,CITY OF COVE,0.9,needs decision,2,1,,City of Cove,n,clear,Different names: Ames vs Cove
+City of Ames - (IA),MISO,CITY OF SLATER MO,0.925,needs decision,2,1,,"City of Slater, MO",n,clear,Different state: IA vs MO
+City of Ames - (IA),MISO,CITY OF AVENAL,0.91,needs decision,2,1,,City of Avenal,n,clear,Different names: Ames vs Avenal
+City of Ames - (IA),MISO,CITY OF OSCEOLA,0.912,needs decision,2,1,,City of Osceola,n,clear,Different names: Ames vs Osceola
+City of Ames - (IA),MISO,CITY OF MONETT,0.91,needs decision,2,1,,City of Monett,n,clear,Different names: Ames vs Monett
+City of Anoka,MISO,CITY OF ALTAMONT KS,0.921,needs decision,2,1,,"City of Altamont, KS",n,clear,Different names: Anoka vs Altamont KS
+City of Anoka,MISO,CITY OF KASOTA MN,0.922,needs decision,2,1,,"CITY OF KASOTA, MN",n,clear,Different names: Anoka vs Kasota MN
+City of Anoka,MISO,CITY OF AVENAL,0.926,needs decision,2,1,,City of Avenal,n,clear,Different names: Anoka vs Avenal
+City of Anoka,MISO,CITY OF POMONA KS,0.909,needs decision,2,1,,"City of Pomona, KS",n,clear,Different names: Anoka vs Pomona KS
+City of Anoka,MISO,CITY OF SCRANTON KS,0.911,needs decision,2,1,,"City of Scranton, KS",n,clear,Different names: Anoka vs Scranton KS
+City of Anoka,MISO,CITY OF BURBANK CA,0.918,needs decision,2,2,,"City of Burbank, CA",n,clear,Different names: Anoka vs Burbank CA
+City of Anoka,MISO,CITY OF WATHENA KS,0.901,needs decision,2,1,,"City of Wathena, KS",n,clear,Different names: Anoka vs Wathena KS
+City of Anoka,MISO,CITY OF SAN JOS,0.916,needs decision,2,2,,City of San José ; City of San Jos� ; City of San JosÃ©,n,clear,Different names: Anoka vs SAN JOS
+City of Anoka,MISO,CITY OF DALTON,0.908,needs decision,2,1,,City of Dalton,n,clear,Different names: Anoka vs Dalton
+City of Anoka,MISO,CITY OF SAN JOSE CA,0.911,needs decision,2,2,,"City of San Jose, CA",n,clear,Different names: Anoka vs SAN Jose CA
+City of Auburn,PJM,CITY OF BURBANK CA,0.915,needs decision,2,2,,"City of Burbank, CA",n,clear,Different names: Auburn vs Burbank CA
+City of Auburn,PJM,CITY OF SAVONBURG KS,0.9,needs decision,2,1,,"City of Savonburg, KS",n,clear,Different names: Auburn vs Savonburg KS
+City of Auburn,PJM,CITY OF GRANBURY,0.917,needs decision,2,2,,CITY OF GRANBURY,n,clear,Different names: Auburn vs Granbury
+City of Austin - (MN),MISO,CITY OF KASOTA MN,0.913,needs decision,2,1,,"CITY OF KASOTA, MN",n,clear,Different names: Austin vs Kasota MN
+City of Austin - (MN),MISO,CITY OF AUSTIN TEXAS,0.94,needs decision,2,2,,"City of Austin, Texas ; City of Austin, Texas d/b/a Austin Energy",n,clear,Different state: MN vs TX
+City of Austin - (MN),MISO,CITY OF DALTON,0.914,needs decision,2,1,,City of Dalton,n,clear,Different names: Austin vs Dalton
+City of Bay City - (MI),MISO,CITY OF BALDWIN CITY KS,0.905,needs decision,2,1,,"City of Baldwin City, KS",n,clear,Different state: MI vs KS
+City of Boscobel,MISO,CITY OF ROCHELLE,0.9,needs decision,2,2,,City of Rochelle ; CITY OF ROCHELLE,n,clear,Different names: Boscobel vs Rochelle
+City of Boscobel,MISO,CITY OF COVE,0.903,needs decision,2,1,,City of Cove,n,clear,Different names: Boscobel vs Cove
+City of Boscobel,MISO,CITY OF OSCEOLA,0.947,needs decision,2,1,,City of Osceola,n,clear,Different names: Boscobel vs Osceola
+City of Chaska - (MN),MISO,CITY OF ALMA KS,0.915,needs decision,2,1,,"City of Alma, KS",n,clear,Different state: MN vs KS
+City of Chaska - (MN),MISO,CITY OF CHETOPA,0.904,needs decision,2,1,,City of Chetopa,n,clear,Different names: Chaska vs Chetopa
+City of Chaska - (MN),MISO,CITY OF MUSCOTAH KS,0.907,needs decision,2,1,,"City of Muscotah, KS",n,clear,Different state: MN vs KS
+City of Columbia - (MO),MISO,CITY OF COLLINS,0.91,needs decision,2,1,,City of Collins,n,clear,Different names: Columbia vs Collins
+City of Columbus,MISO,CITY OF COLLINS,0.91,needs decision,2,1,,City of Collins,n,clear,Different names: Columbus vs Collins
+"City of Dover, Delaware",PJM,CITY OF DOVER DE,0.945,needs decision,2,2,,"City of Dover, DE",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+City of Eagle River,MISO,CITY OF GENEVA IL,0.919,needs decision,2,2,,"City of Geneva, IL ; CITY OF GENEVA, IL",n,clear,Different names: Eagle River vs Geneva IL
+City of Elk River,MISO,CITY OF GENEVA IL,0.901,needs decision,2,2,,"City of Geneva, IL ; CITY OF GENEVA, IL",n,clear,Different names: ELK River vs Geneva IL
+City of Elk River,MISO,CITY OF DOVER DE,0.9,needs decision,2,2,,"City of Dover, DE",n,clear,Different names: ELK River vs Dover DE
+City of Gladstone,MISO,CITY OF SLATER MO,0.901,needs decision,2,1,,"City of Slater, MO",n,clear,Different names: Gladstone vs Slater MO
+City of Gladstone,MISO,CITY OF DALTON,0.95,needs decision,2,1,,City of Dalton,n,clear,Different names: Gladstone vs Dalton
+City of Greenfield,MISO,CITY OF NEEDLES,0.914,needs decision,2,2,,City of Needles,n,clear,Different names: Greenfield vs Needles
+City of Greenfield,MISO,CITY OF GENEVA IL,0.906,needs decision,2,2,,"City of Geneva, IL ; CITY OF GENEVA, IL",n,clear,Different names: Greenfield vs Geneva IL
+"City of Hamilton, Ohio",PJM,CITY OF DALTON,0.91,needs decision,2,1,,City of Dalton,n,clear,Different names: Hamilton Ohio vs Dalton
+City of Hannibal,MISO,CITY OF HANNIBAL MISSOURI,0.928,needs decision,2,3,MISO,"City of Hannibal, Missouri",y,clear,"Same city: Hannibal, Missouri (in MISO)"
+City of Hannibal,MISO,CITY OF AVENAL,0.921,needs decision,2,1,,City of Avenal,n,clear,Different names: Hannibal vs Avenal
+City of Hannibal,MISO,CITY OF HANNIBAL MO,0.968,needs decision,2,2,,"CITY OF HANNIBAL, MO ; City of Hannibal, MO",y,clear,"Same city: Hannibal, Missouri (in MISO)"
+City of Holland,MISO,CITY OF COLLINS,0.92,needs decision,2,1,,City of Collins,n,clear,Different names: Holland vs Collins
+City of Holland,MISO,CITY OF DALTON,0.928,needs decision,2,1,,City of Dalton,n,clear,Different names: Holland vs Dalton
+City of Kirkwood,MISO,CITY OF KIRKWOOD MO,0.968,needs decision,2,2,,"City of Kirkwood, MO",y,clear,"Same city: Kirkwood, Missouri (in MISO)"
+City of Kirkwood,MISO,CITY OF LOCKWOOD,0.91,needs decision,2,2,,City of Lockwood,n,clear,Different names: Kirkwood vs Lockwood
+City of Lake Crystal - (MN),MISO,CITY OF LAKE WORTH FL,0.912,needs decision,2,2,,"City of Lake Worth, FL",n,clear,Different state: MN vs FL
+City of Lebanon,MISO,CITY OF LINCOLN,0.92,needs decision,2,3,,City of Lincoln ; CITY OF LINCOLN (LINCOLN ELECTRIC SYSTEM),n,clear,Different names: Lebanon vs Lincoln
+City of Lebanon,MISO,CITY OF AVENAL,0.915,needs decision,2,1,,City of Avenal,n,clear,Different names: Lebanon vs Avenal
+City of Lebanon,MISO,CITY OF OSCEOLA,0.903,needs decision,2,1,,City of Osceola,n,clear,Different names: Lebanon vs Osceola
+City of Lebanon,MISO,CITY OF VINELAND,0.92,needs decision,2,3,PJM,The City of Vineland ; City of Vineland (Vineland Municipal Electric Utility) ; CITY OF VINELAND,n,clear,Different names: Lebanon vs Vineland
+City of Lodi,MISO,CITY OF COVE,0.9,needs decision,2,1,,City of Cove,n,clear,Different names: Lodi vs Cove
+City of Lodi,MISO,CITY OF ALAMEDA,0.9,needs decision,2,2,,City of Alameda,n,clear,Different names: Lodi vs Alameda
+City of Lodi,MISO,CITY OF LINCOLN,0.912,needs decision,2,3,,City of Lincoln ; CITY OF LINCOLN (LINCOLN ELECTRIC SYSTEM),n,clear,Different names: Lodi vs Lincoln
+City of Lodi,MISO,CITY OF DALTON,0.922,needs decision,2,1,,City of Dalton,n,clear,Different names: Lodi vs Dalton
+City of Lodi,MISO,CITY OF TROY,0.9,needs decision,2,3,,City of Troy ; CITY OF TROY,n,clear,Different names: Lodi vs Troy
+City of Lodi,MISO,CITY OF VINELAND,0.903,needs decision,2,3,PJM,The City of Vineland ; City of Vineland (Vineland Municipal Electric Utility) ; CITY OF VINELAND,n,clear,Different names: Lodi vs Vineland
+City of Lodi,MISO,CITY OF COLLINS,0.912,needs decision,2,1,,City of Collins,n,clear,Different names: Lodi vs Collins
+City of Lodi,MISO,CITY OF LOCKWOOD,0.921,needs decision,2,2,,City of Lockwood,n,clear,Different names: Lodi vs Lockwood
+City of Lodi,MISO,CITY OF ELWOOD KS,0.913,needs decision,2,1,,"City of Elwood, KS",n,clear,Different names: Lodi vs Elwood KS
+City of Marquette - (MI),MISO,CITY OF MONETT,0.913,needs decision,2,1,,City of Monett,n,clear,Different names: Marquette vs Monett
+City of Marshall - (MN),MISO,CITY OF ALMA KS,0.905,needs decision,2,1,,"City of Alma, KS",n,clear,Different state: MN vs KS
+City of Marshall - (MN),MISO,CITY OF ROCHELLE,0.9,needs decision,2,2,,City of Rochelle ; CITY OF ROCHELLE,n,clear,Different names: Marshall vs Rochelle
+City of Negaunee,MISO,CITY OF NEEDLES,0.91,needs decision,2,2,,City of Needles,n,clear,Different names: Negaunee vs Needles
+City of Negaunee,MISO,CITY OF VINELAND,0.9,needs decision,2,3,PJM,The City of Vineland ; City of Vineland (Vineland Municipal Electric Utility) ; CITY OF VINELAND,n,clear,Different names: Negaunee vs Vineland
+City of Negaunee,MISO,CITY OF EUGENE OR,0.911,needs decision,2,1,,"City of Eugene, OR",n,clear,Different names: Negaunee vs Eugene OR
+City of New Holstein,MISO,CITY OF STEPHENSON,0.9,needs decision,2,1,,City of Stephenson,n,clear,Different names: NEW Holstein vs Stephenson
+City of New Richmond,MISO,CITY OF NEW MADRID,0.913,needs decision,2,3,,City of New Madrid ; CITY OF NEW MADRID,n,clear,Different names: Richmond vs Madrid
+City of Norway,MISO,CITY OF GRANBURY,0.905,needs decision,2,2,,CITY OF GRANBURY,n,clear,Different names: Norway vs Granbury
+City of Norway,MISO,CITY OF TROY,0.922,needs decision,2,3,,City of Troy ; CITY OF TROY,n,clear,Different names: Norway vs Troy
+City of Owatonna - (MN),MISO,CITY OF DALTON,0.905,needs decision,2,1,,City of Dalton,n,clear,Different names: Owatonna vs Dalton
+City of Owatonna - (MN),MISO,CITY OF WATHENA KS,0.907,needs decision,2,1,,"City of Wathena, KS",n,clear,Different state: MN vs KS
+City of Peru - (IL),MISO,CITY OF GILBERT,0.9,needs decision,2,2,,City of Gilbert,n,clear,Different names: Peru vs Gilbert
+City of Peru - (IL),MISO,CITY OF TROY,0.9,needs decision,2,3,,City of Troy ; CITY OF TROY,n,clear,Different names: Peru vs Troy
+City of Peru - (IL),MISO,CITY OF PERRY MISSOURI,0.909,needs decision,2,2,,"City of Perry, Missouri ; CITY OF PERRY MISSOURI",n,clear,Different state: IL vs MO
+City of Peru - (IL),MISO,CITY OF COVE,0.9,needs decision,2,1,,City of Cove,n,clear,Different names: Peru vs Cove
+City of Preston,MISO,CITY OF PRINCETON,0.923,needs decision,2,2,,City of Princeton,n,clear,Different names: Preston vs Princeton
+City of Preston,MISO,CITY OF TROY,0.912,needs decision,2,3,,City of Troy ; CITY OF TROY,n,clear,Different names: Preston vs Troy
+City of Preston,MISO,CITY OF CERRITOS,0.905,needs decision,2,2,,City of Cerritos ; CITY OF CERRITOS,n,clear,Different names: Preston vs Cerritos
+City of Preston,MISO,CITY OF DALTON,0.904,needs decision,2,1,,City of Dalton,n,clear,Different names: Preston vs Dalton
+City of River Falls,MISO,CITY OF ROSEVILLE CA,0.914,needs decision,2,1,,"City of Roseville, CA",n,clear,Different names: River Falls vs Roseville CA
+"City of Rochelle, Illinois",PJM,CITY OF COLLINS,0.907,needs decision,2,1,,City of Collins,n,clear,Different names: Rochelle Illinois vs Collins
+City of Rolla,MISO,CITY OF VICTORVILLE CA,0.903,needs decision,2,2,,"City of Victorville, CA",n,clear,Different names: Rolla vs Victorville CA
+City of Rolla,MISO,CITY OF WILLIAMS,0.907,needs decision,2,3,,City of Williams,n,clear,Different names: Rolla vs Williams
+City of Rolla,MISO,CITY OF COLLINS,0.916,needs decision,2,1,,City of Collins,n,clear,Different names: Rolla vs Collins
+City of Rolla,MISO,CITY OF DALTON,0.908,needs decision,2,1,,City of Dalton,n,clear,Different names: Rolla vs Dalton
+City of Rolla,MISO,CITY OF ROSEVILLE CA,0.93,needs decision,2,1,,"City of Roseville, CA",n,clear,Different names: Rolla vs Roseville CA
+City of Rolla,MISO,CITY OF OSCEOLA,0.916,needs decision,2,1,,City of Osceola,n,clear,Different names: Rolla vs Osceola
+City of Rolla,MISO,CITY OF ROCHELLE,0.935,needs decision,2,2,,City of Rochelle ; CITY OF ROCHELLE,n,clear,Different names: Rolla vs Rochelle
+City of Rolla,MISO,CITY OF TROY,0.921,needs decision,2,3,,City of Troy ; CITY OF TROY,n,clear,Different names: Rolla vs Troy
+City of Rolla,MISO,CITY OF MORRILL KS,0.901,needs decision,2,1,,"City of Morrill, KS",n,clear,Different names: Rolla vs Morrill KS
+City of Ruston,MISO,CITY OF DALTON,0.914,needs decision,2,1,,City of Dalton,n,clear,Different names: Ruston vs Dalton
+City of Ruston,MISO,CITY OF TROY,0.922,needs decision,2,3,,City of Troy ; CITY OF TROY,n,clear,Different names: Ruston vs Troy
+City of Ruston,MISO,CITY OF CERRITOS,0.905,needs decision,2,2,,City of Cerritos ; CITY OF CERRITOS,n,clear,Different names: Ruston vs Cerritos
+City of Traverse City,MISO,CITY OF ROSEVILLE CA,0.908,needs decision,2,1,,"City of Roseville, CA",n,clear,Different names: Traverse vs Roseville CA
+City of Westby,MISO,CITY OF TROY,0.91,needs decision,2,3,,City of Troy ; CITY OF TROY,n,clear,Different names: Westby vs Troy
+City of Worthington - (MN),MISO,CITY OF TACOMA WASHINGTON,0.922,needs decision,2,2,,"CITY OF TACOMA, WASHINGTON ; City of Tacoma Washington",n,clear,Different state: MN vs WA
+"CleanChoice Energy, Inc.",PJM,CLEAR CHOICE ENERGY,0.933,needs decision,2,2,,"Clear Choice Energy, LLC ; CLEAR CHOICE ENERGY, LLC",n,clear,Different names: Cleanchoice vs Clear Choice
+"Constellation NewEnergy, Inc.",PJM,CONSTELLATION GEN,0.936,needs decision,2,1,,Constellation Gen,n,clear,Different names: Newenergy vs GEN
+"DC Energy, LLC",PJM,DPL ENERGY,0.907,needs decision,2,3,,"DPL Energy, LLC ; DPL ENERGY LLC",n,clear,Different names: DC vs DPL
+"DPL Energy Resources, Inc.",PJM,DPL ENERGY,0.9,needs decision,2,3,,"DPL Energy, LLC ; DPL ENERGY LLC",n,clear,"Different company in the same group (DPL Energy, LLC is not DPL Energy Resources)"
+"DTE Energy Trading, Inc.",MISO+PJM,DTE ENERGY,0.911,needs decision,2,2,,DTE Energy ; DTE ENERGY,n,clear,"EQR gives only the group's brand name (DTE Energy); can't tell which company in the group, so left unmatched"
+Dayton Power & Light Company (The),PJM,DAYTON POWER AND LIGHT COMPANY THE,0.929,needs decision,2,2,,"Dayton Power & Light Company, The ; Dayton Power and Light Company, The",y,clear,Same company: Dayton Power & Light
+Dayton Power & Light Company (The),PJM,DAYTON POWER AND LIGHT THE,0.969,needs decision,2,1,,"Dayton Power & Light, The d/b/a AES Ohio",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"Duke Energy Carolinas, LLC",PJM,DUKE ENERGY,0.905,needs decision,2,3,,Duke Energy (PEF) ; Duke Energy Corporation ; Duke Energy,n,clear,The roster name adds 'Carolinas': a different company
+"Duke Energy Carolinas, LLC",PJM,DUKE ENERGY OAKLAND,0.917,needs decision,2,1,,Duke Energy Oakland LLC,n,clear,Different names: Carolinas vs Oakland
+"Duke Energy Florida, LLC",PJM,DUKE ENERGY OAKLAND,0.912,needs decision,2,1,,Duke Energy Oakland LLC,n,clear,Different names: Florida vs Oakland
+"Duke Energy Florida, LLC",PJM,DUKE ENERGY,0.916,needs decision,2,3,,Duke Energy (PEF) ; Duke Energy Corporation ; Duke Energy,n,clear,The roster name adds 'Florida': a different company
+"Duke Energy Kentucky, Inc.",PJM,DUKE ENERGY,0.91,needs decision,2,3,,Duke Energy (PEF) ; Duke Energy Corporation ; Duke Energy,n,clear,The roster name adds 'Kentucky': a different company
+"Duke Energy Ohio, Inc.",PJM,DUKE ENERGY,0.938,needs decision,2,3,,Duke Energy (PEF) ; Duke Energy Corporation ; Duke Energy,n,clear,The roster name adds 'Ohio': a different company
+"Duke Energy Progress, LLC",PJM,DUKE ENERGY,0.91,needs decision,2,3,,Duke Energy (PEF) ; Duke Energy Corporation ; Duke Energy,n,clear,The roster name adds 'Progress': a different company
+"Enel Green Power Hilltopper Wind, LLC",PJM,ENEL GREEN POWER,0.9,needs decision,2,2,,ENEL GREEN POWER NA ; Enel Green Power,n,clear,"The roster name adds 'Hilltopper Wind': a project or wires company, not the same buyer"
+"Energy Transfer Retail Power, LLC",PJM,ENERGY TRANSFER GROUP,0.906,needs decision,2,5,,"Energy Transfer Group, L.L.C. ; Energy Transfer Group LLC ; Energy Transfer Group ; Energy Transfer Group, LLC ; Energy Transfer Group, L. L. C.",n,clear,Different names: Retail Power vs Group
+Gridmatic Inc.,PJM,GRIDMATIC ISEIA,0.92,needs decision,2,2,,GRIDMATIC ISEIA LLC ; GRIDMATIC ISEIA,n,clear,The EQR name adds 'Iseia': a different company
+"Helix Ironwood, LLC",PJM,HELIX RAVENSWOOD,0.905,needs decision,2,3,,"Helix Ravenswood, LLC ; HELIX RAVENSWOOD, LLC",n,clear,Different names: Ironwood vs Ravenswood
+"LM Power, LLC",PJM,LS POWER,0.925,needs decision,2,1,,LS Power,n,clear,Different names: LM vs LS
+MPower Energy NJ LLC,PJM,MPOWER ENERGY,0.963,needs decision,2,3,,MPower Energy LLC ; MPOWER ENERGY LLC,n,clear,The roster name adds 'NJ': a different company
+Macquarie Energy LLC,PJM,MACQUARIE,0.913,needs decision,2,2,,MACQUARIE ; MacQuarie,n,clear,"EQR gives only the group's brand name (Macquarie); can't tell which company in the group, so left unmatched"
+"Marina Energy, LLC",PJM,MARIPOSA ENERGY,0.911,needs decision,2,4,,"Mariposa Energy LLC ; Mariposa Energy, LLC",n,clear,Different names: Marina vs Mariposa
+Mid-South Electric Coop Assn,MISO,MID SOUTH ELECTRIC COOPERATIVE,0.943,needs decision,2,2,,MID-SOUTH ELECTRIC COOP ; MID SOUTH ELEC COOP,y,clear,Same co-op: Mid-South Electric Cooperative Association
+"NextEra Energy Services, LLC",PJM,NEXTERA ENERGY RESOURCES,0.948,needs decision,2,11,,"NextEra Energy Resources, LLC ; Nextera Energy Resources ; NEXTERA ENERGY RESOURCES ; NextEra Energy Resources ; NextEra Energy Resources, LLC.",n,clear,Different names: Services vs Resources
+Northern States Power Co - Minnesota,MISO,NORTHERN STATES POWER COMPANY MN,0.938,needs decision,2,2,,NORTHERN STATES POWER COMPANY - MN ; Northern States Power Company - MN,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Northern States Power Co - Minnesota,MISO,NORTHERN STATES POWER COMPANY A MINNESOTA POWER,0.915,needs decision,2,2,,"Northern States Power Company, a Minnesota Power Company",y,clear,"Same company: Northern States Power Company, a Minnesota corporation"
+Northern States Power Co - Minnesota,MISO,NORTHERN STATES POWER COMPANY A WISCONSIN,0.926,needs decision,2,2,,"NORTHERN STATES POWER COMPANY, A WISCONSIN CORPORATION ; Northern States Power Company, a Wisconsin corporation",n,clear,"Different company: the Wisconsin Northern States Power, not the Minnesota one"
+"Patton Wind Farm, LLC",PJM,PATU WIND FARM,0.904,needs decision,2,1,,"Patu Wind Farm, LLC",n,clear,Different names: Patton vs Patu
+"Peninsula Power, LLC",PJM,PENSTAR POWER,0.902,needs decision,2,2,,"Penstar Power, LLC",n,clear,Different names: Peninsula vs Penstar
+"Renaissance Power & Gas, Inc.",PJM,RENAISSANCE POWER,0.936,needs decision,2,2,,"Renaissance Power LLC ; Renaissance Power, LLC",n,clear,"Different company: Renaissance Power LLC vs Renaissance Power & Gas, Inc."
+"Talen Energy Marketing, LLC",PJM,TALEN ENERGY MONTANA,0.913,needs decision,2,1,,"Talen Energy Montana, LLC",n,clear,Different names: Marketing vs Montana
+The City of Geneva,PJM,CITY OF GAINESVILLE,0.933,needs decision,2,2,,City of Gainesville,n,clear,Different names: Geneva vs Gainesville
+The City of Geneva,PJM,CITY OF AVENAL,0.91,needs decision,2,1,,City of Avenal,n,clear,Different names: Geneva vs Avenal
+The City of Geneva,PJM,CITY OF GENEVA IL,0.965,needs decision,2,2,,"City of Geneva, IL ; CITY OF GENEVA, IL",y,clear,"Same city: Geneva, Illinois (in PJM)"
+The City of Geneva,PJM,CITY OF VINELAND,0.905,needs decision,2,3,PJM,The City of Vineland ; City of Vineland (Vineland Municipal Electric Utility) ; CITY OF VINELAND,n,clear,Different names: Geneva vs Vineland
+"Thunderhead Power, LLC",PJM,THUNDERHEAD WIND ENERGY,0.907,needs decision,2,3,,"THUNDERHEAD WIND ENERGY, LLC ; Thunderhead Wind Energy LLC",n,clear,Different names: Power vs Wind Energy
+"Town Square Energy East, LLC",PJM,TOWN SQUARE ENERGY,0.957,needs decision,2,3,,"TOWN SQUARE ENERGY LLC ; Town Square Energy, LLC ; TOWN SQUARE ENERGY, LLC",n,clear,The roster name adds 'East': a different company
+"Town of Berlin, Maryland",PJM,TOWN OF BERLIN MD,0.948,needs decision,2,3,,"Town of Berlin, MD ; TOWN OF BERLIN, MD",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Trafigura Trading LLC,PJM,TRAFIGURA,0.906,needs decision,2,1,,TRAFIGURA,n,clear,"EQR gives only the group's brand name (Trafigura); can't tell which company in the group, so left unmatched"
+Tri-County Electric Coop,MISO,TRI COUNTY ELECTRIC MEMBERSHIP,0.92,needs decision,2,2,,Tri-County Electric Membership Corporation,n,clear,Different names: Cooperative vs Membership
+Village of L'Anse,MISO,VILLAGE OF DAGGETT,0.907,needs decision,2,1,,Village of Daggett,n,clear,Different names: Lanse vs Daggett
+"Vista Energy Marketing, L.P.",PJM,VISTA ENERGY STORAGE,0.921,needs decision,2,5,,"Vista Energy Storage, LLC ; Vista Energy Storage",n,clear,Different names: Marketing vs Storage
+"West Deptford Energy, LLC",PJM,WEST DEPTFORD ENERGY HOLDINGS,0.938,needs decision,2,2,,"WEST DEPTFORD ENERGY HOLDINGS, LLC ; West Deptford Energy Holdings, LLC",n,clear,"The EQR name is a holding company, not the operating company"
+Virginia Electric & Power Company,PJM,VIRGINIA ELECTRIC POWER,0.97,auto-accepted,2,3,,Virginia Electric Power Company,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+City of Alexandria - (MN),MISO,CITY OF ALEXANDRIA LA,0.971,auto-accepted,2,3,,"City of Alexandria, LA",n,clear,"Different city: Alexandria, Minnesota vs Alexandria, Louisiana"
+"Dynegy Marketing and Trade, LLC",PJM,DYNEGY MARKETING AND TRADING,0.971,auto-accepted,2,1,,DYNEGY MARKETING AND TRADING LLC,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"H.Q. Energy Services (U.S.), Inc.",MISO+PJM,HQ ENERGY SERVICES US,0.971,auto-accepted,2,5,NYISO,"HQ Energy Services US Inc ; HQ ENERGY SERVICES US INC ; H.Q. Energy Services U.S., Inc.",y,clear,Same company; both names carry the (US) tag
+"Twin Eagle Resource Management, LLC",PJM,TWIN EAGLES RESOURCE MANAGEMENT,0.98,auto-accepted,2,2,,"Twin Eagles Resource Management, LLC",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Owensboro Municipal Utilities,PJM,OWENSBORO MUNICIPAL UTILITIES LE,0.981,auto-accepted,2,1,,OWENSBORO MUNICIPAL UTILITIES - LE,y,clear,Same utility; the EQR name has a trailing code
+Letterkenny Industrial Development Authority - PA,PJM,LETTERKENNY INDUSTRIAL DEVELOPMENT AUTHORITY,0.987,auto-accepted,2,5,,Letterkenny Industrial Development Authority,y,clear,Same place; one name adds the state
+Basin Electric Power Coop,MISO,BASIN ELECTRIC POWER COORPERATIVE,0.988,auto-accepted,2,1,,Basin Electric Power Coorperative,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"Shell Energy North America (US), L.P.",PJM,SHELL ENERGY NORTH AMERICAN,0.993,auto-accepted,2,2,,"Shell Energy North American (US), L.P. ; Shell Energy North American",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"AC Energy, LLC",PJM,AYP ENERGY,0.907,needs decision,1,1,,"AYP Energy, Inc.",n,clear,Different names: AC vs AYP
+"AC Energy, LLC",PJM,AIG ENERGY,0.907,needs decision,1,1,,AIG Energy Inc.,n,clear,Different names: AC vs AIG
+"AMP Transmission, LLC",PJM,AEP TRANSMISSION,0.963,needs decision,1,1,,AEP Transmission,n,clear,Different names: AMP vs AEP
+"ATNV Energy, LP",PJM,AUSTIN ENERGY,0.903,needs decision,1,1,,AUSTIN ENERGY,n,clear,Different names: Atnv vs Austin
+All Choice Energy MidAmerica LLC dba Raava Energy,PJM,ALL CHOICE ENERGY,0.921,needs decision,1,2,,"All Choice Energy, LLC ; ALL CHOICE ENERGY LLC",n,clear,The roster name adds 'Midamerica': a different company
+Altop Energy Trading LLC,PJM,ALTOP ENERGY TRADING LLC LE,0.948,needs decision,1,1,,ALTOP ENERGY TRADING LLC - LE,y,clear,Same company; the EQR name has a trailing account code
+Apollo Power Inc.,PJM,APOLLO POWER AND LIGHT,0.909,needs decision,1,1,,Apollo Power & Light LLC,n,clear,Different company: Apollo Power & Light LLC vs Apollo Power Inc.
+"Associated Electric Cooperative, Inc.",PJM,ASSOCIATED ELECTRIC COOPERATIVE INC POWER MARKET,0.929,needs decision,1,1,,"Associated Electric Cooperative, Inc.-Power Market",y,clear,Same co-op; 'Power Marketing' after the full legal name is a department
+Astral Energy LLC,PJM,ASTORIA ENERGY,0.949,needs decision,1,2,,"ASTORIA ENERGY LLC ; Astoria Energy, LLC",n,clear,Different names: Astral vs Astoria
+"BJ Energy, LLC",PJM,BP ENERGY1,0.907,needs decision,1,1,,BP Energy1,n,clear,Different names: BJ vs BP
+BP Energy Retail Company LLC,PJM,BP ENERGY ENERGY RETAIL,0.927,needs decision,1,1,,"BP Energy Energy Retail Company, LLC",y,clear,Same company; the EQR name repeats 'Energy'
+Barron Electric Coop,MISO,BANDERA ELECTRIC COOPERATIVE,0.909,needs decision,1,2,,"Bandera Electric Cooperative ; BANDERA ELECTRIC COOPERATIVE, INC.",n,clear,Different names: Barron vs Bandera
+Basin Electric Power Coop,MISO,BASIN ELECTRIC POWER,0.925,needs decision,1,1,,BASIN ELECTRIC POWER CORP,y,clear,Same co-op: Basin Electric Power Cooperative (seller wrote 'Corp')
+Borough of Chambersburg,PJM,BOROUGH OF CHAMBERSBURG PENNSYLVANIA,0.928,needs decision,1,2,,"Borough of Chambersburg, Pennsylvania",y,clear,"Same borough: Chambersburg, Pennsylvania"
+"Borough of Lavallette, New Jersey",PJM,BOROUGH OF BUTLER NEW JERSEY,0.911,needs decision,1,3,,"Borough of Butler, New Jersey",n,clear,Different names: Lavallette vs Butler
+"Borough of Madison, New Jersey",PJM,BOROUGH OF VINELAND NEW JERSEY,0.93,needs decision,1,1,,"Borough of Vineland, New Jersey",n,clear,Different names: Madison vs Vineland
+"Borough of Milltown, New Jersey",PJM,BOROUGH OF MILLTOWN,0.927,needs decision,1,2,,Borough of Milltown ; BOROUGH OF MILLTOWN,y,clear,Same New Jersey borough; the roster adds the state
+"Borough of Park Ridge, New Jersey",PJM,BOROUGH OF PARK RIDGE,0.931,needs decision,1,1,,BOROUGH OF PARK RIDGE,y,clear,Same New Jersey borough; the roster adds the state
+"Borough of Pemberton, New Jersey",PJM,BOROUGH OF BUTLER NEW JERSEY,0.915,needs decision,1,3,,"Borough of Butler, New Jersey",n,clear,Different names: Pemberton vs Butler
+"Borough of Pemberton, New Jersey",PJM,BOROUGH OF PEMBERTON,0.929,needs decision,1,1,,BOROUGH OF PEMBERTON,y,clear,Same New Jersey borough; the roster adds the state
+"Borough of Pemberton, New Jersey",PJM,BOROUGH OF PEMBERTON NJ,0.948,needs decision,1,1,,"Borough of Pemberton, NJ",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"Borough of Pitcairn, Pennsylvania",PJM,BOROUGH OF PERKASIE PENNSYLVANIA,0.907,needs decision,1,1,,"Borough of Perkasie, Pennsylvania",n,clear,Different names: Pitcairn vs Perkasie
+Brookfield Renewable Energy Marketing US LLC,PJM,BROOKFIELD RENEWABLE,0.9,needs decision,1,2,,Brookfield Renewable,n,clear,"EQR gives only the group's brand name (Brookfield Renewable); can't tell which company in the group, so left unmatched"
+Brookfield Renewable Energy Marketing US LLC,PJM,BROOKFIELD RENEWABLES TRADING AND MARKETING,0.909,needs decision,1,1,,"Brookfield Renewables Trading and Marketing, LP.",n,clear,Different names: Energy US vs Trading
+Brookfield Renewable Energy Marketing US LLC,PJM,BROOKFIELD RENEWABLE TRADING AND MARKING,0.905,needs decision,1,1,,BROOKFIELD RENEWABLE TRADING AND MARKING LP,n,clear,Different names: Energy Marketing US vs Trading Marking
+Brookfield Renewable Trading and Marketing LP,PJM,BROOKFIELD RENEWABLE ENERGY MARKETING,0.91,needs decision,1,1,,Brookfield Renewable Energy Marketing LP,n,clear,Different names: Trading vs Energy
+"Calpine Energy Services, L.P.",PJM,CALPINE ENERGY SERVICES LP RWR,0.953,needs decision,1,1,,"Calpine Energy Services, L.P.- RWR",y,clear,Same company; the EQR name has a trailing account code
+"Capacity Markets Partners, LLC",PJM,CAPACITY MARKET PARTNERS,0.959,needs decision,1,1,,"Capacity Market Partners, LLC",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Central Minnesota Municipal Power Agency,MISO,CENTRAL MN MUNICIPAL POWER AGENCY,0.904,needs decision,1,1,,Central MN Municipal Power Agency,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Citadel FNGE Ltd.,PJM,CITADEL,0.917,needs decision,1,1,,Citadel,n,clear,The roster name adds 'Fnge': a different company
+"Citizens' Electric Company of Lewisburg, PA",PJM,CITIZENS ELECTRIC CORP PROCTOR AND GAMBLE,0.901,needs decision,1,1,,"Citizens Electric Corp., Proctor & Gamble",n,clear,Different names: Company Lewisburg PA vs Corp Proctor Gamble
+City Water and Light Plant,MISO,CITY WATER AND LIGHT PLANT JONESBORO AR,0.933,needs decision,1,1,MISO,"City Water & Light Plant, Jonesboro, AR",y,clear,"Same utility: City Water & Light Plant of Jonesboro, Arkansas"
+City Water and Light Plant,MISO,CITY WATER AND LIGHT PARAGOULD ARKANSAS,0.913,needs decision,1,1,,"City Water & Light Paragould, Arkansas",n,clear,Different names: Plant vs Paragould Arkansas
+City Water and Light Plant,MISO,CITY WATER AND LIGHT PLANT OF JONESBORO ARKANSAS,0.908,needs decision,1,1,,"City Water & Light Plant of Jonesboro, Arkansas",y,clear,"Same utility: City Water & Light Plant of Jonesboro, Arkansas"
+City Water and Light Plant,MISO,CITY WATER AND LIGHT PLANT OF THE CITY OF JONESBORO,0.902,needs decision,1,1,MISO,The City Water & Light Plant of the City of Jonesboro,y,clear,"Same utility: City Water & Light Plant of Jonesboro, Arkansas"
+City Water and Light Plant,MISO,CITY WATER LIGHT AND POWER,0.902,needs decision,1,4,,"City Water, Light & Power (Springfield, Illinois) ; CITY, WATER, LIGHT & POWER ; City, Water, Light and Power ; City Water, Light and Power (a Utility of The City of Springfield, Illinois)",n,clear,Different names: Plant vs Power
+City of Alexandria - (MN),MISO,CITY OF GARLAND TX,0.92,needs decision,1,1,,"City of Garland, TX",n,clear,Different state: MN vs TX
+City of Alexandria - (MN),MISO,CITY OF ASHLAND,0.918,needs decision,1,1,,City of Ashland,n,clear,Different names: Alexandria vs Ashland
+City of Alexandria - (MN),MISO,CITY OF DRAIN,0.914,needs decision,1,1,,City of Drain,n,clear,Different names: Alexandria vs Drain
+City of Alexandria - (MN),MISO,CITY OF LAKELAND FLORIDA,0.919,needs decision,1,1,,"City of Lakeland, Florida",n,clear,Different state: MN vs FL
+City of Ames - (IA),MISO,CITY OF SUMAS,0.934,needs decision,1,2,,City of Sumas,n,clear,Different names: Ames vs Sumas
+City of Ames - (IA),MISO,CITY OF ASHLAND,0.9,needs decision,1,1,,City of Ashland,n,clear,Different names: Ames vs Ashland
+City of Ames - (IA),MISO,CITY OF PLUMMER,0.9,needs decision,1,2,,City of Plummer,n,clear,Different names: Ames vs Plummer
+City of Ames - (IA),MISO,CITY OF MCCLEARY,0.903,needs decision,1,1,,City of McCleary,n,clear,Different names: Ames vs Mccleary
+City of Ames - (IA),MISO,CITY OF OSAWATOMIE,0.9,needs decision,1,1,,City of Osawatomie,n,clear,Different names: Ames vs Osawatomie
+City of Ames - (IA),MISO,CITY OF PAGE,0.933,needs decision,1,2,,City of Page ; The City of Page dba Page Electric Utility,n,clear,Different names: Ames vs Page
+City of Ames - (IA),MISO,CITY OF SHAKOPEE MN,0.91,needs decision,1,1,,"CITY OF SHAKOPEE, MN",n,clear,Different state: IA vs MN
+City of Ames - (IA),MISO,CITY OF ELY,0.914,needs decision,1,1,,City of Ely,n,clear,Different names: Ames vs ELY
+City of Ames - (IA),MISO,CITY OF STAPLES,0.912,needs decision,1,1,,City of Staples,n,clear,Different names: Ames vs Staples
+City of Ames - (IA),MISO,CITY OF BLAINE,0.91,needs decision,1,2,,City of Blaine,n,clear,Different names: Ames vs Blaine
+City of Ames - (IA),MISO,CITY OF AMES IA,0.96,needs decision,1,1,,"City of Ames, IA",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+City of Ames - (IA),MISO,CITY OF SALEM,0.968,needs decision,1,1,,City of Salem,n,clear,Different names: Ames vs Salem
+City of Ames - (IA),MISO,CITY OF AMES IOWA,0.941,needs decision,1,1,,"City of Ames, Iowa",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+City of Ames - (IA),MISO,CITY OF MONROE,0.91,needs decision,1,1,,City of Monroe,n,clear,Different names: Ames vs Monroe
+City of Ames - (IA),MISO,CITY OF AZTEC,0.921,needs decision,1,2,,City of Aztec ; CITY OF AZTEC,n,clear,Different names: Ames vs Aztec
+City of Ames - (IA),MISO,CITY OF ADA MN,0.91,needs decision,1,1,,"City of Ada, MN",n,clear,Different state: IA vs MN
+City of Ames - (IA),MISO,CITY OF WILLAIMS,0.921,needs decision,1,1,,City of Willaims,n,clear,Different names: Ames vs Willaims
+City of Ames - (IA),MISO,CITY OF COLEMAN,0.912,needs decision,1,1,,CITY OF COLEMAN,n,clear,Different names: Ames vs Coleman
+City of Ames - (IA),MISO,CITY OF KASSON,0.91,needs decision,1,1,,City of Kasson,n,clear,Different names: Ames vs Kasson
+City of Ames - (IA),MISO,CITY OF WEISER,0.91,needs decision,1,1,,City of Weiser,n,clear,Different names: Ames vs Weiser
+City of Anoka,MISO,CITY OF DRAIN,0.908,needs decision,1,1,,City of Drain,n,clear,Different names: Anoka vs Drain
+City of Anoka,MISO,CITY OF NASHWAUK,0.901,needs decision,1,1,,City of Nashwauk,n,clear,Different names: Anoka vs Nashwauk
+City of Anoka,MISO,CITY OF BANDON,0.926,needs decision,1,1,,City of Bandon,n,clear,Different names: Anoka vs Bandon
+City of Anoka,MISO,CITY OF RATON,0.92,needs decision,1,1,,City of Raton,n,clear,Different names: Anoka vs Raton
+City of Anoka,MISO,CITY OF ALBION,0.908,needs decision,1,1,,City of Albion,n,clear,Different names: Anoka vs Albion
+City of Anoka,MISO,CITY OF RANDALL,0.916,needs decision,1,1,,City of Randall,n,clear,Different names: Anoka vs Randall
+City of Anoka,MISO,CITY OF ADA MN,0.908,needs decision,1,1,,"City of Ada, MN",n,clear,Different names: Anoka vs ADA MN
+City of Anoka,MISO,CITY OF OAK HARBOR,0.901,needs decision,1,1,,City of Oak Harbor,n,clear,Different names: Anoka vs OAK Harbor
+City of Anoka,MISO,CITY OF KING,0.901,needs decision,1,1,,City Of King dba King City Community Power,n,clear,Different names: Anoka vs King
+City of Anoka,MISO,CITY OF SAN JOSA,0.935,needs decision,1,1,,City of San Josa,n,clear,Different names: Anoka vs SAN Josa
+City of Anoka,MISO,CITY OF FALLON,0.908,needs decision,1,2,,City of Fallon,n,clear,Different names: Anoka vs Fallon
+City of Anoka,MISO,CITY OF MINIDOKA,0.901,needs decision,1,1,,City of Minidoka,n,clear,Different names: Anoka vs Minidoka
+City of Anoka,MISO,CITY OF KAHOKA MO,0.909,needs decision,1,1,MISO,"City of Kahoka, MO",n,clear,Different names: Anoka vs Kahoka MO
+City of Anoka,MISO,CITY OF KASSON,0.939,needs decision,1,1,,City of Kasson,n,clear,Different names: Anoka vs Kasson
+City of Anoka,MISO,CITY OF CORONA CA,0.909,needs decision,1,1,,"City of Corona, CA",n,clear,Different names: Anoka vs Corona CA
+City of Auburn,PJM,CITY OF RATON,0.908,needs decision,1,1,,City of Raton,n,clear,Different names: Auburn vs Raton
+City of Auburn,PJM,CITY OF DRAIN,0.908,needs decision,1,1,,City of Drain,n,clear,Different names: Auburn vs Drain
+City of Auburn,PJM,CITY OF BRYAN TX,0.905,needs decision,1,1,,"City of Bryan, TX",n,clear,Different names: Auburn vs Bryan TX
+City of Auburn,PJM,CITY OF ALBION,0.914,needs decision,1,1,,City of Albion,n,clear,Different names: Auburn vs Albion
+City of Auburn,PJM,CITY OF VANCEBURG KY,0.9,needs decision,1,1,PJM,"City of Vanceburg, Ky",n,clear,Different names: Auburn vs Vanceburg KY
+City of Auburn,PJM,CITY OF HEYBURN,0.915,needs decision,1,1,,City of Heyburn,n,clear,Different names: Auburn vs Heyburn
+City of Auburn,PJM,CITY OF SHULLSBURG,0.905,needs decision,1,1,,City of Shullsburg,n,clear,Different names: Auburn vs Shullsburg
+City of Austin - (MN),MISO,CITY OF KASSON,0.914,needs decision,1,1,,City of Kasson,n,clear,Different names: Austin vs Kasson
+City of Austin - (MN),MISO,CITY OF RATON,0.926,needs decision,1,1,,City of Raton,n,clear,Different names: Austin vs Raton
+City of Austin - (MN),MISO,CITY OF ALBION,0.914,needs decision,1,1,,City of Albion,n,clear,Different names: Austin vs Albion
+City of Austin - (MN),MISO,CITY OF ASHLAND,0.904,needs decision,1,1,,City of Ashland,n,clear,Different names: Austin vs Ashland
+City of Austin - (MN),MISO,CITY OF KING,0.91,needs decision,1,1,,City Of King dba King City Community Power,n,clear,Different names: Austin vs King
+City of Austin - (MN),MISO,CITY OF SUMAS,0.908,needs decision,1,2,,City of Sumas,n,clear,Different names: Austin vs Sumas
+City of Austin - (MN),MISO,CITY OF KEEWATIN,0.921,needs decision,1,1,,City of Keewatin,n,clear,Different names: Austin vs Keewatin
+City of Austin - (MN),MISO,CITY OF SIDNEY,0.914,needs decision,1,2,,City of Sidney ; CITY OF SIDNEY,n,clear,Different names: Austin vs Sidney
+City of Austin - (MN),MISO,CITY OF NASHWAUK,0.905,needs decision,1,1,,City of Nashwauk,n,clear,Different names: Austin vs Nashwauk
+City of Austin - (MN),MISO,CITY OF BLAINE,0.914,needs decision,1,2,,City of Blaine,n,clear,Different names: Austin vs Blaine
+City of Austin - (MN),MISO,CITY OF SIKESTON,0.905,needs decision,1,1,,City of Sikeston,n,clear,Different names: Austin vs Sikeston
+City of Austin - (MN),MISO,CITY OF DRAIN,0.926,needs decision,1,1,,City of Drain,n,clear,Different names: Austin vs Drain
+City of Austin - (MN),MISO,CITY OF AMES IA,0.904,needs decision,1,1,,"City of Ames, IA",n,clear,Different state: MN vs IA
+"City of Batavia, Illinois",PJM,CITY OF GENEVA ILLINOIS,0.902,needs decision,1,1,,"City of Geneva, Illinois",n,clear,Different names: Batavia vs Geneva
+"City of Batavia, Illinois",PJM,CITY OF BATAVIA IL,0.95,needs decision,1,2,,"City of Batavia, IL",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+City of Bay City - (MI),MISO,CITY OF BRYAN TX,0.91,needs decision,1,1,,"City of Bryan, TX",n,clear,Different state: MI vs TX
+City of Boscobel,MISO,CITY OF DECLO,0.918,needs decision,1,1,,City of Declo,n,clear,Different names: Boscobel vs Declo
+City of Boscobel,MISO,CITY OF ELY,0.907,needs decision,1,1,,City of Ely,n,clear,Different names: Boscobel vs ELY
+City of Boscobel,MISO,CITY OF ESCONDIDO,0.9,needs decision,1,1,,City of Escondido,n,clear,Different names: Boscobel vs Escondido
+City of Boscobel,MISO,CITY OF LUBBOCK,0.905,needs decision,1,1,,City of Lubbock,n,clear,Different names: Boscobel vs Lubbock
+City of Chaska - (MN),MISO,CITY OF PADUCAH,0.915,needs decision,1,1,,City of Paducah,n,clear,Different names: Chaska vs Paducah
+City of Chaska - (MN),MISO,CITY OF CLARKSDALE,0.915,needs decision,1,1,,CITY OF CLARKSDALE,n,clear,Different names: Chaska vs Clarksdale
+City of Chaska - (MN),MISO,CITY OF ASHLAND,0.915,needs decision,1,1,,City of Ashland,n,clear,Different names: Chaska vs Ashland
+City of Chaska - (MN),MISO,CITY OF AMES IA,0.904,needs decision,1,1,,"City of Ames, IA",n,clear,Different state: MN vs IA
+City of Chaska - (MN),MISO,CITY OF NASHWAUK,0.917,needs decision,1,1,,City of Nashwauk,n,clear,Different names: Chaska vs Nashwauk
+City of Columbia - (MO),MISO,CITY OF COLEMAN,0.936,needs decision,1,1,,CITY OF COLEMAN,n,clear,Different names: Columbia vs Coleman
+City of Columbia - (MO),MISO,CITY OF SUMAS,0.907,needs decision,1,2,,City of Sumas,n,clear,Different names: Columbia vs Sumas
+City of Columbia - (MO),MISO,CITY OF LUBBOCK,0.905,needs decision,1,1,,City of Lubbock,n,clear,Different names: Columbia vs Lubbock
+City of Columbia - (MO),MISO,CITY OF BUHL,0.903,needs decision,1,1,,City of Buhl,n,clear,Different names: Columbia vs Buhl
+City of Columbia - (MO),MISO,CITY OF ALBION,0.933,needs decision,1,1,,City of Albion,n,clear,Different names: Columbia vs Albion
+City of Columbus,MISO,CITY OF COLEMAN,0.91,needs decision,1,1,,CITY OF COLEMAN,n,clear,Different names: Columbus vs Coleman
+City of Columbus,MISO,CITY OF BUHL,0.903,needs decision,1,1,,City of Buhl,n,clear,Different names: Columbus vs Buhl
+City of Columbus,MISO,CITY OF LUBBOCK,0.905,needs decision,1,1,,City of Lubbock,n,clear,Different names: Columbus vs Lubbock
+City of Crystal Falls,MISO,CITY OF GREAT FALLS,0.906,needs decision,1,2,,City of Great Falls,n,clear,Different names: Crystal vs Great
+City of Crystal Falls,MISO,CITY OF CRYSTAL FALLS MICHIGAN,0.94,needs decision,1,1,,City of Crystal Falls Michigan,y,clear,"Same city: Crystal Falls, Michigan (in MISO)"
+City of Elk River,MISO,CITY OF ELKHORN,0.901,needs decision,1,1,,City of Elkhorn,n,clear,Different names: ELK River vs Elkhorn
+City of Elk River,MISO,CITY OF SHERRILL,0.9,needs decision,1,2,NYISO,City of Sherrill ; CIty of Sherrill,n,clear,Different names: ELK River vs Sherrill
+City of Frankfort,MISO,CITY OF RATON,0.938,needs decision,1,1,,City of Raton,n,clear,Different names: Frankfort vs Raton
+City of Gladstone,MISO,CITY OF BLAINE,0.913,needs decision,1,2,,City of Blaine,n,clear,Different names: Gladstone vs Blaine
+City of Gladstone,MISO,CITY OF DENTON,0.908,needs decision,1,1,,City of Denton,n,clear,Different names: Gladstone vs Denton
+City of Gladstone,MISO,CITY OF RATON,0.926,needs decision,1,1,,City of Raton,n,clear,Different names: Gladstone vs Raton
+City of Gladstone,MISO,CITY OF MILTON,0.913,needs decision,1,1,,City of Milton,n,clear,Different names: Gladstone vs Milton
+City of Gladstone,MISO,CITY OF KASSON,0.913,needs decision,1,1,,City of Kasson,n,clear,Different names: Gladstone vs Kasson
+City of Gladstone,MISO,CITY OF SALEM,0.909,needs decision,1,1,,City of Salem,n,clear,Different names: Gladstone vs Salem
+City of Gladstone,MISO,CITY OF PORT ANGELES,0.911,needs decision,1,1,,City of Port Angeles,n,clear,Different names: Gladstone vs Port Angeles
+City of Grand Haven - (MI),MISO,CITY OF GRAND RAPIDS,0.908,needs decision,1,1,,City of Grand Rapids,n,clear,Different names: Haven vs Rapids
+City of Grand Haven - (MI),MISO,CITY OF ADA MN,0.907,needs decision,1,1,,"City of Ada, MN",n,clear,Different state: MI vs MN
+City of Grand Haven - (MI),MISO,CITY OF GRAND ISLAND THE,0.917,needs decision,1,1,,"City of Grand Island, The",n,clear,Different names: Haven vs Island
+City of Grand Haven - (MI),MISO,CITY OF RANDALL,0.91,needs decision,1,1,,City of Randall,n,clear,Different names: Grand Haven vs Randall
+City of Grand Haven - (MI),MISO,CITY OF GRAND ISLAND,0.928,needs decision,1,2,,City of Grand Island,n,clear,Different names: Haven vs Island
+"City of Hamilton, Ohio",PJM,CITY OF MILTON,0.933,needs decision,1,1,,City of Milton,n,clear,Different names: Hamilton Ohio vs Milton
+City of Hannibal,MISO,CITY OF ALBION,0.917,needs decision,1,1,,City of Albion,n,clear,Different names: Hannibal vs Albion
+City of Hannibal,MISO,CITY OF BANDON,0.905,needs decision,1,1,,City of Bandon,n,clear,Different names: Hannibal vs Bandon
+City of Hannibal,MISO,CITY OF ASHLAND,0.905,needs decision,1,1,,City of Ashland,n,clear,Different names: Hannibal vs Ashland
+City of Hannibal,MISO,CITY OF GRAND ISLAND,0.901,needs decision,1,2,,City of Grand Island,n,clear,Different names: Hannibal vs Grand Island
+City of Hannibal,MISO,CITY OF BLAINE,0.917,needs decision,1,2,,City of Blaine,n,clear,Different names: Hannibal vs Blaine
+City of Hannibal,MISO,CITY OF MINDEN LA,0.9,needs decision,1,1,,"City of Minden, La",n,clear,Different names: Hannibal vs Minden LA
+City of Hannibal,MISO,CITY OF BUHL,0.903,needs decision,1,1,,City of Buhl,n,clear,Different names: Hannibal vs Buhl
+City of Hannibal,MISO,CITY OF RANDALL,0.91,needs decision,1,1,,City of Randall,n,clear,Different names: Hannibal vs Randall
+City of Holland,MISO,CITY OF RANDALL,0.916,needs decision,1,1,,City of Randall,n,clear,Different names: Holland vs Randall
+City of Holland,MISO,CITY OF BUHL,0.9,needs decision,1,1,,City of Buhl,n,clear,Different names: Holland vs Buhl
+City of Holland,MISO,CITY OF FALLON,0.944,needs decision,1,2,,City of Fallon,n,clear,Different names: Holland vs Fallon
+City of Holland,MISO,CITY OF BLAINE,0.904,needs decision,1,2,,City of Blaine,n,clear,Different names: Holland vs Blaine
+City of Holland,MISO,CITY OF ALBION,0.915,needs decision,1,1,,City of Albion,n,clear,Different names: Holland vs Albion
+City of Holland,MISO,CITY OF ELKHORN,0.903,needs decision,1,1,,City of Elkhorn,n,clear,Different names: Holland vs Elkhorn
+City of Holland,MISO,CITY OF COLEMAN,0.92,needs decision,1,1,,CITY OF COLEMAN,n,clear,Different names: Holland vs Coleman
+City of Holland,MISO,CITY OF ASHLAND,0.931,needs decision,1,1,,City of Ashland,n,clear,Different names: Holland vs Ashland
+City of Jasper - (IN),MISO,CITY OF PIERZ,0.926,needs decision,1,1,,City of Pierz,n,clear,Different names: Jasper vs Pierz
+City of Jasper - (IN),MISO,CITY OF PLUMMER,0.904,needs decision,1,2,,City of Plummer,n,clear,Different names: Jasper vs Plummer
+City of Jasper - (IN),MISO,CITY OF PAGE,0.922,needs decision,1,2,,City of Page ; The City of Page dba Page Electric Utility,n,clear,Different names: Jasper vs Page
+City of Jasper - (IN),MISO,CITY OF SALEM,0.908,needs decision,1,1,,City of Salem,n,clear,Different names: Jasper vs Salem
+City of Jasper - (IN),MISO,CITY OF FALLS POWER,0.923,needs decision,1,1,,CITY OF FALLS POWER DBA IDAHO FALLS POWER,n,clear,Different names: Jasper vs Falls Power
+City of Jasper - (IN),MISO,CITY OF STAPLES,0.915,needs decision,1,1,,City of Staples,n,clear,Different names: Jasper vs Staples
+City of Kaukauna,MISO,CITY OF AZUSA CA,0.9,needs decision,1,1,,"City of Azusa, CA",n,clear,Different names: Kaukauna vs Azusa CA
+City of Lake Crystal - (MN),MISO,CITY OF CLARKSDALE,0.912,needs decision,1,1,,CITY OF CLARKSDALE,n,clear,Different names: Lake Crystal vs Clarksdale
+City of Lake Crystal - (MN),MISO,CITY OF LAKE WORTH,0.917,needs decision,1,2,,City of Lake Worth,n,clear,Different names: Crystal vs Worth
+City of Lake Crystal - (MN),MISO,CITY OF GREAT FALLS,0.902,needs decision,1,2,,City of Great Falls,n,clear,Different names: Lake Crystal vs Great Falls
+City of Lake Crystal - (MN),MISO,CITY OF MCCLEARY,0.901,needs decision,1,1,,City of McCleary,n,clear,Different names: Lake Crystal vs Mccleary
+City of Lebanon,MISO,CITY OF ALBION,0.928,needs decision,1,1,,City of Albion,n,clear,Different names: Lebanon vs Albion
+City of Lebanon,MISO,CITY OF BENTON,0.944,needs decision,1,2,MISO,City of Benton,n,clear,Different names: Lebanon vs Benton
+City of Lebanon,MISO,CITY OF BARTOW,0.904,needs decision,1,1,,City of Bartow,n,clear,Different names: Lebanon vs Bartow
+City of Lebanon,MISO,CITY OF COLEMAN,0.916,needs decision,1,1,,CITY OF COLEMAN,n,clear,Different names: Lebanon vs Coleman
+City of Lebanon,MISO,CITY OF BLAINE,0.928,needs decision,1,2,,City of Blaine,n,clear,Different names: Lebanon vs Blaine
+City of Lebanon,MISO,CITY OF DENTON,0.931,needs decision,1,1,,City of Denton,n,clear,Different names: Lebanon vs Denton
+City of Lebanon,MISO,CITY OF DENTON TX,0.901,needs decision,1,1,,"City of Denton, TX",n,clear,Different names: Lebanon vs Denton TX
+City of Lebanon,MISO,CITY OF BURLINGTON,0.902,needs decision,1,1,,City of Burlington,n,clear,Different names: Lebanon vs Burlington
+City of Lebanon,MISO,CITY OF BANDON,0.959,needs decision,1,1,,City of Bandon,n,clear,Different names: Lebanon vs Bandon
+City of Lodi,MISO,CITY OF DRAIN,0.921,needs decision,1,1,,City of Drain,n,clear,Different names: Lodi vs Drain
+City of Lodi,MISO,CITY OF DOWAGIAC,0.903,needs decision,1,1,PJM,City of Dowagiac,n,clear,Different names: Lodi vs Dowagiac
+City of Lodi,MISO,CITY OF BLAINE,0.91,needs decision,1,2,,City of Blaine,n,clear,Different names: Lodi vs Blaine
+City of Lodi,MISO,CITY OF SAFFORD,0.9,needs decision,1,1,,City of Safford,n,clear,Different names: Lodi vs Safford
+City of Lodi,MISO,CITY OF LUBBOCK,0.9,needs decision,1,1,,City of Lubbock,n,clear,Different names: Lodi vs Lubbock
+City of Lodi,MISO,CITY OF KING,0.9,needs decision,1,1,,City Of King dba King City Community Power,n,clear,Different names: Lodi vs King
+City of Lodi,MISO,CITY OF ASHLAND,0.9,needs decision,1,1,,City of Ashland,n,clear,Different names: Lodi vs Ashland
+City of Lodi,MISO,CITY OF ALBION,0.922,needs decision,1,1,,City of Albion,n,clear,Different names: Lodi vs Albion
+City of Lodi,MISO,CITY OF ESCONDIDO,0.913,needs decision,1,1,,City of Escondido,n,clear,Different names: Lodi vs Escondido
+City of Lodi,MISO,CITY OF MINIDOKA,0.903,needs decision,1,1,,City of Minidoka,n,clear,Different names: Lodi vs Minidoka
+City of Lodi,MISO,CITY OF ELKHORN,0.9,needs decision,1,1,,City of Elkhorn,n,clear,Different names: Lodi vs Elkhorn
+City of Lodi,MISO,CITY OF ELY,0.914,needs decision,1,1,,City of Ely,n,clear,Different names: Lodi vs ELY
+City of Lodi,MISO,CITY OF MILTON,0.922,needs decision,1,1,,City of Milton,n,clear,Different names: Lodi vs Milton
+City of Lodi,MISO,CITY OF CLYDE OHIO,0.917,needs decision,1,1,,"City of Clyde, Ohio",n,clear,Different names: Lodi vs Clyde Ohio
+City of Lodi,MISO,CITY OF DECLO,0.934,needs decision,1,1,,City of Declo,n,clear,Different names: Lodi vs Declo
+City of Lodi,MISO,CITY OF FALLON,0.91,needs decision,1,2,,City of Fallon,n,clear,Different names: Lodi vs Fallon
+City of Lodi,MISO,CITY OF BUHL,0.9,needs decision,1,1,,City of Buhl,n,clear,Different names: Lodi vs Buhl
+City of Logansport - (IN),MISO,CITY OF RATON,0.914,needs decision,1,1,,City of Raton,n,clear,Different names: Logansport vs Raton
+City of Logansport - (IN),MISO,CITY OF PORT ANGELES,0.912,needs decision,1,1,,City of Port Angeles,n,clear,Different names: Logansport vs Port Angeles
+City of Marquette - (MI),MISO,CITY OF RUPERT,0.913,needs decision,1,1,,City of Rupert,n,clear,Different names: Marquette vs Rupert
+City of Marshall - (MN),MISO,CITY OF SALEM,0.918,needs decision,1,1,,City of Salem,n,clear,Different names: Marshall vs Salem
+City of Marshall - (MN),MISO,CITY OF MARTINSVILLE VA,0.905,needs decision,1,1,PJM,"City of Martinsville, VA",n,clear,Different state: MN vs VA
+City of Marshall - (MN),MISO,CITY OF NASHWAUK,0.9,needs decision,1,1,,City of Nashwauk,n,clear,Different names: Marshall vs Nashwauk
+City of Marshall - (MN),MISO,CITY OF RANDALL,0.92,needs decision,1,1,,City of Randall,n,clear,Different names: Marshall vs Randall
+City of Marshall - (MN),MISO,CITY OF CLARKSDALE,0.902,needs decision,1,1,,CITY OF CLARKSDALE,n,clear,Different names: Marshall vs Clarksdale
+City of Marshall - (MN),MISO,CITY OF ASHLAND,0.92,needs decision,1,1,,City of Ashland,n,clear,Different names: Marshall vs Ashland
+City of Marshall - (MN),MISO,CITY OF SHERRILL,0.91,needs decision,1,2,NYISO,City of Sherrill ; CIty of Sherrill,n,clear,Different names: Marshall vs Sherrill
+City of Marshfield - (WI),MISO,CITY OF MINDEN LA,0.906,needs decision,1,1,,"City of Minden, La",n,clear,Different state: WI vs LA
+City of Marshfield - (WI),MISO,CITY OF SALEM,0.929,needs decision,1,1,,City of Salem,n,clear,Different names: Marshfield vs Salem
+City of Marshfield - (WI),MISO,CITY OF ASHLAND,0.918,needs decision,1,1,,City of Ashland,n,clear,Different names: Marshfield vs Ashland
+City of Marshfield - (WI),MISO,CITY OF SHERRILL,0.902,needs decision,1,2,NYISO,City of Sherrill ; CIty of Sherrill,n,clear,Different names: Marshfield vs Sherrill
+City of Negaunee,MISO,CITY OF PAGE,0.903,needs decision,1,2,,City of Page ; The City of Page dba Page Electric Utility,n,clear,Different names: Negaunee vs Page
+City of Negaunee,MISO,CITY OF WAYNE NE,0.91,needs decision,1,1,,"City of Wayne, NE",n,clear,Different names: Negaunee vs Wayne NE
+City of New Holstein,MISO,CITY OF KEEWATIN,0.901,needs decision,1,1,,City of Keewatin,n,clear,Different names: NEW Holstein vs Keewatin
+City of New Richmond,MISO,CITY OF CENTRALIA MO,0.908,needs decision,1,1,MISO,"City of Centralia, MO",n,clear,Different names: NEW Richmond vs Centralia MO
+City of North Little Rock - (AR),MISO,CITY OF NORTH LITTLE ROCK ARKANSAS,0.947,needs decision,1,1,,"CITY OF NORTH LITTLE ROCK, ARKANSAS",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+City of Norway,MISO,CITY OF BRYAN TX,0.905,needs decision,1,1,,"City of Bryan, TX",n,clear,Different names: Norway vs Bryan TX
+City of Norway,MISO,CITY OF RATON,0.923,needs decision,1,1,,City of Raton,n,clear,Different names: Norway vs Raton
+City of Norway,MISO,CITY OF DRAIN,0.908,needs decision,1,1,,City of Drain,n,clear,Different names: Norway vs Drain
+City of Norway,MISO,CITY OF BARTOW,0.926,needs decision,1,1,,City of Bartow,n,clear,Different names: Norway vs Bartow
+City of Owatonna - (MN),MISO,CITY OF DENTON,0.905,needs decision,1,1,,City of Denton,n,clear,Different names: Owatonna vs Denton
+City of Owatonna - (MN),MISO,CITY OF DOWAGIAC,0.9,needs decision,1,1,PJM,City of Dowagiac,n,clear,Different names: Owatonna vs Dowagiac
+City of Owatonna - (MN),MISO,CITY OF KEEWATIN,0.9,needs decision,1,1,,City of Keewatin,n,clear,Different names: Owatonna vs Keewatin
+City of Owatonna - (MN),MISO,CITY OF RATON,0.918,needs decision,1,1,,City of Raton,n,clear,Different names: Owatonna vs Raton
+City of Owatonna - (MN),MISO,CITY OF OSAWATOMIE,0.902,needs decision,1,1,,City of Osawatomie,n,clear,Different names: Owatonna vs Osawatomie
+City of Owatonna - (MN),MISO,CITY OF BANDON,0.905,needs decision,1,1,,City of Bandon,n,clear,Different names: Owatonna vs Bandon
+City of Owatonna - (MN),MISO,CITY OF CORONA CA,0.9,needs decision,1,1,,"City of Corona, CA",n,clear,Different state: MN vs CA
+City of Owatonna - (MN),MISO,CITY OF BENTON,0.905,needs decision,1,2,MISO,City of Benton,n,clear,Different names: Owatonna vs Benton
+City of Owatonna - (MN),MISO,CITY OF WAYNE NE,0.9,needs decision,1,1,,"City of Wayne, NE",n,clear,Different state: MN vs NE
+City of Peru - (IL),MISO,CITY OF BURLEY,0.922,needs decision,1,1,,City of Burley,n,clear,Different names: Peru vs Burley
+City of Peru - (IL),MISO,CITY OF RUPERT,0.938,needs decision,1,1,,City of Rupert,n,clear,Different names: Peru vs Rupert
+City of Peru - (IL),MISO,CITY OF HEYBURN,0.912,needs decision,1,1,,City of Heyburn,n,clear,Different names: Peru vs Heyburn
+City of Peru - (IL),MISO,CITY OF PADUCAH,0.9,needs decision,1,1,,City of Paducah,n,clear,Different names: Peru vs Paducah
+City of Peru - (IL),MISO,CITY OF ELKHORN,0.9,needs decision,1,1,,City of Elkhorn,n,clear,Different names: Peru vs Elkhorn
+City of Peru - (IL),MISO,CITY OF WEISER,0.91,needs decision,1,1,,City of Weiser,n,clear,Different names: Peru vs Weiser
+City of Peru - (IL),MISO,CITY OF BUHL,0.9,needs decision,1,1,,City of Buhl,n,clear,Different names: Peru vs Buhl
+City of Peru - (IL),MISO,CITY OF PROCTOR,0.9,needs decision,1,1,,City of Proctor,n,clear,Different names: Peru vs Proctor
+City of Peru - (IL),MISO,CITY OF ELY,0.914,needs decision,1,1,,City of Ely,n,clear,Different names: Peru vs ELY
+City of Peru - (IL),MISO,CITY OF STAPLES,0.9,needs decision,1,1,,City of Staples,n,clear,Different names: Peru vs Staples
+City of Peru - (IL),MISO,CITY OF PLUMMER,0.943,needs decision,1,2,,City of Plummer,n,clear,Different names: Peru vs Plummer
+City of Peru - (IL),MISO,CITY OF PIERZ,0.953,needs decision,1,1,,City of Pierz,n,clear,Different names: Peru vs Pierz
+City of Peru - (IL),MISO,CITY OF PAGE,0.933,needs decision,1,2,,City of Page ; The City of Page dba Page Electric Utility,n,clear,Different names: Peru vs Page
+City of Preston,MISO,CITY OF KASSON,0.904,needs decision,1,1,,City of Kasson,n,clear,Different names: Preston vs Kasson
+City of Preston,MISO,CITY OF PROCTOR,0.903,needs decision,1,1,,City of Proctor,n,clear,Different names: Preston vs Proctor
+City of Preston,MISO,CITY OF SIKESTON,0.92,needs decision,1,1,,City of Sikeston,n,clear,Different names: Preston vs Sikeston
+City of Preston,MISO,CITY OF PORT ANGELES,0.91,needs decision,1,1,,City of Port Angeles,n,clear,Different names: Preston vs Port Angeles
+City of Preston,MISO,CITY OF PRESCOTT AK,0.92,needs decision,1,1,,"City of Prescott, AK",n,clear,Different names: Preston vs Prescott AK
+City of Preston,MISO,CITY OF HERMISTON,0.937,needs decision,1,1,,City of Hermiston,n,clear,Different names: Preston vs Hermiston
+City of Preston,MISO,CITY OF PAGE,0.9,needs decision,1,2,,City of Page ; The City of Page dba Page Electric Utility,n,clear,Different names: Preston vs Page
+City of Preston,MISO,CITY OF ELKHORN,0.903,needs decision,1,1,,City of Elkhorn,n,clear,Different names: Preston vs Elkhorn
+City of Preston,MISO,CITY OF RATON,0.945,needs decision,1,1,,City of Raton,n,clear,Different names: Preston vs Raton
+City of Preston,MISO,CITY OF BENTON,0.915,needs decision,1,2,MISO,City of Benton,n,clear,Different names: Preston vs Benton
+City of Preston,MISO,CITY OF MILTON,0.904,needs decision,1,1,,City of Milton,n,clear,Different names: Preston vs Milton
+City of Preston,MISO,CITY OF ESCONDIDO,0.901,needs decision,1,1,,City of Escondido,n,clear,Different names: Preston vs Escondido
+City of Preston,MISO,CITY OF BARTOW,0.904,needs decision,1,1,,City of Bartow,n,clear,Different names: Preston vs Bartow
+City of Preston,MISO,CITY OF SUPERIOR NE,0.92,needs decision,1,1,,"City of Superior, NE",n,clear,Different names: Preston vs Superior NE
+City of Preston,MISO,CITY OF FREMONT NE,0.902,needs decision,1,1,,"City of Fremont, NE",n,clear,Different names: Preston vs Fremont NE
+City of Preston,MISO,CITY OF DENTON,0.915,needs decision,1,1,,City of Denton,n,clear,Different names: Preston vs Denton
+City of Preston,MISO,CITY OF RUPERT,0.915,needs decision,1,1,,City of Rupert,n,clear,Different names: Preston vs Rupert
+City of Richland Center,MISO,CITY OF RICHLAND WASHINGTON,0.906,needs decision,1,1,,"City of Richland, Washington",n,clear,Different names: Center vs Washington
+City of River Falls,MISO,CITY OF GREAT FALLS,0.924,needs decision,1,2,,City of Great Falls,n,clear,Different names: River vs Great
+"City of Rochelle, Illinois",PJM,CITY OF ROSEVILLE CALIFORNIA,0.915,needs decision,1,1,,City of Roseville California,n,clear,Different state: IL vs CA
+"City of Rochelle, Illinois",PJM,CITY OF ROCHELLE IL,0.952,needs decision,1,2,,"City of Rochelle, IL",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+City of Rolla,MISO,CITY OF ELY,0.902,needs decision,1,1,,City of Ely,n,clear,Different names: Rolla vs ELY
+City of Rolla,MISO,CITY OF FALLON,0.939,needs decision,1,2,,City of Fallon,n,clear,Different names: Rolla vs Fallon
+City of Rolla,MISO,CITY OF ALBION,0.908,needs decision,1,1,,City of Albion,n,clear,Different names: Rolla vs Albion
+City of Rolla,MISO,CITY OF PELLA IA,0.907,needs decision,1,1,MISO,"City of Pella, IA",n,clear,Different names: Rolla vs Pella IA
+City of Rolla,MISO,CITY OF RANDALL,0.928,needs decision,1,1,,City of Randall,n,clear,Different names: Rolla vs Randall
+City of Rolla,MISO,CITY OF TROY AL,0.928,needs decision,1,1,,"CITY OF TROY, AL",n,clear,Different names: Rolla vs Troy AL
+City of Rolla,MISO,CITY OF DRAIN,0.908,needs decision,1,1,,City of Drain,n,clear,Different names: Rolla vs Drain
+City of Rolla,MISO,CITY OF BARTOW,0.908,needs decision,1,1,,City of Bartow,n,clear,Different names: Rolla vs Bartow
+City of Rolla,MISO,CITY OF ROCHELLE IL,0.911,needs decision,1,2,,"City of Rochelle, IL",n,clear,Different names: Rolla vs Rochelle IL
+City of Rolla,MISO,CITY OF COLEMAN,0.916,needs decision,1,1,,CITY OF COLEMAN,n,clear,Different names: Rolla vs Coleman
+City of Rolla,MISO,CITY OF SHERRILL,0.907,needs decision,1,2,NYISO,City of Sherrill ; CIty of Sherrill,n,clear,Different names: Rolla vs Sherrill
+City of Rolla,MISO,CITY OF WILLAIMS,0.907,needs decision,1,1,,City of Willaims,n,clear,Different names: Rolla vs Willaims
+City of Rolla,MISO,CITY OF RATON,0.92,needs decision,1,1,,City of Raton,n,clear,Different names: Rolla vs Raton
+City of Ruston,MISO,CITY OF RUSTON LOUISIANA,0.917,needs decision,1,1,,"CITY OF RUSTON, LOUISIANA",y,clear,"Same city: Ruston, Louisiana (in MISO)"
+City of Ruston,MISO,CITY OF RATON,0.956,needs decision,1,1,,City of Raton,n,clear,Different names: Ruston vs Raton
+City of Ruston,MISO,CITY OF RUPERT,0.914,needs decision,1,1,,City of Rupert,n,clear,Different names: Ruston vs Rupert
+City of Ruston,MISO,CITY OF NORTON KS,0.908,needs decision,1,1,,"City of Norton, KS",n,clear,Different names: Ruston vs Norton KS
+City of Ruston,MISO,CITY OF HERMISTON,0.939,needs decision,1,1,,City of Hermiston,n,clear,Different names: Ruston vs Hermiston
+City of Ruston,MISO,CITY OF SUPERIOR NE,0.907,needs decision,1,1,,"City of Superior, NE",n,clear,Different names: Ruston vs Superior NE
+City of Ruston,MISO,CITY OF SIKESTON,0.921,needs decision,1,1,,City of Sikeston,n,clear,Different names: Ruston vs Sikeston
+City of Ruston,MISO,CITY OF BARTOW,0.914,needs decision,1,1,,City of Bartow,n,clear,Different names: Ruston vs Bartow
+City of Ruston,MISO,CITY OF MILTON,0.914,needs decision,1,1,,City of Milton,n,clear,Different names: Ruston vs Milton
+City of Ruston,MISO,CITY OF KASSON,0.914,needs decision,1,1,,City of Kasson,n,clear,Different names: Ruston vs Kasson
+City of Springfield - (IL),MISO,CITY OF SPRINGFIELD MISSOURI,0.936,needs decision,1,1,,"City of Springfield, Missouri",n,clear,Different state: IL vs MO
+City of Springfield - (IL),MISO,CITY OF SIDNEY,0.907,needs decision,1,2,,City of Sidney ; CITY OF SIDNEY,n,clear,Different names: Springfield vs Sidney
+City of Springfield - (IL),MISO,CITY OF SPRINGFIELD ILLINOIS,0.936,needs decision,1,1,,THE CITY OF SPRINGFIELD ILLINOIS,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+City of Westby,MISO,CITY OF ELY,0.925,needs decision,1,1,,City of Ely,n,clear,Different names: Westby vs ELY
+City of Westby,MISO,CITY OF WEISER,0.914,needs decision,1,1,,City of Weiser,n,clear,Different names: Westby vs Weiser
+Command Power Corp.,PJM,CHAMON POWER,0.902,needs decision,1,1,,Chamon Power LLC,n,clear,Different names: Command vs Chamon
+Commonwealth Edison Company,PJM,COMMONWEALTH ELECTRIC,0.901,needs decision,1,3,,Commonwealth Electric Company ; Commonwealth Electric Co.,n,clear,Different names: Edison vs Electric
+Commonwealth Edison Company,PJM,COMMONWEALTH ENERGY,0.916,needs decision,1,2,,Commonwealth Energy Corp. d/b/a electricAmerica ; Commonwealth Energy Corporation,n,clear,Different names: Edison vs Energy
+"Constellation Energy Generation, LLC",PJM,CONSTELLATION ENERGY POWER CHOICE,0.918,needs decision,1,2,,"CONSTELLATION Energy POWER CHOICE, INC. ; Constellation Energy Power Choice, Inc.",n,clear,Different names: Generation vs Power Choice
+"Constellation Energy Generation, LLC",PJM,CONSTELLATION ENERGY COMMODITIES,0.902,needs decision,1,1,,Constellation Energy Commodities,n,clear,Different names: Generation vs Commodities
+Consumers Energy Company,MISO+PJM,CONSUMERS ENERGY TRADERS,0.933,needs decision,1,1,,Consumers Energy Traders,n,clear,The EQR name adds 'Traders': a different company
+"Cube Hydro Partners, LLC",PJM,CUBE HYDRO CAROLINAS,0.908,needs decision,1,2,,"Cube Hydro Carolinas, LLC",n,clear,Different names: Partners vs Carolinas
+"Cypress Creek Renewables, LLC",PJM,CYPRESS CREEK RENEWABLES TRANSMISSION,0.93,needs decision,1,1,,"Cypress Creek Renewables Transmission, LLC",n,clear,"The EQR name adds 'Transmission': a project or wires company, not the same buyer"
+"DC Energy, LLC",PJM,DRW ENERGY,0.907,needs decision,1,1,,DRW Energy LLC,n,clear,Different names: DC vs DRW
+DRW Energy Trading LLC,PJM,DRW ENERGY TRADING CANADA ULC,0.924,needs decision,1,1,,DRW Energy Trading Canada ULC,n,clear,The EQR name adds 'Canada ULC': a different company
+DRW Energy Trading LLC,PJM,DRW ENERGY TRADING HOLDINGS,0.933,needs decision,1,1,,DRW Energy Trading Holdings LLC,n,clear,"The EQR name is a holding company, not the operating company"
+"DTE Energy Trading, Inc.",MISO+PJM,DUKE ENERGY TRADING,0.952,needs decision,1,2,,"Duke Energy Trading, Inc. ; Duke Energy Trading",n,clear,Different names: DTE vs Duke
+Dakota Electric Association,MISO,DAKOTA ELECTRIC,0.911,needs decision,1,1,,Dakota Electric,y,clear,Same co-op: Dakota Electric Association
+"Delaware Municipal Electric Corporation, Inc.",PJM,DELAWARE MUNICIPAL ELECTRIC COOPERATION,0.938,needs decision,1,1,,Delaware Municipal Electric Cooperation,y,clear,Same agency (DEMEC); the seller miswrote 'Corporation'
+"Delaware Municipal Electric Corporation, Inc.",PJM,DELAWARE MUNICIPAL ELECTRIC COOPERATIVE,0.938,needs decision,1,1,,Delaware Municipal Electric Cooperative,y,clear,Same agency (DEMEC); the seller miswrote 'Corporation'
+Delmarva Power & Light Company,PJM,DELMARVA POWER,0.917,needs decision,1,1,,Delmarva Power,y,clear,Same utility: Delmarva Power is the brand of Delmarva Power & Light
+"Duke Energy Carolinas, LLC",PJM,DUKE ENERGY VERMILLION,0.905,needs decision,1,1,,"Duke Energy Vermillion, LLC",n,clear,Different names: Carolinas vs Vermillion
+"Duke Energy Carolinas, LLC",PJM,DUKE ENERGY TRADING,0.908,needs decision,1,2,,"Duke Energy Trading, Inc. ; Duke Energy Trading",n,clear,Different names: Carolinas vs Trading
+"Duke Energy Carolinas, LLC",PJM,DUKE ENERGY SOUTH CAROLINA,0.923,needs decision,1,1,,"Duke Energy South Carolina, Inc.",n,clear,Different names: Carolinas vs South Carolina
+"Duke Energy Florida, LLC",PJM,DUKE ENERGY TRADING,0.924,needs decision,1,2,,"Duke Energy Trading, Inc. ; Duke Energy Trading",n,clear,Different names: Florida vs Trading
+"Duke Energy Florida, LLC",PJM,DUKE ENERGY MORRO BAY,0.901,needs decision,1,1,,"Duke Energy Morro Bay, LLC",n,clear,Different names: Florida vs Morro BAY
+"Duke Energy Ohio, Inc.",PJM,DUKE ENERGY SOUTH CAROLINA,0.911,needs decision,1,1,,"Duke Energy South Carolina, Inc.",n,clear,Different state: OH vs SC
+"Duke Energy Ohio, Inc.",PJM,DUKE ENERGY MORRO BAY,0.908,needs decision,1,1,,"Duke Energy Morro Bay, LLC",n,clear,Different names: Ohio vs Morro BAY
+Duquesne Light Company,PJM,DUQUESNE POWER AND LIGHT,0.917,needs decision,1,1,,Duquesne Power and Light,n,clear,'Duquesne Power and Light' mixes Duquesne Light and Duquesne Power; can't tell which
+"Duquesne Power, LLC",PJM,DUQUESNE POWER AND LIGHT,0.917,needs decision,1,1,,Duquesne Power and Light,n,clear,'Duquesne Power and Light' mixes Duquesne Light and Duquesne Power; can't tell which
+Dynasty Energy California Inc.,PJM,DYNASTY ENERGY,0.912,needs decision,1,1,,DYNASTY ENERGY INC,n,clear,The roster name adds 'California': a different company
+"Dynegy Marketing and Trade, LLC",PJM,DINEGY MARKETING AND TRADE,0.929,needs decision,1,1,,DINEGY MARKETING AND TRADE,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"Dynegy Marketing and Trade, LLC",PJM,DYNERGY MARKETING AND TRADE,0.923,needs decision,1,1,,Dynergy Marketing and Trade,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+EDP Renewables North America LLC,PJM,EDP RENEWABLES,0.9,needs decision,1,1,MISO,EDP Renewables,n,clear,"EQR gives only the group's brand name (EDP Renewables); can't tell which company in the group, so left unmatched"
+"ENGIE Energy Marketing NA, Inc.",PJM,ENGIE ENERGY MKT,0.945,needs decision,1,1,,ENGIE ENERGY MKT NA,y,clear,Same company: ENGIE Energy Marketing NA (MKT = Marketing)
+ENGIE Power & Gas LLC,PJM,ENERGO POWER AND GAS,0.9,needs decision,1,2,,ENERGO POWER & GAS LLC ; Energo Power & Gas LLC dba Energo ; ENERGO POWER AND GAS LLC,n,clear,Different names: Engie vs Energo
+"Eagle Creek Hydro Holdings, LLC",PJM,EAGLE CREEK HYDRO POWER,0.911,needs decision,1,2,,"Eagle Creek Hydro Power, LLC",n,clear,Different names: Holdings vs Power
+"East Kentucky Power Cooperative, Inc.",PJM,EAST KENTUCKY POWER,0.923,needs decision,1,1,,East Kentucky Power,y,clear,Same co-op: East Kentucky Power Cooperative
+Easton Utilities Commission,PJM,EASTON UTILITIES,0.919,needs decision,1,1,,Easton Utilities,y,clear,Same utility: Easton Utilities Commission
+Edison Mission Marktg & Trdg Inc,MISO,EDISON MISSION MARKETING AND TRADE,0.95,needs decision,1,1,,"Edison Mission Marketing & Trade, Inc.",y,clear,Same company: Marktg & Trdg = Marketing & Trading
+"Energy Authority, Inc. (The)",PJM,ENERGY OF UTAH,0.905,needs decision,1,1,,"Energy of Utah, L.L.C.",n,clear,Different names: Authority vs Utah
+"Energy Authority, Inc. (The)",PJM,ENERGY AUTHORITY INC THE,0.933,needs decision,1,1,,"Energy Authority, Inc., The",y,clear,Same company: The Energy Authority
+"Energy Authority, Inc. (The)",PJM,ENERGY AUTHORITY INC HGL,0.933,needs decision,1,1,,The Energy Authority Inc. - HGL,y,clear,Same company: The Energy Authority
+"Energy Developments Honey Brook, LLC",PJM,ENERGY DEVELOPMENTS BYRON CENTER,0.921,needs decision,1,1,,ENERGY DEVELOPMENTS BYRON CENTER,n,clear,Different names: Honey Brook vs Byron Center
+"Enerwise Global Technologies, LLC",PJM,ENERWISE GLOBAL TECHNOLOGIES INCDBA CPOWER,0.933,needs decision,1,1,,"Enerwise Global Technologies, Inc.dba CPower",y,clear,Same company: Enerwise Global Technologies (d/b/a CPower)
+Engelhart CTP (US) LLC,PJM,ENGELHART CTP US,0.963,needs decision,1,1,,ENGELHART CTP US LLC,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"Evergy Kansas Central, Inc.",PJM,EVERGY KANSAS CENTRAL INC ELECTRIC,0.924,needs decision,1,1,,"Evergy Kansas Central, Inc - Electric",y,clear,Same company; the EQR name adds '- Electric'
+Florida Power & Light Company,PJM,FLORIDA POWER AND LIGHT NEXTERA,0.948,needs decision,1,1,,Florida Power & Light/NextEra,y,clear,Same utility: Florida Power & Light; '/NextEra' names its parent
+"GenOn Energy Management, LLC",PJM,GENON ENERGY,0.904,needs decision,1,2,,"GenOn Energy, Inc. ; GenOn Energy, LP",n,clear,"EQR gives only the group's brand name (GenOn Energy); can't tell which company in the group, so left unmatched"
+"Gerdau Ameristeel Energy, Inc.",PJM,GERDAU AMERISTEEL US,0.93,needs decision,1,1,,"Gerdau Ameristeel US, Inc.",n,clear,Different names: Energy vs US
+Great River Energy,MISO,GREAT RIVER HYDRO,0.906,needs decision,1,3,,"Great River Hydro, LLC (Comerford) ; Great River Hydro, LLC ; Great River Hydro, LLC (Moore Station) ; Great River Hydro LLC",n,clear,Different names: Energy vs Hydro
+"Hoosier Energy REC, Inc.",MISO+PJM,HOOSIER ENERGY ELECTRIC COOPERATIVE,0.931,needs decision,1,1,,"Hoosier Energy Electric Cooperative, Inc.",y,clear,Same co-op: Hoosier Energy Rural Electric Cooperative
+Hutchinson Utilities Comm,MISO,HUTCHINSON UTILITIES,0.96,needs decision,1,1,,HUTCHINSON UTILITIES,y,clear,Same utility: Hutchinson Utilities Commission
+Hutchinson Utilities Comm,MISO,HUTCHINSON UTILITIES COMMISSION,0.961,needs decision,1,2,,Hutchinson Utilities Commission,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+J. Aron & Company LLC,PJM,J ARON,0.92,needs decision,1,1,,J. Aron,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Jo-Carroll Energy Coop Inc,MISO,JO CARROLL ENERGY,0.917,needs decision,1,2,,"Jo-Carroll Energy, Inc ; JO-CARROLL ENERGY, INC.",y,clear,Same co-op: Jo-Carroll Energy
+Just Energy Limited,PJM,JUST ENERGY TRADING,0.916,needs decision,1,1,,JUST ENERGY TRADING L.P.,n,clear,"Different company in the same group (a Just Energy subsidiary, not Just Energy Limited)"
+LCP Energy LP,PJM,LSP ENERGY,0.94,needs decision,1,1,,LSP ENERGY LP,n,clear,Different names: LCP vs LSP
+Louisville Gas and Electric Company/Kentucky Utilities Company,PJM,LOUISVILLE GAS AND ELECTRIC CO KENTUCKY UTILITIES,0.965,needs decision,1,1,,LOUISVILLE GAS AND ELECTRIC CO/KENTUCKY UTILITIES COMPANY,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+MPower Energy NJ LLC,PJM,MPOWER ENERGY LLC DIS,0.908,needs decision,1,1,,MPOWER ENERGY LLC-DIS,n,clear,Different names: NJ vs LLC DIS
+Macquarie Energy LLC,PJM,MACQUERIE ENERGY,0.935,needs decision,1,1,,Macquerie Energy LLC,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"Marina Energy, LLC",PJM,MAGNOLIA ENERGY,0.904,needs decision,1,2,,Magnolia Energy LP,n,clear,Different names: Marina vs Magnolia
+"Marina Energy, LLC",PJM,MARIN CLEAN ENERGY MCE,0.903,needs decision,1,1,,Marin Clean Energy - MCE,n,clear,Different names: Marina vs Marin Clean MCE
+"Mercuria Energy America, LLC",PJM,MERCURIA ENERGY AMERICA LLC HGL,0.948,needs decision,1,1,,"Mercuria Energy America, LLC - HGL",y,clear,Same company; the EQR name has a trailing account code
+"MidAmerican Energy Services, LLC",PJM,MIDAMERICA ENERGY,0.914,needs decision,1,1,,MidAmerica Energy Co,n,clear,"The EQR spelling 'MidAmerica Energy Co' points to MidAmerican Energy Company, not this retail arm"
+Morgan Stanley Capital Group Inc.,PJM,MORGAN STANLEY CAPITAL GROUP INC COMMODITIES DEPARTMENT,0.902,needs decision,1,1,,MORGAN STANLEY CAPITAL GROUP INC COMMODITIES DEPARTMENT,y,clear,Same company; the EQR name adds 'Commodities Department'
+Morgan Stanley Services Group Inc.,PJM,MORGAN STANLEY CAP GROUP,0.917,needs decision,1,1,,MORGAN STANLEY CAP GROUP INC,n,clear,Different names: Services vs CAP
+Municipal Energy Agency of MS,MISO,MUNICIPAL ENERGY AGENCY MISSISSIPPI,0.928,needs decision,1,1,,MUNICIPAL ENERGY AGENCY MISSISSIPPI,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+NRG Power Marketing LLC,PJM,NRG POWER MARKETING LOLC,0.958,needs decision,1,1,,NRG Power Marketing LOLC,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"NextEra Energy Marketing, LLC",PJM,NEXTERE ENERGY MARKETING,0.966,needs decision,1,1,MISO,"Nextere Energy Marketing, LLC",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"NextEra Energy Services, LLC",PJM,NEXTERE ENERGY MARKETING,0.902,needs decision,1,1,MISO,"Nextere Energy Marketing, LLC",n,clear,Different names: Services vs Marketing
+"NextEra Energy Services, LLC",PJM,NEXTERA ENERGY SERVICES NEW YORK,0.944,needs decision,1,2,NYISO,"NextEra Energy Services New York, LLC",n,clear,Different company in the same group (NextEra Energy Services New York)
+"Nextera Energy Services Illinois, LLC",PJM,NEXTERA ENERGY SERVICES NEW YORK,0.925,needs decision,1,2,NYISO,"NextEra Energy Services New York, LLC",n,clear,Different state: IL vs NY
+"Nextera Energy Services New Jersey, LLC",PJM,NEXTERA ENERGY SERVICES NEW YORK,0.957,needs decision,1,2,NYISO,"NextEra Energy Services New York, LLC",n,clear,Different state: NJ vs NY
+Northeastern REMC,PJM,NORTHWESTERN ENER,0.915,needs decision,1,1,,NORTHWESTERN ENER,n,clear,Different names: Northeastern Remc vs Northwestern Ener
+Northern Municipal Power Agency,MISO,NORTHERN CALIFORNIA POWER AGECY,0.904,needs decision,1,1,,Northern California Power Agecy,n,clear,Different names: Municipal Agency vs California Agecy
+"PALMco Power DC, LLC dba Indra Energy",PJM,PALMCO POWER MA,0.947,needs decision,1,2,,"Palmco Power MA, LLC",n,clear,Different names: DC vs MA
+"PALMco Power DE, LLC dba Indra Energy",PJM,PALMCO POWER MA,0.947,needs decision,1,2,,"Palmco Power MA, LLC",n,clear,Different state: DE vs MA
+"PALMco Power DE, LLC dba Indra Energy",PJM,PALMCO POWER CT,0.947,needs decision,1,1,,PALMCO POWER CT LLC,n,clear,Different state: DE vs CT
+"PALMco Power IL, LLC dba Indra Energy",PJM,PALMCO POWER CT,0.947,needs decision,1,1,,PALMCO POWER CT LLC,n,clear,Different state: IL vs CT
+"PALMco Power IL, LLC dba Indra Energy",PJM,PALMCO POWER MA,0.947,needs decision,1,2,,"Palmco Power MA, LLC",n,clear,Different state: IL vs MA
+"PALMco Power MD, LLC dba Indra Energy",PJM,PALMCO POWER CT,0.947,needs decision,1,1,,PALMCO POWER CT LLC,n,clear,Different state: MD vs CT
+"PALMco Power NJ, LLC dba Indra Energy",PJM,PALMCO POWER MA,0.947,needs decision,1,2,,"Palmco Power MA, LLC",n,clear,Different state: NJ vs MA
+"PALMco Power NJ, LLC dba Indra Energy",PJM,PALMCO POWER CT,0.947,needs decision,1,1,,PALMCO POWER CT LLC,n,clear,Different state: NJ vs CT
+"PALMco Power PA, LLC dba Indra Energy",PJM,PALMCO POWER CT,0.947,needs decision,1,1,,PALMCO POWER CT LLC,n,clear,Different state: PA vs CT
+"PALMco Power VA, LLC",PJM,PALMCO POWER CT,0.947,needs decision,1,1,,PALMCO POWER CT LLC,n,clear,Different state: VA vs CT
+"Patton Wind Farm, LLC",PJM,PATRIOT WIND FARM,0.942,needs decision,1,2,,"Patriot Wind Farm, LLC ; PATRIOT WIND FARM, LLC",n,clear,Different names: Patton vs Patriot
+Pelican Power LLC,PJM,PINNACLE POWER,0.932,needs decision,1,2,,Pinnacle Power LLC ; PINNACLE POWER LLC,n,clear,Different names: Pelican vs Pinnacle
+"Powervine Energy, LLC",PJM,POWEREX ENERGY,0.917,needs decision,1,1,,Powerex Energy Corp.,n,clear,Different names: Powervine vs Powerex
+"RWE Americas, LLC",PJM,RES AMERICAS,0.95,needs decision,1,1,,"RES Americas, Inc.",n,clear,Different names: RWE vs RES
+"RWE CLEAN ENERGY WHOLESALE SERVICES, INC.",PJM,RWE CLEAN ENERGY WHOLESALE SERVICES INCF K A CONSOLIDATED EDISON ENE,0.903,needs decision,1,1,,"RWE Clean Energy Wholesale Services, Inc.f/k/a Consolidated Edison Ene",y,clear,Same company: RWE Clean Energy Wholesale Services (formerly Con Edison Energy)
+Rainbow Energy Marketing Corporation,PJM,RAINBOW ENERGY CENTER,0.929,needs decision,1,3,,"Rainbow Energy Center, LLC ; RAINBOW ENERGY CENTER, LLC",n,clear,Different names: Marketing vs Center
+Rainbow Energy Ventures LLC,PJM,RAINBOW ENERGY CENTER,0.954,needs decision,1,3,,"Rainbow Energy Center, LLC ; RAINBOW ENERGY CENTER, LLC",n,clear,Different names: Ventures vs Center
+"Riverside Generating Company, L.L.C.",PJM,RIVERSIDE ELECTRIC,0.903,needs decision,1,1,,"Riverside Electric Company, LTD",n,clear,Different names: Generating vs Electric
+Rodan Energy Solutions (USA) Inc.,PJM,RDAF ENERGY SOLUTIONS,0.943,needs decision,1,1,,"RDAF Energy Solutions, LLC",n,clear,Different names: Rodan vs Rdaf
+"Rolling Hills Generating, LLC",PJM,ROLLLING HILLS GENERATING,0.967,needs decision,1,1,,"Rollling Hills Generating, L.L.C.",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Royal Bank of Canada,PJM,ROYAL BANK OF SCOTLAND,0.944,needs decision,1,1,,"Royal Bank Of Scotland, PLC",n,clear,Different names: Canada vs Scotland
+Saracen Energy East LP,PJM,SARACEN MERCHANT ENERGY,0.902,needs decision,1,1,,SARACEN MERCHANT ENERGY LP,n,clear,Different names: East vs Merchant
+"Shelby Electric Coop, Inc",MISO,SLOPE ELECTRIC COOPERATIVE,0.931,needs decision,1,1,,"Slope Electric Cooperative, Inc.",n,clear,Different names: Shelby vs Slope
+South Central Electric Assn,MISO,SOUTHWEST RURAL ELECTRIC ASSOCIATION,0.922,needs decision,1,1,,"Southwest Rural Electric Association, Inc.",n,clear,Different names: South Central vs Southwest Rural
+South Central Indiana REMC,MISO,SOUTH CENTRAL GENERATING,0.901,needs decision,1,1,MISO,South Central Generating LLC,n,clear,Different names: Indiana Remc vs Generating
+South Central Indiana REMC,MISO,SOUTH CENTRAL,0.9,needs decision,1,1,,South Central,n,clear,The roster name adds 'Indiana Remc': a different company
+Southeastern Power Administration,PJM,SOUTHEAST POWER ADMINISTRATION,0.915,needs decision,1,1,,Southeast Power Administration,y,clear,Same agency: Southeastern Power Administration (seller wrote 'Southeast')
+Southern Indiana Gas and Electric Company d/b/a Vectren Power Supply Inc.,PJM,SOUTHERN INDIANA GAS AND ELECTRIC CO SIGE,0.961,needs decision,1,1,,SOUTHERN INDIANA GAS & ELECTRIC CO SIGE CO,y,clear,Same utility: SIGECO is Southern Indiana Gas and Electric Company
+"Spark Energy, LLC",PJM,SPARK ENERGY GAS,0.95,needs decision,1,1,,"SPARK ENERGY GAS, LLC",n,clear,"Different company in the same group (Spark Energy Gas, LLC)"
+Sparta Energy Inc.,PJM,SPARK ENERGY GAS,0.907,needs decision,1,1,,"SPARK ENERGY GAS, LLC",n,clear,Different names: Sparta vs Spark GAS
+Strategic Energy LLC,MISO,STRATEGIC ENERGY SERVICES,0.928,needs decision,1,1,,STRATEGIC ENERGY SERVICES INC,n,clear,Different company: Strategic Energy Services Inc.
+"SunCoke Energy, Inc.",PJM,SUNCOR ENERGY,0.939,needs decision,1,1,,Suncor Energy,n,clear,Different names: Suncoke vs Suncor
+"Talen Energy Marketing, LLC",PJM,TALEN ENERGY,0.909,needs decision,1,1,,Talen Energy,n,clear,"EQR gives only the group's brand name (Talen Energy); can't tell which company in the group, so left unmatched"
+"Tenaska Power Management, LLC",PJM,TENASKA POWER,0.908,needs decision,1,1,,Tenaska Power,n,clear,"EQR gives only the group's brand name (Tenaska Power); can't tell which company in the group, so left unmatched"
+Tenaska Power Services Co.,PJM,TENASKA POWER,0.918,needs decision,1,1,,Tenaska Power,n,clear,"EQR gives only the group's brand name (Tenaska Power); can't tell which company in the group, so left unmatched"
+Tennessee Valley Authority (The),PJM,TENNESSEE VALLEY AUTHORITY BULK POWER TRADING,0.916,needs decision,1,1,,Tennessee Valley Authority Bulk Power Trading,y,clear,Same company: TVA's Bulk Power Trading unit
+"Texas Retail Energy, LLC",PJM,TEXAS COMMERCIAL ENERGY,0.924,needs decision,1,1,,TEXAS COMMERCIAL ENERGY LLC,n,clear,Different names: Retail vs Commercial
+The City of Geneva,PJM,CITY OF KEEWATIN,0.905,needs decision,1,1,,City of Keewatin,n,clear,Different names: Geneva vs Keewatin
+The City of Geneva,PJM,CITY OF CHENEY,0.914,needs decision,1,2,,City of Cheney,n,clear,Different names: Geneva vs Cheney
+The City of Geneva,PJM,CITY OF GLENDALE CA,0.907,needs decision,1,1,,"City of Glendale, CA",n,clear,Different names: Geneva vs Glendale CA
+The City of Geneva,PJM,CITY OF WAYNE NE,0.905,needs decision,1,1,,"City of Wayne, NE",n,clear,Different names: Geneva vs Wayne NE
+The City of Geneva,PJM,CITY OF GENEVA ILLINOIS,0.922,needs decision,1,1,,"City of Geneva, Illinois",y,clear,"Same city: Geneva, Illinois (in PJM)"
+The City of Geneva,PJM,CITY OF SEGUIN TEXAS,0.9,needs decision,1,1,,"CITY OF SEGUIN, TEXAS",n,clear,Different names: Geneva vs Seguin Texas
+The City of Geneva,PJM,CITY OF PAGE,0.922,needs decision,1,2,,City of Page ; The City of Page dba Page Electric Utility,n,clear,Different names: Geneva vs Page
+Town of Thurmont,PJM,TOWN OF THURMONT MARYLAND,0.928,needs decision,1,1,,"The Town of Thurmont, Maryland",y,clear,"Same town: Thurmont, Maryland"
+Town of Williamsport (The),PJM,TOWN OF WINDSOR,0.903,needs decision,1,1,PJM,Town of Windsor,n,clear,Different names: Williamsport vs Windsor
+TransAlta Energy Marketing (U.S.) Inc.,MISO+PJM,TRANSALTA ENERGY MARKETING INC HGL,0.953,needs decision,1,1,,TransAlta Energy Marketing (U.S.) Inc. - HGL,y,clear,Same company; the EQR name has a trailing account code
+TransAlta Energy Marketing (U.S.) Inc.,MISO+PJM,TRANSALTA ENERGY MANAGEMENT,0.93,needs decision,1,1,,TransAlta Energy Management (US) Inc.,n,clear,Different names: Marketing vs Management
+"Twin Eagle Resource Management, LLC",PJM,TWIN EAGLE RESOURCE MANAGEMENT CANADA,0.962,needs decision,1,1,,"Twin Eagle Resource Management Canada, LLC",n,clear,The EQR name adds 'Canada': a different company
+"Tyr Energy, LLC",PJM,TROY ENERGY,0.943,needs decision,1,4,,"TROY ENERGY, LLC ; Troy Energy LLC ; Troy Energy, LLC",n,clear,Different names: TYR vs Troy
+Village of Baraga,MISO,VILLAGE OF GRESHAM,0.906,needs decision,1,1,,Village of Gresham,n,clear,Different names: Baraga vs Gresham
+Village of Baraga,MISO,VILLAGE OF SEBEWAING,0.905,needs decision,1,1,,Village of Sebewaing,n,clear,Different names: Baraga vs Sebewaing
+Village of Baraga,MISO,VILLAGE OF MARATHON,0.912,needs decision,1,1,NYISO,Village of Marathon,n,clear,Different names: Baraga vs Marathon
+Village of L'Anse,MISO,VILLAGE OF SOLVAY,0.925,needs decision,1,2,NYISO,Village of Solvay,n,clear,Different names: Lanse vs Solvay
+Village of L'Anse,MISO,VILLAGE OF BENTON,0.9,needs decision,1,1,,Village of Benton,n,clear,Different names: Lanse vs Benton
+Village of L'Anse,MISO,VILLAGE OF BLACK EARTH,0.902,needs decision,1,1,,Village of Black Earth,n,clear,Different names: Lanse vs Black Earth
+Village of L'Anse,MISO,VILLAGE OF BELMONT,0.916,needs decision,1,1,,Village of Belmont,n,clear,Different names: Lanse vs Belmont
+Village of L'Anse,MISO,VILLAGE OF GRESHAM,0.916,needs decision,1,1,,Village of Gresham,n,clear,Different names: Lanse vs Gresham
+Village of L'Anse,MISO,VILLAGE OF HANOVER,0.931,needs decision,1,1,,Village of Hanover,n,clear,Different names: Lanse vs Hanover
+Village of L'Anse,MISO,VILLAGE OF MAZOMANIE,0.915,needs decision,1,1,,Village of Mazomanie,n,clear,Different names: Lanse vs Mazomanie
+Village of L'Anse,MISO,VILLAGE OF WATKINS GLENN,0.908,needs decision,1,1,NYISO,Village of Watkins Glenn,n,clear,Different names: Lanse vs Watkins Glenn
+Village of L'Anse,MISO,VILLAGE OF WONEWOC,0.907,needs decision,1,1,,Village of Wonewoc,n,clear,Different names: Lanse vs Wonewoc
+Village of L'Anse,MISO,VILLAGE OF MAYVILLE,0.908,needs decision,1,1,NYISO,Village of Mayville,n,clear,Different names: Lanse vs Mayville
+Village of L'Anse,MISO,VILLAGE OF SEBEWAING,0.911,needs decision,1,1,,Village of Sebewaing,n,clear,Different names: Lanse vs Sebewaing
+Village of New Glarus,MISO,VILLAGE OF HAZEL GREEN,0.902,needs decision,1,1,,Village of Hazel Green,n,clear,Different names: NEW Glarus vs Hazel Green
+Village of New Glarus,MISO,VILLAGE OF SEBEWAING,0.908,needs decision,1,1,,Village of Sebewaing,n,clear,Different names: NEW Glarus vs Sebewaing
+Village of New Glarus,MISO,VILLAGE OF GRESHAM,0.905,needs decision,1,1,,Village of Gresham,n,clear,Different names: NEW Glarus vs Gresham
+Village of Waunakee,MISO,VILLAGE OF SEBEWAING,0.903,needs decision,1,1,,Village of Sebewaing,n,clear,Different names: Waunakee vs Sebewaing
+Village of Waunakee,MISO,VILLAGE OF HANOVER,0.903,needs decision,1,1,,Village of Hanover,n,clear,Different names: Waunakee vs Hanover
+Village of Waunakee,MISO,VILLAGE OF WONEWOC,0.903,needs decision,1,1,,Village of Wonewoc,n,clear,Different names: Waunakee vs Wonewoc
+Virtuoso Energy LP,PJM,VIRTUE ENERGY,0.911,needs decision,1,1,,"Virtue Energy, LLC ; Virtue Energy LLC",n,clear,Different names: Virtuoso vs Virtue
+"WGL Energy Services, Inc.",PJM,WGL ENERGY SERVISES,0.968,needs decision,1,1,,"WGL Energy Servises, Inc.",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"Walleye Power, LLC",PJM,WELLHEAD POWER,0.909,needs decision,1,1,,"Wellhead Power, LLC",n,clear,Different names: Walleye vs Wellhead
+"Washington-St Tammany E C, Inc",MISO,WASHINGTON ST TAMMANY ELECTRIC,0.952,needs decision,1,1,,Washington - St. Tammany Electric Corp. Inc.,y,clear,Same co-op: Washington-St. Tammany Electric Cooperative
+Western Minnesota Mun Pwr Agny,MISO,WESTERN MINNESOTA MUNICIPAL POWER AGENCY,0.935,needs decision,1,8,,Western Minnesota Municipal Power Agency ; WESTERN MINNESOTA MUNICIPAL POWER AGENCY,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"Wheelabrator Baltimore, L.P.",PJM,WHEELABRATOR BRIDGEPORT,0.917,needs decision,1,2,,"Wheelabrator Bridgeport LP ; Wheelabrator Bridgeport, LP",n,clear,Different names: Baltimore vs Bridgeport
+Wheelabrator Falls Inc.,PJM,WHEELABRATOR FRACKVILLE ENERGY,0.902,needs decision,1,1,,Wheelabrator Frackville Energy Company Inc.,n,clear,Different names: Falls vs Frackville Energy
+"Wheelabrator Gloucester Company, L.P.",PJM,WHEELABRATOR TECHNOLOGIES,0.913,needs decision,1,1,,Wheelabrator Technologies Inc.,n,clear,Different names: Gloucester vs Technologies
+"Wheelabrator Gloucester Company, L.P.",PJM,WHEELABRATOR WESTCHESTER,0.902,needs decision,1,1,,"Wheelabrator Westchester, L.P.",n,clear,Different names: Gloucester vs Westchester
+Willmar Municipal Utilities,MISO,WILLMAR MUNICIPAL UTILITIES COMMISSION,0.942,needs decision,1,1,MISO,Willmar Municipal Utilities Commission,y,clear,Same utility: Willmar Municipal Utilities Commission
+Wyandot Solar LLC,PJM,WALTON SOLAR,0.902,needs decision,1,1,,WALTON SOLAR LLC,n,clear,Different names: Wyandot vs Walton
+ConocoPhillips Company,PJM,CONOCO PHILIPS,0.971,auto-accepted,1,3,,Conoco Philips Company,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Louisville Gas and Electric Company/Kentucky Utilities Company,PJM,LOUISVILLE GAS AND ELECTRIC COMPANY AND KENTUCKY UTILITIES,0.971,auto-accepted,1,8,,Louisville Gas and Electric Company and Kentucky Utilities Company,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Morgan Stanley Capital Group Inc.,PJM,MORGAN STANLEY CAP GROUP,0.971,auto-accepted,1,1,,MORGAN STANLEY CAP GROUP INC,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Northern States Power Co - Minnesota,MISO,NORTHERN STATES POWER CO MINN,0.971,auto-accepted,1,1,,NORTHERN STATES POWER CO MINN,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Wellsboro Electric Company,PJM,WELLSBOROUGH ELECTRIC,0.971,auto-accepted,1,2,,Wellsborough Electric Company,y,clear,Same company: Wellsborough is the older spelling of Wellsboro
+Municipal Energy Agency of MS,MISO,MUNICIPAL ENERGY AGENCY OF NE,0.972,auto-accepted,1,1,,Municipal Energy Agency of NE,n,clear,Different agency: Municipal Energy Agency of Mississippi vs of Nebraska
+City of Springfield - (IL),MISO,CITY OF SPRINGFIELD MO,0.973,auto-accepted,1,1,,"City of Springfield, MO",n,clear,"Different city: Springfield, Illinois vs Springfield, Missouri"
+Louisville Gas and Electric Company/Kentucky Utilities Company,PJM,LOUISVILLE GAS AND ELECTRIC CO AND KENTUCKY UTILITIES,0.973,auto-accepted,1,1,,Louisville Gas and Electric Co. and Kentucky Utilities Co.,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+North Carolina Municipal Power Agency Number 1,PJM,NORTH CAROLINA MUNICIPAL POWER AGENCY NO 1,0.973,auto-accepted,1,2,,North Carolina Municipal Power Agency No. 1,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"PALMco Power DC, LLC dba Indra Energy",PJM,PALMCO POWER CT,0.973,auto-accepted,1,1,,PALMCO POWER CT LLC,n,clear,Different PALMco company: each state has its own LLC
+"PALMco Power MD, LLC dba Indra Energy",PJM,PALMCO POWER MA,0.973,auto-accepted,1,2,,"Palmco Power MA, LLC",n,clear,Different PALMco company: each state has its own LLC
+"PALMco Power PA, LLC dba Indra Energy",PJM,PALMCO POWER MA,0.973,auto-accepted,1,2,,"Palmco Power MA, LLC",n,clear,Different PALMco company: each state has its own LLC
+"PALMco Power VA, LLC",PJM,PALMCO POWER MA,0.973,auto-accepted,1,2,,"Palmco Power MA, LLC",n,clear,Different PALMco company: each state has its own LLC
+Crow Wing Cooperative Power & Light Comp,MISO,CROW WING COOPERATIVE POWER AND LIGHT,0.976,auto-accepted,1,1,,Crow Wing Cooperative Power & Light Company,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+MidAmerican Energy Company,PJM,MIDAMERICA ENERGY,0.977,auto-accepted,1,1,,MidAmerica Energy Co,y,clear,Same company: the EQR spelling is 'MidAmerica Energy Co'
+City of North Little Rock - (AR),MISO,CITY OF NORTH LITTLE ROCK AR,0.979,auto-accepted,1,1,,"City of North Little Rock, AR",y,clear,Same place; one name adds the state
+"Dynegy Marketing and Trade, LLC",PJM,DYNEGY MARKETING AND TRADE LL,0.979,auto-accepted,1,2,,"Dynegy Marketing and Trade, LL",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+BP Energy Company,PJM,BP ENERGY1,0.98,auto-accepted,1,1,,BP Energy1,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Innergex Renewable USA LLC,PJM,INNERGEX RENEWABLES USA,0.982,auto-accepted,1,1,,Innergex Renewables USA LLC,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"Merrill Lynch Commodities, Inc.",MISO+PJM,MERRIL LYNCH COMMODITIES,0.984,auto-accepted,1,1,,"Merril Lynch Commodities, Inc",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Louisiana Energy & Power Authority,MISO,LOUSIANA ENERGY AND POWER AUTHORITY,0.987,auto-accepted,1,1,,Lousiana ENERGY and Power Authority,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Big Rivers Electric Corporation,MISO+PJM,BIG RIVER ELECTRIC,0.989,auto-accepted,1,1,MISO,Big River Electric Corporation,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Carroll County Energy LLC,PJM,CAROLL COUNTY ENERGY,0.989,auto-accepted,1,1,,Caroll County Energy LLC,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"H.Q. Energy Services (U.S.), Inc.",MISO+PJM,HQ ENERGY SERTVICES,0.989,auto-accepted,1,1,,H.Q. Energy Sertvices (U.S.) Inc.,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Brookfield Renewable Trading and Marketing LP,PJM,BROOKFIELD RENEWABLE TRADING AND MARKING,0.99,auto-accepted,1,1,,BROOKFIELD RENEWABLE TRADING AND MARKING LP,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"Homer City Generation, L.P.",PJM,HOMER CITY GENERATIO,0.99,auto-accepted,1,1,,"HOMER CITY GENERATIO, L.P.",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+"MAG Energy Solutions, Inc.",PJM,MAG ENERGY SOLUTION,0.99,auto-accepted,1,1,,"MAG Energy Solution, Inc",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+NRG Power Marketing LLC,PJM,NRG POWER MARKERTING,0.99,auto-accepted,1,1,MISO,NRG Power Markerting LLC,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+J.P. Morgan Ventures Energy Corporation,PJM,JP MORGAN VENTURE ENERGY,0.992,auto-accepted,1,1,,JP Morgan Venture Energy Corporation,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Southern Illinois Power Coop,MISO,SOTHERN ILLINOIS POWER COOPERATIVE,0.992,auto-accepted,1,1,,Sothern Illinois Power Cooperative,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Tennessee Valley Authority (The),PJM,TENNESSSEE VALLEY AUTHORITY,0.993,auto-accepted,1,1,PJM,Tennesssee Valley Authority,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+CMS Energy Resource Management Company,MISO+PJM,CMS ENERGY RESOURCES MANAGEMENT,0.994,auto-accepted,1,1,,CMS Energy Resources Management Company,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+FirstEnergy Pennsylvania Electric Company,PJM,FIRSTENERGY PENNSYLVANIA ELECTRC,0.994,auto-accepted,1,1,,FIRSTENERGY PENNSYLVANIA ELECTRC,y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"
+Brookfield Renewable Trading and Marketing LP,PJM,BROOKFIELD RENEWABLES TRADING AND MARKETING,0.995,auto-accepted,1,1,,"Brookfield Renewables Trading and Marketing, LP.",y,clear,"Same company; only spelling, abbreviation or a cut-off ending differs"

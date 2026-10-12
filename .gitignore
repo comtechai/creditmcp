@@ -1,0 +1,28 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.DS_Store
+.cache/
+.env
+claude_desktop_config.json
+
+# Reality-check output. Git keeps what resolve_entity reads: the manifest, the alias seed, the
+# hand-reviewed match decisions and FERC's filer identity table. The other snapshots, the DuckDB
+# file and the reports stay local; every snapshot's SHA-256 hash is in rc/manifest.json.
+rc/*
+!rc/manifest.json
+!rc/alias_seed.csv
+!rc/review_queue_marked.csv
+!rc/snapshot/
+rc/snapshot/*
+!rc/snapshot/core_ferceqr__quarterly_identity_*.parquet
+rc_frozen_*/
+
+# The dormancy run and its build stay local: the per-company results name companies.
+rc_dormancy/
+
+# The raw PJM page lists every member type, including the associate members the roster drops.
+pjm_member_list.html
+*.zip

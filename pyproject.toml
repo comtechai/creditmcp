@@ -1,0 +1,26 @@
+[project]
+name = "creditmcp"
+version = "0.2.0"
+description = "An open MCP server for energy counterparty credit in PJM and MISO, built from public FERC data."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.10,<3.15"
+# Upper bounds on every dependency, per v0.1's policy: mcp 2.x drops mcp.server.fastmcp.
+dependencies = ["mcp>=1.27,<2", "duckdb>=1.1,<2", "pydantic>=2,<3"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "pandas>=2,<4"]
+
+[project.scripts]
+creditmcp = "creditmcp.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/creditmcp"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

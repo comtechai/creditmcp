@@ -1,0 +1,41 @@
+kind,query,expected,expected_group,note
+plain,Indiana Municipal Power Agency,Indiana Municipal Power Agency,,Plan example
+plain,"TransAlta Energy Marketing (US), Inc.",TransAlta Energy Marketing (U.S.) Inc.,,Most-spelled company in EQR (37 spellings)
+plain,Shell Energy North America (US) L.P.,"Shell Energy North America (US), L.P.",,34 spellings in EQR
+plain,Tenaska Power Services Company,Tenaska Power Services Co.,,EQR spelling
+plain,J. Aron & Company,J. Aron & Company LLC,,EQR spelling
+plain,"The Energy Authority, Inc.","Energy Authority, Inc. (The)",,Leading 'The' vs trailing '(The)'
+plain,CP Energy Marketing (US) Inc,CP Energy Marketing (US) Inc.,,EQR spelling
+plain,Big Rivers Electric Corporation,Big Rivers Electric Corporation,,On both rosters
+plain,Morgan Stanley Capital Group Inc.,Morgan Stanley Capital Group Inc.,,Roster name
+plain,Macquarie Energy LLC,Macquarie Energy LLC,,Roster name
+plain,Louisiana Energy and Power Authority,Louisiana Energy & Power Authority,,'and' vs '&'
+plain,Tennessee Valley Authority,Tennessee Valley Authority (The),,Roster adds '(The)'
+plain,Wisconsin Public Service Corporation,Wisconsin Public Service Corp,,Legal suffix differs
+plain,Consumers Energy Company,Consumers Energy Company,,On both rosters
+plain,Great River Energy,Great River Energy,,MISO co-op
+variant,"Hoosier Energy Rural Electric Cooperative, Inc.","Hoosier Energy REC, Inc.",,Co-op shorthand REC (plan example)
+variant,Southern Minnesota Municipal Power Agency,Southern Minnesota Mun P Agny,,EIA abbreviation
+variant,Pearl River Valley Electric Power Association,Pearl River Valley El Pwr Assn,,EIA abbreviation
+variant,"Edison Mission Marketing & Trading, Inc.",Edison Mission Marktg & Trdg Inc,,EIA abbreviation
+variant,Michigan South Central Power Agency (MSCPA),Michigan South Central Pwr Agy,,EIA abbreviation plus acronym
+variant,"Northern States Power Company, a Minnesota corporation",Northern States Power Co - Minnesota,,Legal-name form EQR sellers use
+variant,"Dayton Power & Light, The d/b/a AES Ohio",Dayton Power & Light Company (The),,d/b/a tail
+variant,Basin Electric Power Co-op,Basin Electric Power Coop,,Co-op spelled out differently
+variant,Tenaska Power Servces Co,Tenaska Power Services Co.,,Typo: fuzzy tier
+variant,Macquarrie Energy LLC,Macquarie Energy LLC,,Typo: fuzzy tier
+affiliate,Calpine Energy Services LP,"Calpine Energy Services, L.P.","Constellation Energy Generation, LLC",Plan example
+affiliate,Duke Energy Florida LLC,"Duke Energy Florida, LLC",Duke Energy Business Services LLC,One of five Duke affiliates
+affiliate,NextEra Energy Services LLC,"NextEra Energy Services, LLC","NextEra Energy Marketing, LLC",Group anchor is the marketing arm
+affiliate,PSEG Energy Resources and Trade LLC,PSEG Energy Resources & Trade LLC,Public Service Electric and Gas Company,Seller behind 31 net terminations
+affiliate,Direct Energy Business LLC,"Direct Energy Business, LLC",NRG Business Marketing LLC,Direct Energy sits in NRG's group
+renamed,"NextEra Energy Power Marketing, LLC","NextEra Energy Marketing, LLC",,"Renamed (Federal Register, Feb 2019)"
+renamed,Wabash Valley Power Alliance,"Wabash Valley Power Association, Inc.",,d/b/a name
+renamed,"American Municipal Power-Ohio, Inc.","American Municipal Power, Inc.|American Mun Power-Ohio, Inc",,Old name; on both rosters under different names
+renamed,Interstate Power Company,Interstate Power and Light Company,,Merged into IPL in 2002
+renamed,Mille Lacs Energy Cooperative,Mille Lacs Electric Coop,,Renamed co-op
+should_not_resolve,"Enverus, Inc.",,,PJM associate member that doesn't trade (plan example)
+should_not_resolve,Municipal Energy Agency of Nebraska,,,Look-alike of the Mississippi agency
+should_not_resolve,"UNS Electric, Inc.",,,Arizona utility; look-alike of Union Electric
+should_not_resolve,DB Energy Trading LLC,,,Look-alike of DTE Energy Trading
+should_not_resolve,Green Mountain Power Corporation,,,Vermont utility; look-alike of Green Mountain Energy

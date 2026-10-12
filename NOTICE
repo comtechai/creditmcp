@@ -1,0 +1,9 @@
+CreditMCP
+Copyright 2026 ComtechAI
+
+This product includes software developed at ComtechAI (https://comtechai.com).
+
+The files in rc/ and miso_members.csv are derived from FERC Electric Quarterly Reports and EIA
+data as published by Catalyst Cooperative's Public Utility Data Liberation Project (PUDL),
+licensed CC-BY-4.0 (https://creativecommons.org/licenses/by/4.0/). pjm_members.csv is taken
+from the PJM member list at pjm.com, as of Oct 8, 2026.

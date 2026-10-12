@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "creditmcp": {
+      "command": "/ABSOLUTE/PATH/TO/creditmcp/.venv/bin/python",
+      "args": ["-m", "creditmcp.server"],
+      "env": {"CREDITMCP_HOME": "/ABSOLUTE/PATH/TO/creditmcp"}
+    }
+  }
+}

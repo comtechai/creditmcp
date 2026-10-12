@@ -1,0 +1,140 @@
+{
+  "run_at": "2026-10-10T22:14:53",
+  "duckdb": "1.5.6",
+  "python": "3.12.14",
+  "source": {
+    "eqr_root": "s3://pudl.catalyst.coop/ferceqr",
+    "eia_utilities": "s3://pudl.catalyst.coop/stable/core_pudl__assn_eia_pudl_utilities.parquet"
+  },
+  "contract_window": [
+    "2023q3",
+    "2026q2"
+  ],
+  "quarters": [
+    "2023q3",
+    "2023q4",
+    "2024q1",
+    "2024q2",
+    "2024q3",
+    "2024q4",
+    "2025q1",
+    "2025q2",
+    "2025q3",
+    "2025q4",
+    "2026q1",
+    "2026q2"
+  ],
+  "tx_quarters": [
+    "2026q2"
+  ],
+  "files": {
+    "contracts": [
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__contracts/2023q3.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__contracts/2023q4.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__contracts/2024q1.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__contracts/2024q2.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__contracts/2024q3.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__contracts/2024q4.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__contracts/2025q1.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__contracts/2025q2.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__contracts/2025q3.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__contracts/2025q4.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__contracts/2026q1.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__contracts/2026q2.parquet"
+    ],
+    "identity": [
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__quarterly_identity/2023q3.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__quarterly_identity/2023q4.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__quarterly_identity/2024q1.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__quarterly_identity/2024q2.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__quarterly_identity/2024q3.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__quarterly_identity/2024q4.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__quarterly_identity/2025q1.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__quarterly_identity/2025q2.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__quarterly_identity/2025q3.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__quarterly_identity/2025q4.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__quarterly_identity/2026q1.parquet",
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__quarterly_identity/2026q2.parquet"
+    ],
+    "transactions": [
+      "s3://pudl.catalyst.coop/ferceqr/core_ferceqr__transactions/2026q2.parquet"
+    ]
+  },
+  "snapshots": {
+    "core_ferceqr__contracts": {
+      "file": "core_ferceqr__contracts_2023q3_2026q2.parquet",
+      "sha256": "9e852e3805cbaf9c66ad5a3c7781c65d5e63baca88849d3b0ec8c4df2a632495",
+      "rows": 2364125,
+      "taken_at": "2026-10-10T20:32:08",
+      "reused": true,
+      "columns": "subset used by this check"
+    },
+    "core_ferceqr__quarterly_identity": {
+      "file": "core_ferceqr__quarterly_identity_2023q3_2026q2.parquet",
+      "sha256": "8663e3c14295565f426ed9d117cb0a164d602af1d8effe68b84515f9f2403a0f",
+      "rows": 88819,
+      "taken_at": "2026-10-10T20:32:08",
+      "reused": true,
+      "columns": "subset used by this check"
+    },
+    "core_pudl__assn_eia_pudl_utilities": {
+      "file": "core_pudl__assn_eia_pudl_utilities.parquet",
+      "sha256": "8dbe8881f041b15007cebbd423dbf35c90cc93e81fcff52f4ceba91226563835",
+      "rows": 17465,
+      "taken_at": "2026-10-10T20:32:08",
+      "reused": true,
+      "source": "s3://pudl.catalyst.coop/stable/core_pudl__assn_eia_pudl_utilities.parquet"
+    },
+    "core_ferceqr__transactions_2026q2_1d1ed14a": {
+      "file": "core_ferceqr__transactions_2026q2_1d1ed14a.parquet",
+      "sha256": "e53ca75008193b397a9a2a0e7eaaa502382576945e9402d014ac5e3ba88ca2d7",
+      "rows": 2591766,
+      "taken_at": "2026-10-10T21:23:36",
+      "reused": true,
+      "columns": "subset used by this check; filtered to PJM/MISO/NYISO bilateral power"
+    }
+  },
+  "missing_columns": {},
+  "bars": {
+    "roster_resolution": 0.3,
+    "volume_coverage": 0.6,
+    "usable_dates": 0.8
+  },
+  "bars_set_before_run": true,
+  "tunables": {
+    "SCOPE_PATTERNS": {
+      "PJM": "\\bPJM\\b|AEP[ -]?DAYTON|\\bAD HUB\\b|\\bNI HUB\\b|N(ORTHERN)? ILLINOIS HUB|\\bWEST(ERN)? HUB\\b|\\bEAST(ERN)? HUB\\b|DOMINION HUB|NEW JERSEY HUB|\\bOHIO HUB\\b|CHICAGO HUB",
+      "MISO": "\\bMISO\\b|MIDCONTINENT|MIDWEST ISO|INDIANA HUB|\\bCINERGY\\b|ILLINOIS HUB|MICHIGAN HUB|MINNESOTA HUB|ARKANSAS HUB|LOUISIANA HUB|TEXAS HUB|MISSISSIPPI HUB",
+      "NYISO": "\\bNYIS\\b|\\bNYISO\\b|\\bNY ?ISO\\b"
+    },
+    "MARKET_OPERATOR_RE": "^(PJM INTERCONNECTION|PJM SETTLEMENT|MIDCONTINENT INDEPENDENT|MIDWEST INDEPENDENT|NEW YORK INDEPENDENT SYSTEM|ISO NEW ENGLAND|CALIFORNIA INDEPENDENT SYSTEM|SOUTHWEST POWER POOL|ELECTRIC RELIABILITY COUNCIL)|^(PJM|MISO|NYISO|ISO NE|ISONE|CAISO|SPP|ERCOT)( |$)",
+    "EVERGREEN_RE": "EVERGREEN|UNTIL (TERMINAT|CANCEL)|MONTH[ -]TO[ -]MONTH|YEAR[ -]TO[ -]YEAR|AUTOMATIC|AUTO[ -]?RENEW|\\bRENEW(S|AL|ED|ING)?\\b|CONTINU|INDEFINITE|ROLL(S|ING)? OVER",
+    "FUZZY_HIGH": 0.97,
+    "FUZZY_REVIEW": 0.9,
+    "EARLY_TOLERANCE_DAYS": 30,
+    "OPEN_ENDED_YEAR": 2090,
+    "REPAPER_WINDOW_DAYS": [
+      -30,
+      120
+    ]
+  },
+  "roster": {
+    "files": [
+      "pjm_members.csv",
+      "miso_members.csv"
+    ],
+    "rows": 1301,
+    "entities": 1270,
+    "isos": [
+      "MISO",
+      "PJM"
+    ]
+  },
+  "decisions": {
+    "file": "rc/review_queue_marked.csv",
+    "sha256": "51b49abc23be530727b54c8c3b31dd8b7054002cedeb0ba9d3705848af7f1164",
+    "accepted": 166,
+    "rejected": 748,
+    "not_found": 0
+  }
+}
