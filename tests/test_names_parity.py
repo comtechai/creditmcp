@@ -19,7 +19,7 @@ TRICKY = [
     "Hoosier Energy R.E.C., Inc.", "Jackson EMC", "The Energy Authority, Inc.", "J. Aron & Company LLC",
     "Dayton Power & Light, The d/b/a AES Ohio", "TransAlta Energy Marketing (U.S.) Inc.", "Basin Electric Power Co-op",
     "Washington - St. Tammany Electric Corp. Inc.", "Harvey Solar II, L.L.C.", "N.A. Power Co", "", None,
-    "RWE Clean Energy Wholesale Services, Inc. f/k/a Con Edison Energy", "Assoc. Elec. Coop. Svcs. Mktg Pwr",
+    "Northwind Power Marketing, Inc. f/k/a Northwind Energy Services", "Assoc. Elec. Coop. Svcs. Mktg Pwr",
 ]
 
 

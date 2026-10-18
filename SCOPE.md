@@ -43,3 +43,48 @@ MISO contract coverage was 58.6% before the name review and 63.3% after. The rev
 - Matching a bare group name in EQR (such as "NextEra Energy" or "Constellation") to one company. resolve_entity can map those to the affiliate group later.
 - Silent exits as a signal: 972 of 2,315 roster-linked contracts stopped being reported with no termination date, and 711 of those were re-keyed by a name or ID change. This needs re-key detection first.
 - Live callouts on named private companies. Write-ups are backtests on public failures.
+
+## Amendment, Oct 14, 2026: market signals
+
+Recorded after the dormancy tool had been built and run on real data, and before publication.
+The frozen text above is unchanged.
+
+- **Framing.** The v0.2 signals are market signals: what the EQR trading record shows about a
+  counterparty, in either direction. The scope above framed every signal as deterioration
+  (dormancy, tenor compression, early termination). The data reads both ways, and a one-sided
+  test misread companies whose trading had shifted rather than stopped.
+- **One tool.** `counterparty.market_signals` replaces the dormancy tool. For each company: energy
+  volume against the same quarter last year (up, steady or down, in 25% bands), sellers trading
+  now and a year earlier, new sellers, what each regular seller did (kept trading, stopped while
+  still under contract, or reached the end of its contract), the largest seller's share, and the
+  market's median for comparison.
+- **Dormancy (decision 4) is kept** as the tool's early-warning part, with its relationship test
+  unchanged: 2 or more regular sellers under contract stopped, at least half of them, and energy
+  volume down by half or more. The thresholds stay provisional until the backtests.
+- **Renames, both ways.** A buyer name that a seller used on the same agreement as a roster
+  company, one name after the other, counts toward that company, so a rename shows up neither as
+  a lost seller nor as a new one.
+- **Tenor and early termination (decisions 2 and 3)** read both ways when they are built: deals
+  getting longer or shorter, and contracts starting as well as ending.
+- **Unchanged:** the coverage bars, the rosters, decisions 1 and 5, everything under "Not in v0.2",
+  and no live callouts on named private companies, in either direction.
+
+## Amendment, Oct 18, 2026: quantity check
+
+Recorded after the first full market signals run on real data, before publication. The frozen text
+and the Oct 14 amendment are unchanged.
+
+- **What the run found.** One seller's 2026q2 report carried 38,193,307 MWh, about a thousand times
+  its other quarters: kWh entered in EQR's MWh field. Checking it turned up a second seller that
+  had scaled both the MWh and the dollars by a thousand for three quarters, then corrected itself.
+- **The check.** `reality_check.py` now pulls each trade's total charge. An energy row priced under
+  $0.50 a MWh, on at least 1,000 MWh as reported, can't be a full-price sale of that much energy, so
+  it counts at a thousandth. In the reference run that is 4 rows from 3 sellers, out of 9.3 million:
+  the kWh report above, two adjustment rows that repeat a month's MWh, and one row for a buyer
+  outside the rosters. Market signals name every report they corrected. Methodology `signals-0.4.0`.
+- **What it can't see.** A seller that scales both the MWh and the dollars passes the price test.
+  The build report lists thousandfold jumps within a seller relationship for a check by hand. The
+  one case found so far is for a buyer outside the rosters, so no company's signals use it.
+- **Coverage, recomputed with the check.** 2026q2 traded energy tied to a roster company: MISO
+  80.6% (91.7% before, because the 38-million-MWh row was a roster company's) and PJM 83.7%
+  (unchanged). Both clear the 60% bar set on Oct 10.

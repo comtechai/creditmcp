@@ -1,7 +1,7 @@
 [project]
 name = "creditmcp"
 version = "0.2.0"
-description = "An open MCP server for energy counterparty credit in PJM and MISO, built from public FERC data."
+description = "Market signals on energy counterparties in PJM and MISO, from public FERC data, as an open MCP server."
 readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.10,<3.15"

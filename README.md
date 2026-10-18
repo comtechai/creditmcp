@@ -1,9 +1,13 @@
 # CreditMCP
 
-An open MCP server for energy counterparty credit in the PJM and MISO power markets, built
-from public FERC data. Most energy counterparties are private, so instead of reading financial
-statements it reads what companies do in the wholesale market: who they buy power from, under
-which contracts, and whether those sellers keep trading with them.
+**Public data. Private counterparties. Clear signals.**
+
+Market signals on energy counterparties in the PJM and MISO power markets, from public FERC data,
+served as an open MCP server. Every wholesale power seller that files with FERC reports each
+bilateral sale it makes. Read from the buyer's side, those reports are a trading record: how much
+power a company buys, from whom, and how that is changing. CreditMCP turns the record into signals
+you can ask about in plain language, which matters most for the many counterparties that are
+private and publish no financial statements.
 
 It is **decision support, not a credit rating**. Every answer names its public sources and the
 data snapshot it came from, and is meant for human review.
@@ -18,12 +22,13 @@ Two tools ship:
 
 | Tool | Question it answers | Methodology |
 |---|---|---|
+| `counterparty.market_signals` | What does the trading record show about this company? Buying more or less than a year ago, from which sellers, who is new, who stopped, how concentrated, against the market. | `signals-0.4.0` |
 | `counterparty.resolve_entity` | Which company is this name, and what are its FERC, EIA and PUDL IDs? | `resolve-0.1.0` |
-| `counterparty.dormancy` | Have the sellers that trade with it regularly gone quiet while their contracts stay in force? | `dormancy-0.2.0` |
 
-`SCOPE.md` records the v0.2 scope, frozen on Oct 11, 2026, before either tool was built. The
-coverage bars the data had to clear were set on Oct 10, before the first data run. Two more
-signals in that scope, tenor compression and early termination, are not built yet. The dormancy
+`SCOPE.md` records the v0.2 scope, frozen on Oct 11, 2026, before either tool was built, and a
+dated amendment from Oct 14 that widened the seller signal it calls dormancy into two-sided market
+signals. The coverage bars the data had to clear were set on Oct 10, before the first data run.
+Two more signals in that scope, tenor and early termination, are not built yet. The early-warning
 thresholds are provisional until they have been backtested against public failures.
 
 ## Install
@@ -39,9 +44,25 @@ pytest
 
 `resolve_entity` works straight away: the repo includes everything it reads (the rosters, the
 alias seed built from FERC EQR, the hand-reviewed match decisions and FERC's filer identity
-table). Dormancy needs five quarters of trades, which you pull once (see below).
+table). Market signals need five quarters of trades, which you pull once (see below).
 
 ## Use it
+
+### Market signals
+
+Pull five consecutive quarters of FERC EQR trades for PJM, MISO and NYISO delivery, then build.
+The pull is about 9 million rows and takes several minutes; reruns into the same folder reuse it.
+
+```bash
+python reality_check.py --roster pjm_members.csv --roster miso_members.csv --out rc_trades \
+  --decisions rc/review_queue_marked.csv --quarters 2023q3:2026q2 \
+  --tx-quarters 2025q2,2025q3,2025q4,2026q1,2026q2
+python -m creditmcp.signals build
+python -m creditmcp.signals "Company name"
+```
+
+The build writes per-company results to `rc_trades/signals/`, which git ignores. Lookups refuse
+a build made under a different methodology version, so rebuild after updating.
 
 ### Resolve a name
 
@@ -50,28 +71,14 @@ python -m creditmcp.cli "Tenaska Power Service Co." "Wabash Valley Power Allianc
 python -m creditmcp.cli "Hoosier Energy Rural Electric Cooperative" --json
 ```
 
-### Dormancy
-
-Pull five consecutive quarters of FERC EQR trades for PJM, MISO and NYISO delivery, then build.
-The pull is about 9 million rows and takes several minutes; reruns into the same folder reuse it.
-
-```bash
-python reality_check.py --roster pjm_members.csv --roster miso_members.csv --out rc_dormancy \
-  --decisions rc/review_queue_marked.csv --quarters 2023q3:2026q2 \
-  --tx-quarters 2025q2,2025q3,2025q4,2026q1,2026q2
-python -m creditmcp.dormancy build
-python -m creditmcp.dormancy "Company name"
-```
-
-The build writes per-company results to `rc_dormancy/dormancy/`, which git ignores. Lookups
-refuse a build made under a different methodology version, so rebuild after updating.
-
 ### From Claude Desktop
 
 Copy `claude_desktop_config.example.json` into your Claude Desktop config, set `command` to this
 repo's `.venv` Python and `CREDITMCP_HOME` to this repo (absolute paths), then restart Claude and
-ask something like *"Which company is 'Tenaska Power Service Co.' in PJM?"* Claude calls
-`counterparty.resolve_entity` and reads back the company, its IDs and its sources.
+ask something like *"Is [company] buying more or less power than a year ago, and from whom?"*
+Claude calls `counterparty.market_signals` and reads back the trend, the sellers behind it and
+its sources. Questions about which company a name is, or its IDs, go to
+`counterparty.resolve_entity`.
 
 - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
@@ -97,6 +104,50 @@ revised, so every run snapshots its inputs. `rc/manifest.json` holds the SHA-256
 snapshot, and every tool result carries those hashes in its `provenance`. A fresh pull may
 differ from the snapshots here; the hashes show which data a result came from.
 
+### market_signals
+
+EQR reports every trade, so a change in how the market trades with a company can show up before
+a rating action or a headline, and for a private company there may be nothing else to go on. Each
+company's latest quarter is compared with the same quarter a year earlier, so seasonal buyers read
+fairly, and with the four quarters before it. A relationship is one seller and one roster company.
+
+- **Volume:** energy MWh bought from all EQR sellers, by quarter, against the same quarter a year
+  earlier (the prior-quarter average when that quarter is empty). Up or down means a change of 25%
+  or more. Every result also carries the market's median change.
+- **Sellers:** how many sellers traded energy with the company in the latest quarter and a year
+  earlier (broader or narrower means at least 2 and 25% more or fewer), and how many are new:
+  trading with it after no trades in the prior four quarters.
+- **Regular sellers:** sellers that traded energy with the company in at least 3 of the 4 prior
+  quarters. In the latest quarter each one kept trading, stopped while its contract stayed in
+  force, or reached the end of its contract. Only energy trades make a seller regular; capacity,
+  booked-out power and requirements service come in lumps by design.
+- **Concentration:** the largest seller's share of the company's energy, now and a year earlier.
+- **Early warning:** 2 or more regular sellers under contract stopped trading with the company,
+  they are at least half of them, and its energy volume fell by half or more. Sellers going quiet
+  while their contracts stay in force can mean they are cutting credit exposure without
+  terminating.
+- **In short:** one line that puts volume and sellers together, such as "Buying more, from more
+  sellers" or "Buying about the same, with a change of sellers". The summary gives the detail.
+
+Not counted as stopped or as new: a seller that stopped selling energy but still trades other
+products with the company (it is still exposed to it); a renamed buyer; and moves within the
+company's PJM affiliate group. A buyer name counts as a rename when a seller used the same
+agreement ID with the company and that one other name, one after the other; its trades then count
+toward the company. Agreement IDs used with two known companies, placeholder IDs and placeholder
+buyer names never count as renames.
+
+Some sellers enter kWh in EQR's MWh field, which makes a quarter look a thousand times too big,
+and some bill an adjustment as a separate row that repeats a month's MWh. An energy row priced
+under $0.50 a MWh, on at least 1,000 MWh as reported, can't be a full-price sale of that much
+energy, so `reality_check.py` counts it at a thousandth, and every answer names the reports it
+corrected. Other reporting errors pass through as filed.
+
+Customers are tied to companies through `resolve_entity`'s exact name map and those agreement
+links only, so a trade under an unknown spelling is missed rather than misassigned. In the
+reference data, about 90% of 9.3 million trade rows (2025q2 to 2026q2) tie to a roster company,
+and in a given quarter only about 1 in 10 seller relationships under contract trades energy at
+all, which is why the seller tests rest on regular trading.
+
 ### resolve_entity
 
 Each roster company carries aliases from five sources: its roster name, the spellings EQR
@@ -120,33 +171,6 @@ Test set: 40 names checked by hand (`tests/golden.csv`), with the pass bar set b
 The right company comes first for 35 of the 35 that should resolve (the bar was 32), and none
 of the 5 that shouldn't resolve comes back as a match.
 
-### dormancy
-
-A relationship is one seller and one roster company.
-
-- **Regular:** the seller traded energy with the company in at least 3 of the 4 prior quarters.
-  Only energy trades count; capacity, booked-out power and requirements service come in lumps
-  by design.
-- **Went quiet:** regular, an eligible power-sale contract still in force in the latest quarter,
-  and no energy trades in it, under any agreement.
-- **Not counted as quiet:** the seller kept trading under the same agreement with a new buyer
-  name (a rename), or with an affiliate in the company's PJM group. Agreement IDs shared across
-  buyers, placeholder IDs, and an agreement taken over by an unrelated known company don't
-  qualify.
-- **Flags:** `watch` when 2 or more regular sellers went quiet, they are at least half of the
-  company's regular sellers, and its energy volume from all EQR sellers fell by at least half;
-  `some` when at least one went quiet; `none`; `no_baseline` when no seller traded energy with it
-  regularly; `unresolved` when the name doesn't resolve to exactly one company.
-
-Customers are tied to companies through `resolve_entity`'s exact name map only, so a trade
-under an unknown spelling is missed rather than misassigned. Every result includes a
-roster-wide baseline for comparison.
-
-The reference build (2026q2 against 2025q2 to 2026q1) tied 89.9% of 9.3 million trade rows to a
-roster company (80.0% of energy MWh). In a given quarter, only about 1 in 10 seller relationships
-under contract trades energy at all, which is why the test rests on regular trading. Of 526
-regular relationships, 53 (10.1%) went quiet in 2026q2.
-
 ## Limitations
 
 These are deliberate, and stated plainly.
@@ -157,24 +181,25 @@ These are deliberate, and stated plainly.
   from the ISO markets, exchange trades and sellers that don't file EQR are invisible, so a
   company can look quiet in EQR while trading elsewhere.
 - **Names are free text.** Each EQR seller types its customers' names its own way.
-  `resolve_entity` reports close spellings as "possible" rather than guessing, and dormancy
-  only uses exact known spellings.
-- **A quiet quarter is evidence to check, not a verdict.** Seasonal buyers, hedges that matured
-  and contract structure also produce quiet quarters. The thresholds are provisional.
+  `resolve_entity` reports close spellings as "possible" rather than guessing, and market signals
+  use only exact known spellings and agreement-linked renames.
+- **A change in trading is evidence to check, not a verdict.** Seasonal buyers, hedges that
+  matured, contract structure and purchases moved to the ISO markets also move bilateral volumes,
+  up or down. The thresholds are provisional.
 - **Lag.** EQR is filed quarterly, about a month after each quarter ends.
 - **Coverage.** PJM and MISO only, and the MISO roster is the utility proxy described above.
-- **No published watch lists.** The repo publishes the method and the tools, not lists of
-  flagged companies. Write-ups are backtests on public failures.
+- **No published lists.** The repo publishes the method and the tools, not lists of named
+  companies, in either direction. Write-ups are backtests on public failures.
 
 ## Layout
 
 ```
 src/creditmcp/
-  schema.py      # the locked response shapes (ResolveResult, DormancyResult)
+  schema.py      # the locked response shapes (MarketSignalsResult, ResolveResult)
   names.py       # name normalization, shared with reality_check.py
+  signals.py     # the market signals build and lookups
   resolve.py     # resolve_entity
-  dormancy.py    # the dormancy build and lookups
-  server.py      # MCP server: counterparty.resolve_entity, counterparty.dormancy
+  server.py      # MCP server: counterparty.market_signals, counterparty.resolve_entity
   cli.py         # command-line lookups
 reality_check.py # pulls and snapshots FERC EQR via PUDL; builds the alias seed and match review
 SCOPE.md         # the frozen v0.2 scope, coverage bars and decisions

@@ -1,9 +1,8 @@
-"""CreditMCP v0.2 — the counterparty.resolve_entity I/O contract.
+"""CreditMCP v0.2 — the I/O contracts for counterparty.market_signals and counterparty.resolve_entity.
 
-This is the locked return shape for resolve_entity, in the style of v0.1's HealthResult:
-the query as sent, a plain-language summary, a methodology version and an as-of date, plus
-what v0.2 adds — provenance tying every answer to the data snapshot it came from, and
-standing caveats about the data.
+These are the locked return shapes, in the style of v0.1's HealthResult: the query as sent, a
+plain-language summary, a methodology version and an as-of date, plus what v0.2 adds — provenance
+tying every answer to the data snapshot it came from, and standing caveats about the data.
 
 Design rule, carried over from v0.1: nothing unsourced. Every candidate names the roster and
 the alias it matched on, and every result carries the snapshot hashes behind it.
@@ -97,61 +96,152 @@ class ResolveResult(BaseModel):
     )
 
 
-# --- dormancy -----------------------------------------------------------------
-class DormancyFlag(str, Enum):
-    WATCH = "watch"                # 2+ regular sellers went quiet, they are at least half of its regular sellers,
-                                   # and its energy volume fell by at least half
-    SOME = "some"                  # at least one regular seller went quiet
-    NONE = "none"                  # every regular seller still traded energy with it in the latest quarter
-    NO_BASELINE = "no_baseline"    # no seller traded energy with it regularly in the prior quarters
+# --- market signals -------------------------------------------------------------
+class ResultStatus(str, Enum):
+    OK = "ok"                      # resolved to one roster company, with EQR contracts or trades in the window
+    NO_ACTIVITY = "no_activity"    # resolved, but no EQR seller has contracts or trades with it in the window
     UNRESOLVED = "unresolved"      # the name did not resolve to exactly one roster company
 
 
-class Relationship(BaseModel):
+class VolumeTrend(str, Enum):
+    UP = "up"                      # energy bought rose 25% or more against the comparison basis
+    STEADY = "steady"              # within 25% either way
+    DOWN = "down"                  # fell 25% or more
+    STARTED = "started"            # bought energy in the latest quarter after none in the four before it
+    NONE = "none"                  # no energy bought from EQR sellers in the window
+
+
+class SellerTrend(str, Enum):
+    BROADER = "broader"            # trading energy with at least 2 more sellers, and 25% more, than a year earlier
+    STEADY = "steady"              # about the same number of sellers
+    NARROWER = "narrower"          # at least 2 fewer sellers, and 25% fewer
+    NONE = "none"                  # no seller traded energy with it in either quarter
+
+
+class SellerStatus(str, Enum):
+    KEPT_TRADING = "kept_trading"                # regular seller, traded energy with it in the latest quarter
+    NEW = "new"                                  # traded energy with it in the latest quarter, none in the prior year
+    OCCASIONAL = "occasional"                    # traded energy with it in the latest quarter; before, not regularly
+    CARRIED_OVER = "carried_over"                # would be new, but already traded with an affiliate in its PJM group
+    STOPPED = "stopped"                          # regular, contract in force, no trades of any kind in latest quarter
+    STOPPED_NOT_COUNTED = "stopped_not_counted"  # stopped selling it energy, explained (see reason)
+    CONTRACT_ENDED = "contract_ended"            # regular, no energy trades in the latest quarter, no contract in force
+    QUIET = "quiet"                              # not a regular seller, and no energy trades in the latest quarter
+
+
+class SellerRelationship(BaseModel):
     seller_cid: str = Field(..., description="The seller's FERC company ID")
     seller_name: str = Field(..., description="The seller's latest EQR filer name")
+    status: SellerStatus = Field(..., description="What this seller did with the company in the latest quarter")
+    reason: str | None = Field(
+        None, description="For stopped_not_counted: it still trades other products with the company, kept trading "
+                          "under the same agreement with a new buyer name, or kept trading with an affiliate. For "
+                          "carried_over: it already traded with an affiliate in the company's PJM group")
+    regular: bool = Field(..., description="Traded energy with the company in at least 3 of the 4 prior quarters")
+    under_contract_latest: bool = Field(..., description="An eligible power-sale contract was in force in the latest "
+                                                         "quarter")
     quarters_traded: list[str] = Field(..., description="Quarters in the window with at least one energy trade")
     quarters_other_products: list[str] = Field(
         default_factory=list,
-        description="Quarters with capacity, booked-out power or requirements-service trades only; these don't count")
-    regular: bool = Field(..., description="Traded energy in at least 3 of the 4 prior quarters")
-    under_contract_latest: bool = Field(..., description="An eligible power-sale contract was still in force")
-    traded_latest: bool = Field(..., description="At least one energy trade in the latest quarter, under any agreement")
-    went_quiet: bool = Field(..., description="Regular, still under contract, no energy trades in the latest quarter, "
-                                              "and not explained by a renamed or affiliated buyer")
-    quiet_explained: str | None = Field(
-        None, description="Why a relationship that looked quiet doesn't count: the seller kept trading under the "
-                          "same agreement with a new buyer name, or with an affiliate in the same PJM group")
+        description="Quarters with only capacity, booked-out power or requirements-service trades")
+    other_buyer_names: list[str] = Field(
+        default_factory=list,
+        description="Buyer names this seller used on the same agreement that are counted as this company's (a "
+                    "rename or a spelling the name map doesn't know)")
     trades_latest: int = Field(..., description="Energy trades in the latest quarter")
+    mwh_by_quarter: dict[str, float] = Field(default_factory=dict, description="Energy MWh in each quarter")
     mwh_latest: float
+    mwh_same_quarter_last_year: float = 0.0
+    share_latest: float | None = Field(None, description="This seller's share of the company's energy MWh in the "
+                                                         "latest quarter")
+
+
+class VolumeSignal(BaseModel):
+    mwh_by_quarter: dict[str, float] = Field(default_factory=dict,
+                                             description="Energy MWh bought from all EQR sellers, by quarter")
+    mwh_latest: float
+    mwh_same_quarter_last_year: float
     mwh_prior_avg: float = Field(..., description="Average energy MWh per prior quarter")
+    change: float | None = Field(None, description="Change in energy MWh against basis (0.38 = up 38%)")
+    basis: str | None = Field(None, description="What change compares against: the same quarter last year, or the "
+                                                "prior-quarter average when last year is empty")
+    trend: VolumeTrend
+    market_median_change: float | None = Field(None, description="Median change across roster companies that bought "
+                                                                 "energy in both quarters")
 
 
-class DormancyResult(BaseModel):
-    """Return shape of counterparty.dormancy."""
+class SellerSignal(BaseModel):
+    trading_latest: int = Field(..., description="Sellers that traded energy with it in the latest quarter")
+    trading_same_quarter_last_year: int = Field(..., description="The same, a year earlier")
+    trend: SellerTrend
+    new: int = Field(..., description="Traded energy with it in the latest quarter after no trades in the prior year")
+    occasional: int = Field(..., description="Traded energy with it in the latest quarter; traded before, not "
+                                             "regularly")
+    carried_over: int = Field(0, description="Would be new, but already traded with an affiliate in its PJM group")
+    regular: int = Field(..., description="Sellers that traded energy with it in at least 3 of the 4 prior quarters")
+    kept_trading: int = Field(..., description="Regular sellers that traded energy with it in the latest quarter")
+    stopped: int = Field(..., description="Regular sellers with a contract still in force but no trades of any kind "
+                                          "with it in the latest quarter")
+    stopped_not_counted: int = Field(0, description="Regular sellers that stopped selling it energy for a reason that "
+                                                    "doesn't count as stopping (see each relationship's reason)")
+    contract_ended: int = Field(0, description="Regular sellers with no energy trades and no contract in force in the "
+                                               "latest quarter")
+    other_products_latest: int = Field(0, description="Sellers that traded capacity, booked-out power or requirements "
+                                                      "service with it in the latest quarter")
+    top_seller: str | None = Field(None, description="The seller that supplied the most energy in the latest quarter")
+    top_seller_share: float | None = Field(None, description="Its share of the company's energy MWh")
+    top_seller_share_last_year: float | None = Field(
+        None, description="The largest seller's share a year earlier (whichever seller that was)")
+
+
+class EarlyWarning(BaseModel):
+    met: bool = Field(..., description="True when the provisional early-warning bar is met")
+    regular_under_contract: int = Field(..., description="Regular sellers with a contract in force in the latest "
+                                                         "quarter")
+    stopped: int = Field(..., description="How many of them stopped trading with it")
+    stopped_share: float | None = Field(None, description="stopped / regular_under_contract")
+    volume_change: float | None = Field(None, description="The volume change the bar uses")
+    rule: str = Field(..., description="The bar, in words")
+
+
+class QuantityFix(BaseModel):
+    seller_name: str = Field(..., description="The seller whose report was corrected")
+    quarter: str
+    rows: int = Field(..., description="Energy rows read as kWh in that quarter")
+    reported_mwh: float = Field(..., description="Their total as reported in EQR's MWh field")
+    counted_mwh: float = Field(..., description="What CreditMCP counts: a thousandth of the reported figure")
+
+
+class MarketSignalsResult(BaseModel):
+    """Return shape of counterparty.market_signals."""
 
     name: str = Field(..., description="The query as the caller sent it")
+    status: ResultStatus
     company: Candidate | None = Field(None, description="The roster company the name resolved to")
     latest_quarter: str
+    same_quarter_last_year: str
     prior_quarters: list[str]
-    flag: DormancyFlag
-    regular_sellers: int = Field(..., description="Sellers that traded energy regularly and are still under contract")
-    went_quiet: int = Field(..., description="How many of them showed no energy trades in the latest quarter")
-    explained: int = Field(0, description="Regular sellers that stopped under this name but kept trading under the "
-                                          "same agreement with a new buyer name or with an affiliate; not counted")
-    quiet_share: float | None = Field(None, description="went_quiet / regular_sellers")
-    mwh_latest: float = Field(..., description="Energy MWh bought from all EQR sellers in the latest quarter")
-    mwh_prior_avg: float = Field(..., description="Average energy MWh per prior quarter, all EQR sellers")
-    volume_change: float | None = Field(None, description="mwh_latest / mwh_prior_avg - 1; None with no prior volume")
-    relationships: list[Relationship] = Field(..., description="Every seller relationship, quiet ones first")
-    baseline: str = Field(..., description="How common going quiet is across the roster, for comparison")
-    summary: str
+    in_short: str | None = Field(None, description="One line: buying more, less or about the same, and from more, "
+                                                   "fewer or the same sellers")
+    summary: str = Field(..., description="Plain-language read of the signals")
+    volume: VolumeSignal | None = None
+    sellers: SellerSignal | None = None
+    early_warning: EarlyWarning | None = None
+    relationships: list[SellerRelationship] = Field(
+        default_factory=list,
+        description="Every seller relationship: those trading in the latest quarter first, by volume, then regular "
+                    "sellers that stopped, then the rest")
+    quantity_fixes: list[QuantityFix] = Field(
+        default_factory=list,
+        description="Energy reports priced so low they only make sense as kWh entered in EQR's MWh field, counted at "
+                    "a thousandth of the reported figure")
+    market: str = Field(..., description="The same measures across all roster companies, for comparison")
     methodology_version: str
     as_of: str
     provenance: Provenance
     caveats: list[str]
     disclaimer: str = Field(
-        "Decision support from public data. Not a credit rating. A quiet quarter is evidence to check, "
+        "Decision support from public data. Not a credit rating. Changes in trading activity are evidence to check, "
         "not a verdict.",
         description="Non-negotiable framing.",
     )

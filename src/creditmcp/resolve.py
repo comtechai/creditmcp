@@ -259,7 +259,7 @@ class EntityResolver:
     # --- bulk use ----------------------------------------------------------
     def name_map(self) -> dict[str, str]:
         """Normalized name -> entity_id for every trusted alias that names exactly one company.
-        Bulk joins (dormancy) use this exact map only: no close spellings, nothing capped or rejected."""
+        Bulk joins (market signals) use this exact map only: no close spellings, nothing capped or rejected."""
         rows = self._con.execute("""SELECT alias_norm, list(DISTINCT entity_id) FROM aliases
                                     WHERE NOT capped GROUP BY 1""").fetchall()
         out = {}

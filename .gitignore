@@ -20,7 +20,9 @@ rc/snapshot/*
 !rc/snapshot/core_ferceqr__quarterly_identity_*.parquet
 rc_frozen_*/
 
-# The dormancy run and its build stay local: the per-company results name companies.
+# The multi-quarter trades run and the market signals build stay local: the per-company results
+# name companies. (rc_dormancy/ is the same run under its earlier name.)
+rc_trades/
 rc_dormancy/
 
 # The raw PJM page lists every member type, including the associate members the roster drops.

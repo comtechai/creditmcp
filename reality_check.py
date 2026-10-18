@@ -115,6 +115,11 @@ NON_POWER_PRODUCTS = (
     "REAL POWER TRANSMISSION LOSS", "CUSTOMER CHARGE", "UPLIFT",
 )
 TX_PRODUCTS = ("ENERGY", "CAPACITY", "BOOKED OUT POWER", "REQUIREMENTS SERVICE")
+# Some sellers enter kWh in EQR's MWh field, and some bill an adjustment as a row that repeats a month's MWh. An energy
+# row whose total charge works out under KWH_MAX_PRICE dollars per MWh, on at least KWH_MIN_QTY MWh as reported, is
+# too cheap for that much energy (usually one or the other): it counts at a thousandth.
+KWH_MAX_PRICE = 0.5
+KWH_MIN_QTY = 1000.0
 
 FUZZY_HIGH = 0.97        # Jaro-Winkler at/above this counts as a high-confidence match
 FUZZY_REVIEW = 0.90      # between REVIEW and HIGH lands in review_queue.csv for hand checks
@@ -239,6 +244,7 @@ TX_COLS = {
     "point_of_delivery_balancing_authority": "VARCHAR",
     "point_of_delivery_specific_location": "VARCHAR",
     "standardized_quantity": "DOUBLE",
+    "total_transaction_charge": "DOUBLE",
 }
 
 MISSING_COLUMNS: dict[str, set[str]] = {}
@@ -268,6 +274,13 @@ def tx_filter_sql() -> str:
     geo = scope_case("point_of_delivery_balancing_authority", "point_of_delivery_specific_location")
     return (f"upper(coalesce(product_name, '')) IN {sql_tuple(TX_PRODUCTS)} "
             f"AND upper(coalesce(type_of_rate, '')) <> 'RTO/ISO' AND {geo} IS NOT NULL")
+
+
+def kwh_sql(t: str = "t") -> str:
+    """True for an energy row priced so low it only makes sense as kWh entered in the MWh field."""
+    q, charge = f"{t}.standardized_quantity", f"{t}.total_transaction_charge"
+    return (f"coalesce(upper({t}.product_name) = 'ENERGY' AND {q} >= {KWH_MIN_QTY} AND {charge} > 0 "
+            f"AND {charge} / {q} < {KWH_MAX_PRICE}, false)")
 
 
 def mtime_iso(path: Path) -> str:
@@ -1257,7 +1270,8 @@ def main(argv=None) -> None:
         "tunables": {"SCOPE_PATTERNS": SCOPE_PATTERNS, "MARKET_OPERATOR_RE": MARKET_OPERATOR_RE,
                      "EVERGREEN_RE": EVERGREEN_RE, "FUZZY_HIGH": FUZZY_HIGH, "FUZZY_REVIEW": FUZZY_REVIEW,
                      "EARLY_TOLERANCE_DAYS": EARLY_TOLERANCE_DAYS, "OPEN_ENDED_YEAR": OPEN_ENDED_YEAR,
-                     "REPAPER_WINDOW_DAYS": [-REPAPER_DAYS_BEFORE, REPAPER_DAYS_AFTER]},
+                     "REPAPER_WINDOW_DAYS": [-REPAPER_DAYS_BEFORE, REPAPER_DAYS_AFTER],
+                     "KWH_MAX_PRICE": KWH_MAX_PRICE, "KWH_MIN_QTY": KWH_MIN_QTY},
         "roster": {"files": args.roster, "rows": len(roster), "entities": len(entities), "isos": roster_isos},
         "decisions": None if decisions is None else {"file": str(Path(args.decisions).expanduser()),
                                                      "sha256": decisions_sha, **decision_stats},
@@ -1287,6 +1301,8 @@ def main(argv=None) -> None:
         manifest["tx_quarters"] = tx_quarters
         manifest["files"]["transactions"] = [f"{eqr_root}/core_ferceqr__transactions/{q}.parquet" for q in tx_quarters]
         manifest["missing_columns"] = {k: sorted(v) for k, v in MISSING_COLUMNS.items()}
+        manifest["quantity_check"] = {k: ctx["tx"][k] for k in ("kwh_rows", "kwh_sellers", "kwh_reported", "kwh_counted",
+                                                                "charge_rows", "energy_rows")}
         write_report(out, ctx, manifest)
         log(f"Report updated with transactions ({time.time() - t_start:.0f}s).")
     con.close()
@@ -1342,37 +1358,43 @@ def run_transactions(con, eqr_root: str, tx_quarters: list[str], out: Path, tx_p
     SELECT target_norm, entity_id FROM (
       SELECT * FROM cand_tx WHERE confidence = 'high'
       QUALIFY row_number() OVER (PARTITION BY target_norm ORDER BY tier, score DESC, entity_id) = 1)""")
-    con.execute("""
+    con.execute(f"""
     CREATE OR REPLACE TABLE tx_base AS
-    SELECT t.*, r.entity_id, (upper(t.product_name) = 'ENERGY') AS is_energy
+    SELECT t.*, r.entity_id, (upper(t.product_name) = 'ENERGY') AS is_energy, {kwh_sql()} AS kwh_fixed,
+           CASE WHEN {kwh_sql()} THEN t.standardized_quantity / 1000 ELSE t.standardized_quantity END AS mwh
     FROM tx t LEFT JOIN resolved_all r ON r.target_norm = t.customer_norm
     WHERE t.dup_rank = 1 AND NOT coalesce(t.customer_is_mo, false)""")
+    kwh = one(con, """
+        SELECT count(*) FILTER (WHERE kwh_fixed), count(DISTINCT seller_company_id_ferc) FILTER (WHERE kwh_fixed),
+               coalesce(sum(standardized_quantity) FILTER (WHERE kwh_fixed), 0), coalesce(sum(mwh) FILTER (WHERE kwh_fixed), 0),
+               count(*) FILTER (WHERE is_energy AND total_transaction_charge IS NOT NULL), count(*) FILTER (WHERE is_energy)
+        FROM tx_base""")
 
     rows_all, rows_dup = one(con, "SELECT count(*), count(*) FILTER (WHERE dup_rank > 1) FROM tx")
     b = one(con, """
-        SELECT count(*), sum(CASE WHEN is_energy THEN standardized_quantity END),
+        SELECT count(*), sum(CASE WHEN is_energy THEN mwh END),
                avg(trade_date_ok::INT),
-               sum(CASE WHEN is_energy AND trade_date_ok THEN standardized_quantity END),
-               sum(CASE WHEN is_energy AND upper(term_name) = 'LT' THEN standardized_quantity END),
-               sum(CASE WHEN is_energy AND upper(term_name) IN ('LT', 'ST') THEN standardized_quantity END)
+               sum(CASE WHEN is_energy AND trade_date_ok THEN mwh END),
+               sum(CASE WHEN is_energy AND upper(term_name) = 'LT' THEN mwh END),
+               sum(CASE WHEN is_energy AND upper(term_name) IN ('LT', 'ST') THEN mwh END)
         FROM tx_base""")
     n_base, mwh, trade_ok_rows, mwh_trade_ok, mwh_lt, mwh_term = b
     cov = rows(con, """
-        SELECT geo_scope, sum(CASE WHEN is_energy THEN standardized_quantity END),
-               sum(CASE WHEN is_energy AND entity_id IS NOT NULL THEN standardized_quantity END),
+        SELECT geo_scope, sum(CASE WHEN is_energy THEN mwh END),
+               sum(CASE WHEN is_energy AND entity_id IS NOT NULL THEN mwh END),
                count(*), count(*) FILTER (WHERE entity_id IS NOT NULL)
         FROM tx_base GROUP BY 1 ORDER BY 1""")
     horizon = rows(con, """
         SELECT CASE WHEN horizon_days < 7 THEN '0-6 days (prompt)' WHEN horizon_days <= 31 THEN '7-31 days'
                     WHEN horizon_days <= 365 THEN '1-12 months' WHEN horizon_days <= 1095 THEN '1-3 years'
                     ELSE '> 3 years' END AS bucket,
-               count(*) AS n_rows, sum(standardized_quantity) AS mwh, min(horizon_days) AS o
+               count(*) AS n_rows, sum(mwh) AS mwh, min(horizon_days) AS o
         FROM tx_base WHERE is_energy AND trade_date_ok GROUP BY 1 ORDER BY o""")
     copy_csv(con, """
         SELECT CASE WHEN horizon_days < 7 THEN '0-6 days (prompt)' WHEN horizon_days <= 31 THEN '7-31 days'
                     WHEN horizon_days <= 365 THEN '1-12 months' WHEN horizon_days <= 1095 THEN '1-3 years'
                     ELSE '> 3 years' END AS bucket, geo_scope, (entity_id IS NOT NULL) AS roster_linked,
-               count(*) AS n_rows, round(sum(standardized_quantity)) AS mwh
+               count(*) AS n_rows, round(sum(mwh)) AS mwh
         FROM tx_base WHERE is_energy AND trade_date_ok GROUP BY 1, 2, 3 ORDER BY 1, 2, 3""",
              out / "tx_forward_horizon.csv")
     ent_any, ent_enough = one(con, f"""
@@ -1412,7 +1434,9 @@ def run_transactions(con, eqr_root: str, tx_quarters: list[str], out: Path, tx_p
                 trade_ok_rows=trade_ok_rows, mwh_trade_ok=mwh_trade_ok, mwh_lt=mwh_lt, mwh_term=mwh_term,
                 cov=cov, horizon=horizon, ent_any=ent_any, ent_enough=ent_enough,
                 join_rows=j[0] or 0, join_csa=j[1] or 0, join_cust=j[2] or 0,
-                active=d[0] or 0, active_tx_csa=d[1] or 0, active_tx_cust=d[2] or 0), snap
+                active=d[0] or 0, active_tx_csa=d[1] or 0, active_tx_cust=d[2] or 0,
+                kwh_rows=kwh[0], kwh_sellers=kwh[1], kwh_reported=kwh[2], kwh_counted=kwh[3],
+                charge_rows=kwh[4], energy_rows=kwh[5]), snap
 
 
 # =============================================================================
@@ -1581,6 +1605,13 @@ def write_report(out: Path, c: dict, manifest: dict) -> None:
         w(f"LT share of energy MWh: {fp(pct(tx['mwh_lt'] or 0, tx['mwh_term'] or 0))}. "
           f"Duplicate transaction rows (same quarter, seller CID, transaction ID): "
           f"{fi(tx['rows_dup'])} of {fi(tx['rows_all'])} ({fp(pct(tx['rows_dup'], tx['rows_all']))}); deduplicated above.\n")
+        w(f"Quantity check: {fi(tx['kwh_rows'])} energy rows from {fi(tx['kwh_sellers'])} sellers were priced under "
+          f"${KWH_MAX_PRICE:.2f} a MWh on at least {KWH_MIN_QTY:,.0f} MWh as reported, too little for that much energy "
+          f"(usually kWh entered as MWh, or an adjustment to energy billed in another row), so they count at a "
+          f"thousandth: "
+          f"{fi(tx['kwh_reported'])} MWh as reported, "
+          f"{fi(tx['kwh_counted'])} counted. All MWh figures above use the corrected quantities. Total charge is filled "
+          f"in on {fp(pct(tx['charge_rows'], tx['energy_rows']))} of energy rows; rows without it can't be checked.\n")
 
     # ---- Q4
     w("## Q4. Signal sizing\n")
