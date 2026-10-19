@@ -83,6 +83,10 @@ def market_signals(name: str) -> MarketSignalsResult:
         a plain-language summary, provenance and caveats.
       - quantity_fixes: seller reports priced so low they only make sense as kWh entered in EQR's MWh
         field. Those count at a thousandth, and the summary names them.
+      - coverage: how much of the company's buying EQR shows, comparing the energy here over the last
+        four quarters with the wholesale purchases it reported to EIA (Form 861), as a level (high,
+        partial, low, unknown), a share and a sentence. When EQR shows under a quarter of its buying,
+        in_short leads with that: read those signals as a slice of the company's buying.
 
     The name is resolved first; an ambiguous or unknown name returns status "unresolved" rather than a
     guess. Renamed buyers and moves within a PJM affiliate group are not counted as new or stopped

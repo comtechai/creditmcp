@@ -32,6 +32,8 @@ class AliasSource(str, Enum):
     EQR_SELLER = "eqr_seller"                  # the company's own name as an EQR filer
     EQR_SELLER_HISTORY = "eqr_seller_history"  # another name filed under the same FERC company ID (CID)
     EIA_UTILITY = "eia_utility"                # the company's EIA utility name
+    EIA_NAME_HISTORY = "eia_name_history"      # a name its EIA utility filed Form 861 under, any year, as filed and
+                                               # with abbreviations spelled out ("El Pwr Assn")
 
 
 class Identifiers(BaseModel):
@@ -204,6 +206,29 @@ class EarlyWarning(BaseModel):
     rule: str = Field(..., description="The bar, in words")
 
 
+class CoverageLevel(str, Enum):
+    HIGH = "high"                  # EQR shows 60% or more of the wholesale purchases it reported to EIA
+    PARTIAL = "partial"            # 25% to 60%
+    LOW = "low"                    # under 25%: most of its buying is out of EQR's view
+    UNKNOWN = "unknown"            # nothing to compare with, or EQR shows far more than the EIA figure (see note)
+
+
+class Coverage(BaseModel):
+    level: CoverageLevel
+    share: float | None = Field(None, description="eqr_mwh / eia_purchases_mwh (0.03 = EQR shows about 3% of what it "
+                                                   "reported buying). The periods differ, so read it as a guide")
+    eqr_mwh: float = Field(0.0, description="Energy MWh bought from EQR sellers over eqr_quarters")
+    eqr_quarters: list[str] = Field(default_factory=list, description="The four quarters eqr_mwh covers")
+    eia_year: int | None = Field(None, description="Year of the EIA-861 figures")
+    eia_purchases_mwh: float | None = Field(None, description="Wholesale power purchases it reported on EIA Form 861, "
+                                                              "from every source")
+    eia_net_generation_mwh: float | None = Field(None, description="Its own net generation that year")
+    eia_retail_sales_mwh: float | None = Field(None, description="Its retail sales that year")
+    eia_sales_for_resale_mwh: float | None = Field(None, description="Its wholesale sales that year")
+    eia_utility_id: int | None = Field(None, description="The EIA utility it is tied to by an exact name")
+    note: str = Field(..., description="The coverage in words")
+
+
 class QuantityFix(BaseModel):
     seller_name: str = Field(..., description="The seller whose report was corrected")
     quarter: str
@@ -222,7 +247,10 @@ class MarketSignalsResult(BaseModel):
     same_quarter_last_year: str
     prior_quarters: list[str]
     in_short: str | None = Field(None, description="One line: buying more, less or about the same, and from more, "
-                                                   "fewer or the same sellers")
+                                                   "fewer or the same sellers. Leads with low coverage when EQR shows "
+                                                   "under a quarter of what the company buys")
+    coverage: Coverage | None = Field(None, description="How much of the company's buying EQR shows: the energy in "
+                                                        "these signals against the purchases it reported to EIA")
     summary: str = Field(..., description="Plain-language read of the signals")
     volume: VolumeSignal | None = None
     sellers: SellerSignal | None = None

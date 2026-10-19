@@ -49,6 +49,13 @@ so reality_check.py counts it at a thousandth; every answer names the reports it
 the MWh and the dollars passes that test, so the build report lists thousandfold jumps within a
 seller relationship for a check by hand.
 
+Coverage. EQR shows only bilateral sales by sellers that file it, so for some companies it is most
+of their buying and for others a sliver. reality_check.py ties each roster company it can to one
+EIA-861 utility by an exact name, and EIA-861 gives that utility's wholesale purchases from every
+source. Each answer compares the energy EQR shows over the last four quarters with those purchases
+(the latest year EIA has, so the periods differ: a guide, not a measurement). Under 25% is low
+coverage, and it leads the one-line answer.
+
 Every change is evidence to check, not a verdict: seasonal buyers, hedges that matured, contract
 structure and purchases moved to the ISO markets all change bilateral volumes.
 
@@ -77,6 +84,8 @@ import duckdb
 from creditmcp.resolve import DataError, EntityResolver
 from creditmcp.schema import (
     Confidence,
+    Coverage,
+    CoverageLevel,
     EarlyWarning,
     MarketSignalsResult,
     Provenance,
@@ -90,7 +99,7 @@ from creditmcp.schema import (
     VolumeTrend,
 )
 
-METHODOLOGY_VERSION = "signals-0.4.0"
+METHODOLOGY_VERSION = "signals-0.5.0"
 PRIOR_N = 4                  # prior quarters the "regular" test looks back over
 REGULAR_MIN = 3              # quarters with energy trades, out of PRIOR_N, for a relationship to count as regular
 VOLUME_BAND = 0.25           # a volume change of at least this share is up or down; anything less is steady
@@ -103,6 +112,12 @@ WARN_MIN_VOLUME_DROP = 0.5
 KWH_RULE = {"KWH_MAX_PRICE": 0.5, "KWH_MIN_QTY": 1000.0}  # reality_check.py's defaults; a run records its own
 JUMP_RATIO = 300             # the build report lists relationships whose largest quarter is this many times
 JUMP_MIN_MWH = 100_000.0     # their smallest, when the largest is at least this big
+COVER_LOW = 0.25             # EQR shows under this share of the purchases a company reported to EIA: low coverage
+COVER_HIGH = 0.6             # at or above this share: high; in between: partial
+COVER_MAX = 1.5              # EQR showing more than this multiple of reported purchases: the two don't measure the
+                             # same thing (trading companies), so no coverage is given
+EIA_MAX_AGE = 3              # years: EIA-861 purchases older than this aren't compared with the latest quarter
+COVER_LIST_MIN_MWH = 100_000.0  # the build report's coverage lists skip companies buying less than this in EQR
 DEFAULT_RUN = "rc_trades"
 OUT_DIR = "signals"
 REASON_OTHER = "still trades other products with it"
@@ -121,8 +136,10 @@ CAVEATS = [
     "Changes in trading activity are evidence to check, not a verdict: seasonal buyers, hedges that matured, contract "
     "structure and purchases moved to the ISO markets all change bilateral volumes. Only energy trades make a seller "
     "regular; capacity, booked-out power and requirements service come in lumps by design.",
-    "Trades come from FERC EQR transactions delivered in PJM, MISO and NYISO. Trades elsewhere, purchases from the ISO "
-    "markets, exchange trades and sales by sellers that don't file EQR are not seen.",
+    "Trades come from FERC EQR: bilateral power delivered in PJM, MISO or NYISO, plus every trade with a roster "
+    "company under a buyer name sellers use for it in their contracts, wherever it was delivered. Purchases from the "
+    "ISO markets, exchange trades and sales by sellers that don't file EQR are not seen; each answer's coverage says "
+    "how much of the company's buying that leaves out.",
     "EQR customer names are free text typed by each seller. Trades are tied to a company through exact known "
     "spellings, and through a seller's agreement ID when the seller used it with this company and one other buyer "
     "name, one after the other; other trades are missed rather than misassigned.",
@@ -133,6 +150,12 @@ QUANTITY_CAVEAT = ("Some sellers enter kWh in EQR's MWh field, and some bill adj
                    "month's MWh. An energy row priced under ${price:.2f} a MWh can't be a full-price sale of that "
                    "much energy, so it counts at a thousandth, and each answer names any report it corrected. Other "
                    "reporting errors pass through as filed.")
+COVERAGE_CAVEAT = ("Coverage compares the energy EQR shows over the last four quarters with the wholesale purchases "
+                   "the company reported on EIA Form 861 for its latest year, from every source. The periods differ "
+                   "and EIA counts what EQR can't see, so the share is a guide to how much of its buying these "
+                   "signals cover, not a measurement.")
+NO_COVERAGE_CAVEAT = ("This build has no EIA-861 purchases, so answers can't say how much of a company's buying EQR "
+                      "shows. Rerun reality_check.py with access to PUDL, then rebuild.")
 NO_QUANTITY_CAVEAT = ("This build has no quantity check: its trades were pulled without total charges, so energy a "
                       "seller entered in kWh counts as MWh. Rerun reality_check.py, then rebuild.")
 WARN_RULE = (f"{WARN_MIN_STOPPED} or more regular sellers under contract stopped trading with it, they are at least "
@@ -198,6 +221,14 @@ def _seller_test(regular_under_contract: int, stopped: int) -> bool:
 def _warning(regular_under_contract: int, stopped: int, change: float | None) -> bool:
     return (_seller_test(regular_under_contract, stopped) and change is not None
             and change <= -WARN_MIN_VOLUME_DROP)
+
+
+def _cover_level(share: float | None) -> CoverageLevel:
+    if share is None:
+        return CoverageLevel.UNKNOWN
+    if share < COVER_LOW:
+        return CoverageLevel.LOW
+    return CoverageLevel.PARTIAL if share < COVER_HIGH else CoverageLevel.HIGH
 
 
 def _linkable(buyer: str | None, known_q: list[int] | None, other_q: list[int] | None) -> bool:
@@ -425,6 +456,50 @@ def build(db_path: str | Path, out_dir: str | Path, resolver: EntityResolver,
                                 key=lambda f: (f["quarter"], -f["reported_mwh"], f["seller_name"])),
         })
 
+    # Coverage: how much of each company's buying EQR shows. reality_check.py ties a roster company to one EIA-861
+    # utility by an exact name and keeps that utility's yearly sources of power (entity_eia861). Its roster name maps
+    # it to the resolver's company.
+    cover_qs = [labels[k] for k in order[-PRIOR_N:]]
+    eia: dict[str, tuple] = {}
+    if {"entity_eia861", "roster_entities"} <= tables:
+        for row in con.execute("""
+            SELECT n.entity_id, x.utility_id_eia, x.year, x.purchases_mwh, x.net_generation_mwh, x.retail_sales_mwh,
+                   x.sales_for_resale_mwh
+            FROM rc.entity_eia861 x JOIN rc.roster_entities r USING (entity_id)
+            JOIN names n ON n.alias_norm = r.name_norm
+            QUALIFY row_number() OVER (PARTITION BY n.entity_id ORDER BY x.purchases_mwh IS NULL, x.year DESC) = 1
+            """).fetchall():
+            eia[row[0]] = row[1:]
+    eqr4 = {r["entity_id"]: round(sum(r["mwh_by_quarter"][q] for q in cover_qs), 1) for r in ent_rows}
+    latest_year = int(latest_q[:4])
+    cov_rows = []
+    for e in sorted(set(eia) | set(eqr4)):
+        uid, year, purchases, gen, retail, resale = eia.get(e, (None,) * 6)
+        why = ("not_linked" if year is None else "too_old" if latest_year - int(year) > EIA_MAX_AGE
+               else "no_purchases" if not purchases or purchases <= 0 else "")
+        ratio = None if why else round(eqr4.get(e, 0.0) / purchases, 4)
+        if ratio is not None and ratio > COVER_MAX:
+            why = "not_comparable"
+        share = None if why else ratio
+        cov_rows.append({"entity_id": e, "level": _cover_level(share).value, "share": share, "ratio": ratio,
+                         "why_unknown": why,
+                         "eqr_mwh": eqr4.get(e, 0.0), "eia_year": year, "eia_utility_id": uid,
+                         "eia_purchases_mwh": purchases, "eia_net_generation_mwh": gen, "eia_retail_sales_mwh": retail,
+                         "eia_sales_for_resale_mwh": resale})
+    with_signals = [r for r in cov_rows if r["entity_id"] in eqr4]
+    levels = Counter(r["level"] for r in with_signals)
+    shares = sorted(r["share"] for r in with_signals if r["share"] is not None)
+    eia_coverage = {
+        "available": bool(eia), "quarters": cover_qs, "companies_linked": len(eia),
+        "eia_years": dict(sorted(Counter(str(v[1]) for v in eia.values()).items())),
+        "companies_with_signals": len(ent_rows),
+        "levels": {lv.value: levels[lv.value] for lv in CoverageLevel},
+        "median_share": round(statistics.median(shares), 3) if shares else None,
+        "linked_without_activity": sum(r["entity_id"] not in eqr4 for r in cov_rows),
+        "not_comparable": sum(r["why_unknown"] == "not_comparable" for r in with_signals),
+        "rule": {"COVER_LOW": COVER_LOW, "COVER_HIGH": COVER_HIGH, "COVER_MAX": COVER_MAX, "EIA_MAX_AGE": EIA_MAX_AGE},
+    }
+
     # How often relationships under contract trade energy in each quarter: the seasonal backdrop.
     per_quarter = []
     for k in order:
@@ -456,8 +531,8 @@ def build(db_path: str | Path, out_dir: str | Path, resolver: EntityResolver,
 
     out_dir.mkdir(parents=True, exist_ok=True)
     flat = lambda row: {k: json.dumps(v) if isinstance(v, (dict, list)) else v for k, v in row.items()}  # noqa: E731
-    paths = (out_dir / "signals_relationships.csv", out_dir / "signals_companies.csv")
-    for path, rows in zip(paths, (rel_rows, ent_rows)):
+    paths = (out_dir / "signals_relationships.csv", out_dir / "signals_companies.csv", out_dir / "signals_coverage.csv")
+    for path, rows in zip(paths, (rel_rows, ent_rows, cov_rows)):
         with open(path, "w", newline="", encoding="utf-8") as f:
             w = csv.DictWriter(f, fieldnames=list(rows[0].keys()) if rows else ["entity_id"])
             w.writeheader()
@@ -493,13 +568,14 @@ def build(db_path: str | Path, out_dir: str | Path, resolver: EntityResolver,
                      "names_in_map": len(names), "agreement_links": len(links),
                      "kwh_rows": kwh_all[0], "kwh_sellers": kwh_all[1], "kwh_mwh_reported": round(kwh_all[2], 1),
                      "kwh_mwh_counted": round(kwh_all[3], 1)},
+        "eia_coverage": eia_coverage,
         "per_quarter": per_quarter,
         "baseline": baseline,
         "counts": {"relationships": len(rel_rows), "companies": len(ent_rows)},
         "outputs": {p.name: _sha256(p) for p in paths},
     }
     (out_dir / "signals_manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-    (out_dir / "signals_report.md").write_text(_report(manifest, ent_rows, rel_rows), encoding="utf-8")
+    (out_dir / "signals_report.md").write_text(_report(manifest, ent_rows, rel_rows, cov_rows), encoding="utf-8")
     return manifest
 
 
@@ -536,7 +612,55 @@ def _company_table(rows: list[dict], limit: int = 40) -> list[str]:
     return out
 
 
-def _report(m: dict, ents: list[dict], rels: list[dict]) -> str:
+def _coverage_table(rows: list[dict], ents: dict[str, dict], limit: int = 15) -> list[str]:
+    out = ["| Company | ISOs | EQR energy MWh, last 4 quarters | EIA-861 purchases MWh (year) | Share | Volume | "
+           "Sellers now (a year ago) |", "|---|---|---|---|---|---|---|"]
+    for r in rows[:limit]:
+        e = ents.get(r["entity_id"]) or {}
+        volume = ("started" if e.get("volume_trend") == VolumeTrend.STARTED.value else
+                  _change(e.get("volume_change")) if e else "no activity")
+        sellers = f"{e['sellers_latest']} ({e['sellers_last_year']})" if e else "-"
+        out.append(f"| {e.get('name') or r['entity_id']} | {e.get('isos', '')} | {r['eqr_mwh']:,.0f} | "
+                   f"{r['eia_purchases_mwh']:,.0f} ({r['eia_year']}) | {r['ratio']:.0%} | {volume} | {sellers} |")
+    return out
+
+
+def _coverage_lines(m: dict, ents: list[dict], cov: list[dict]) -> list[str]:
+    ec = m["eia_coverage"]
+    lines = ["## Coverage of each company's buying (EIA-861)", ""]
+    if not ec["available"]:
+        return lines + ["- Not available: this run has no EIA-861 purchases, so every answer's coverage is unknown. "
+                        "Rerun reality_check.py with access to PUDL, then rebuild.", ""]
+    lv, years = ec["levels"], ", ".join(f"{y}: {n:,}" for y, n in ec["eia_years"].items())
+    lines += [
+        f"- Roster companies tied to one EIA-861 utility: {ec['companies_linked']:,} (latest year with purchases, by "
+        f"company: {years}). Compared with EQR energy over {ec['quarters'][0]} to {ec['quarters'][-1]}.",
+        f"- Of the {ec['companies_with_signals']:,} companies with signals, EQR shows {COVER_HIGH:.0%} or more of "
+        f"reported purchases for {lv['high']:,}, {COVER_LOW:.0%} to {COVER_HIGH:.0%} for {lv['partial']:,} and under "
+        f"{COVER_LOW:.0%} for {lv['low']:,}; unknown for {lv['unknown']:,}, including "
+        f"{ec.get('not_comparable', 0):,} where EQR shows more than {COVER_MAX:.0%} of reported purchases (the two "
+        f"don't measure the same thing). Median share: "
+        f"{'n/a' if ec['median_share'] is None else format(ec['median_share'], '.0%')}.",
+        f"- Tied to an EIA utility but no EQR contracts or trades in the window: {ec['linked_without_activity']:,} "
+        "(their answers say EQR shows none of their buying).", ""]
+    by_id = {e["entity_id"]: e for e in ents}
+    known = [r for r in cov if r["share"] is not None and r["entity_id"] in by_id]
+    top = sorted((r for r in known if r["eqr_mwh"] >= COVER_LIST_MIN_MWH and r["level"] != CoverageLevel.LOW.value),
+                 key=lambda r: (r["level"] != CoverageLevel.HIGH.value, -r["eqr_mwh"]))
+    low = sorted((r for r in known if r["level"] == CoverageLevel.LOW.value),
+                 key=lambda r: -(r["eia_purchases_mwh"] or 0))
+    over = sorted((r for r in cov if r["why_unknown"] == "not_comparable" and r["entity_id"] in by_id),
+                  key=lambda r: -r["eqr_mwh"])
+    for title, rows in ((f"EQR shows {COVER_LOW:.0%} or more, buying at least {COVER_LIST_MIN_MWH:,.0f} MWh in EQR "
+                         f"(sample picks: high coverage first, then by volume; top 15 of {len(top)})", top),
+                        (f"Largest buyers where EQR shows under {COVER_LOW:.0%} (top 15 of {len(low)})", low),
+                        (f"EQR shows more than {COVER_MAX:.0%} of reported purchases, so no coverage is given (top 15 "
+                         f"of {len(over)})", over)):
+        lines += [f"### {title}", ""] + (_coverage_table(rows, by_id) if rows else ["None."]) + [""]
+    return lines
+
+
+def _report(m: dict, ents: list[dict], rels: list[dict], cov: list[dict] | None = None) -> str:
     b, c, r = m["baseline"], m["coverage"], m["rules"]
     kr = r["quantity_check"]
     qty_line = (f"- Energy rows counted at a thousandth (kWh entered as MWh, or adjustments: priced under "
@@ -568,6 +692,7 @@ def _report(m: dict, ents: list[dict], rels: list[dict]) -> str:
         f"{m['counts']['companies']:,} companies. {b['relationships_linked_by_agreement']:,} include trades under a "
         "linked buyer name.",
         "",
+        *_coverage_lines(m, ents, cov or []),
         f"## The market in {q}",
         "",
         f"- Energy volume against {ly}, across the {b['companies_with_volume_last_year']:,} companies that bought "
@@ -662,7 +787,8 @@ def _all(n: int) -> str:
 class SignalsIndex:
     """Per-company market signals from a build, looked up by name through resolve_entity."""
 
-    def __init__(self, resolver: EntityResolver, companies: list[dict], relationships: list[dict], manifest: dict):
+    def __init__(self, resolver: EntityResolver, companies: list[dict], relationships: list[dict], manifest: dict,
+                 coverage: list[dict] | None = None):
         built_with = manifest.get("methodology_version")
         if built_with != METHODOLOGY_VERSION:
             raise DataError(f"The market signals build was made with {built_with or 'an unknown version'}; this code "
@@ -683,8 +809,12 @@ class SignalsIndex:
         self.as_of = taken[-1] if taken else "unknown"
         kr = (manifest.get("rules") or {}).get("quantity_check") or {}
         self.kwh_price = kr.get("max_price", KWH_RULE["KWH_MAX_PRICE"])
+        ec = manifest.get("eia_coverage") or {}
+        self._cover_on = bool(ec.get("available"))
+        self._cover_qs = ec.get("quarters") or []
+        self._coverage = {r["entity_id"]: r for r in coverage or []}
         self.caveats = CAVEATS + [QUANTITY_CAVEAT.format(price=self.kwh_price) if kr.get("applied")
-                                  else NO_QUANTITY_CAVEAT]
+                                  else NO_QUANTITY_CAVEAT, COVERAGE_CAVEAT if self._cover_on else NO_COVERAGE_CAVEAT]
         self.latest_q = manifest.get("latest_quarter", "")
         self.last_year_q = manifest.get("same_quarter_last_year", "")
         b = manifest.get("baseline", {})
@@ -704,13 +834,30 @@ class SignalsIndex:
     def from_dir(cls, home: str | Path, *, run: str = DEFAULT_RUN, resolver: EntityResolver | None = None):
         home = Path(home).expanduser()
         d = home / run / OUT_DIR
-        paths = [d / "signals_companies.csv", d / "signals_relationships.csv", d / "signals_manifest.json"]
+        paths = [d / "signals_companies.csv", d / "signals_relationships.csv", d / "signals_manifest.json",
+                 d / "signals_coverage.csv"]
         for p in paths:
             if not p.exists():
                 raise DataError(f"Missing {p}. Run: python -m creditmcp.signals build")
         read = lambda p: list(csv.DictReader(open(p, newline="", encoding="utf-8")))  # noqa: E731
         return cls(resolver or EntityResolver.from_dir(home), read(paths[0]), read(paths[1]),
-                   json.loads(paths[2].read_text(encoding="utf-8")))
+                   json.loads(paths[2].read_text(encoding="utf-8")), coverage=read(paths[3]))
+
+    def coverage(self, entity_id: str) -> Coverage:
+        """How much of the company's buying EQR shows, against the purchases it reported to EIA."""
+        r = self._coverage.get(entity_id) or {}
+        share = _opt(r.get("share"))
+        year = int(float(r["eia_year"])) if r.get("eia_year") not in (None, "") else None
+        uid = int(float(r["eia_utility_id"])) if r.get("eia_utility_id") not in (None, "") else None
+        cov = Coverage(level=_cover_level(share), share=share, eqr_mwh=_num(r.get("eqr_mwh")),
+                       eqr_quarters=list(self._cover_qs), eia_year=year,
+                       eia_purchases_mwh=_opt(r.get("eia_purchases_mwh")),
+                       eia_net_generation_mwh=_opt(r.get("eia_net_generation_mwh")),
+                       eia_retail_sales_mwh=_opt(r.get("eia_retail_sales_mwh")),
+                       eia_sales_for_resale_mwh=_opt(r.get("eia_sales_for_resale_mwh")), eia_utility_id=uid, note="")
+        why = (r.get("why_unknown") or "not_linked") if self._cover_on else "no_data"
+        cov.note = _coverage_sentence(cov, why)
+        return cov
 
     def lookup(self, name: str) -> MarketSignalsResult:
         res = self.resolver.resolve(name, limit=3)
@@ -726,13 +873,17 @@ class SignalsIndex:
                                        summary=f"No market signals: {why}. Resolve the name first with "
                                                "counterparty.resolve_entity.")
         c = self._companies.get(top.entity_id)
+        cov = self.coverage(top.entity_id)
         if not c:
             window = f"{(self.manifest.get('prior_quarters') or ['?'])[0]} to {self.latest_q}"
+            known = cov.level == CoverageLevel.LOW and cov.eia_purchases_mwh
             return MarketSignalsResult(
-                **base, status=ResultStatus.NO_ACTIVITY, company=top,
-                summary=f"No EQR seller reported power contracts or trades with {top.name} from {window}. It may buy "
-                        "from the ISO markets or from sellers that don't file EQR, or appear under a spelling "
-                        "CreditMCP doesn't know.")
+                **base, status=ResultStatus.NO_ACTIVITY, company=top, coverage=cov,
+                in_short=f"EQR shows none of its power purchases ({_mwh(cov.eia_purchases_mwh)} in {cov.eia_year})."
+                if known else None,
+                summary=f"No EQR seller reported power contracts or trades with {top.name} from {window}. "
+                        + (cov.note if known else "It may buy from the ISO markets or from sellers that don't file "
+                           "EQR, or appear under a spelling CreditMCP doesn't know."))
         rels = [self._relationship(r) for r in self._rels.get(top.entity_id, [])]
         rels.sort(key=lambda r: (0 if r.status in TRADING else 1 if r.status in LOST else 2,
                                  -r.mwh_latest, -r.mwh_same_quarter_last_year, r.seller_name))
@@ -761,9 +912,10 @@ class SignalsIndex:
         fixes = [QuantityFix(**f) for f in _json(c.get("kwh_fixes"), [])]
         return MarketSignalsResult(
             **base, status=ResultStatus.OK, company=top, volume=volume, sellers=sellers, early_warning=warning,
-            relationships=rels, quantity_fixes=fixes, in_short=_in_short(volume, sellers, warning, self.latest_q),
+            relationships=rels, quantity_fixes=fixes, coverage=cov,
+            in_short=_in_short(volume, sellers, warning, self.latest_q, cov),
             summary=_summary(top.name, self.latest_q, self.last_year_q, volume, sellers, warning, reasons, linked,
-                             fixes, self.kwh_price))
+                             fixes, self.kwh_price, cov if self._cover_on else None))
 
     @staticmethod
     def _relationship(r: dict) -> SellerRelationship:
@@ -780,7 +932,27 @@ class SignalsIndex:
 
 
 # --- plain-language reads -----------------------------------------------------
-def _in_short(v: VolumeSignal, s: SellerSignal, w: EarlyWarning, q: str) -> str:
+def _share_words(share: float) -> str:
+    return "under 1%" if share < 0.005 else f"about {share:.0%}"
+
+
+def _in_short(v: VolumeSignal, s: SellerSignal, w: EarlyWarning, q: str, cov: Coverage | None = None) -> str:
+    """One line. Low coverage leads: a company whose buying EQR mostly can't see gets its signals read as a slice."""
+    text = _in_short_signals(v, s, q) + (" Meets the early-warning bar." if w.met else "")
+    if cov is None or cov.share is None:
+        return text
+    if cov.level == CoverageLevel.LOW:
+        if cov.eqr_mwh <= 0:
+            return "EQR shows none of its power purchases in the last four quarters." + (
+                " Meets the early-warning bar." if w.met else "")
+        lead = f"EQR shows only {_share_words(cov.share)} of its power purchases."
+        return f"{lead} In that slice: {text[0].lower()}{text[1:]}"
+    if cov.level == CoverageLevel.PARTIAL:
+        return f"{text} EQR shows about {cov.share:.0%} of its power purchases."
+    return text
+
+
+def _in_short_signals(v: VolumeSignal, s: SellerSignal, q: str) -> str:
     if v.trend == VolumeTrend.NONE:
         text = "No energy bought from EQR sellers in the last five quarters."
     elif v.trend == VolumeTrend.STARTED:
@@ -796,7 +968,7 @@ def _in_short(v: VolumeSignal, s: SellerSignal, w: EarlyWarning, q: str) -> str:
                 "from the same seller" if s.trading_latest == s.trading_same_quarter_last_year == s.kept_trading == 1
                 else "from much the same sellers")
         text = f"{verb}, {tail}."
-    return text + (" Meets the early-warning bar." if w.met else "")
+    return text
 
 
 def _volume_sentence(name: str, q: str, ly: str, v: VolumeSignal, other_products: int) -> str:
@@ -905,15 +1077,54 @@ def _quantity_sentence(fixes: list[QuantityFix], price: float) -> str:
             f"{', '.join(items)}{more}.")
 
 
+def _coverage_sentence(cov: Coverage, why: str = "") -> str:
+    """How much of the company's buying EQR shows, in words."""
+    span = f"the four quarters to {cov.eqr_quarters[-1]}" if cov.eqr_quarters else "the last four quarters"
+    if cov.share is None:
+        if why == "not_comparable":
+            return (f"How much of its buying EQR shows isn't given: EQR shows {_mwh(cov.eqr_mwh)} of energy bought "
+                    f"over {span}, far more than the {_mwh(cov.eia_purchases_mwh)} it reported buying for "
+                    f"{cov.eia_year} (EIA-861), so the two don't measure the same thing for this company.")
+        if why == "no_data":
+            return "How much of its buying EQR shows is unknown: this build has no EIA-861 purchases to compare with."
+        if why == "too_old":
+            return (f"How much of its buying EQR shows is unknown: its latest EIA-861 purchases are for "
+                    f"{cov.eia_year}, too old to compare with {span}.")
+        if why == "no_purchases":
+            return (f"It reported no wholesale purchases to EIA for {cov.eia_year}, so there is nothing to measure "
+                    "EQR's view of its buying against.")
+        return ("How much of its buying EQR shows is unknown: CreditMCP hasn't tied it to an EIA-861 utility, so "
+                "there are no reported purchases to compare with.")
+    bought = f"{_mwh(cov.eia_purchases_mwh)} it reported buying from all sources for {cov.eia_year} (EIA-861)"
+    gen = (f", and it generated {_mwh(cov.eia_net_generation_mwh)} of its own"
+           if cov.eia_net_generation_mwh and cov.eia_net_generation_mwh > 0 else "")
+    where = ("from the ISO market, from sellers that don't file EQR (many co-ops, public power and federal power "
+             "agencies) or under spellings CreditMCP can't tie to it")
+    if cov.eqr_mwh <= 0:
+        return f"EQR shows none of the {bought}{gen}: it buys {where}."
+    if cov.level == CoverageLevel.LOW:
+        return (f"Over {span}, EQR shows only {_mwh(cov.eqr_mwh)} of energy bought, {_share_words(cov.share)} of the "
+                f"{bought}{gen}. The rest is out of view: bought {where}. Read these signals as a slice of its buying.")
+    head = f"Over {span}, EQR shows {_mwh(cov.eqr_mwh)} of energy bought"
+    if cov.share > 1.05:
+        return (f"{head}, more than the {bought}: the periods differ, but these signals see essentially all of its "
+                "buying.")
+    most = "most of its buying" if cov.level == CoverageLevel.HIGH else "part of its buying"
+    return f"{head}, about {cov.share:.0%} of the {bought}, so these signals see {most}."
+
+
 def _summary(name: str, q: str, ly: str, v: VolumeSignal, s: SellerSignal, w: EarlyWarning, reasons: Counter,
              linked: list[str], fixes: list[QuantityFix] | None = None,
-             price: float = KWH_RULE["KWH_MAX_PRICE"]) -> str:
-    parts = [_volume_sentence(name, q, ly, v, s.other_products_latest), _quantity_sentence(fixes or [], price),
-             _sellers_sentence(q, ly, s), _regular_sentence(s, reasons), _concentration_sentence(s),
-             _warning_sentence(s, w)]
+             price: float = KWH_RULE["KWH_MAX_PRICE"], cov: Coverage | None = None) -> str:
+    known = cov is not None and cov.share is not None
+    parts = [_volume_sentence(name, q, ly, v, s.other_products_latest), cov.note if known else "",
+             _quantity_sentence(fixes or [], price), _sellers_sentence(q, ly, s), _regular_sentence(s, reasons),
+             _concentration_sentence(s), _warning_sentence(s, w)]
     if linked:
         shown = ", ".join(f'"{n}"' for n in linked[:3]) + (f" and {len(linked) - 3} more" if len(linked) > 3 else "")
         parts.append(f"Trades reported under another buyer name on the same agreement count toward {name} ({shown}).")
+    if cov is not None and not known:
+        parts.append(cov.note)
     return " ".join(p for p in parts if p)
 
 
@@ -946,6 +1157,9 @@ def main(argv=None) -> int:
             print(r.model_dump_json(indent=2))
             continue
         print(f"\n{name}  ->  {r.company.name if r.company else '-'}  [{r.in_short or r.status.value}]")
+        if r.coverage:
+            share = "" if r.coverage.share is None else f" ({r.coverage.share:.1%} of reported purchases)"
+            print(f"  coverage: {r.coverage.level.value}{share}")
         for rel in r.relationships[:15]:
             note = f"  ({rel.reason})" if rel.reason else ""
             print(f"  {rel.status.value:<20} {rel.seller_name[:40]:<40} {rel.mwh_latest:>12,.0f} MWh  "

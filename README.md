@@ -22,12 +22,13 @@ Two tools ship:
 
 | Tool | Question it answers | Methodology |
 |---|---|---|
-| `counterparty.market_signals` | What does the trading record show about this company? Buying more or less than a year ago, from which sellers, who is new, who stopped, how concentrated, against the market. | `signals-0.4.0` |
-| `counterparty.resolve_entity` | Which company is this name, and what are its FERC, EIA and PUDL IDs? | `resolve-0.1.0` |
+| `counterparty.market_signals` | What does the trading record show about this company? Buying more or less than a year ago, from which sellers, who is new, who stopped, how concentrated, against the market, and how much of its buying EQR shows. | `signals-0.5.0` |
+| `counterparty.resolve_entity` | Which company is this name, and what are its FERC, EIA and PUDL IDs? | `resolve-0.2.0` |
 
-`SCOPE.md` records the v0.2 scope, frozen on Oct 11, 2026, before either tool was built, and a
-dated amendment from Oct 14 that widened the seller signal it calls dormancy into two-sided market
-signals. The coverage bars the data had to clear were set on Oct 10, before the first data run.
+`SCOPE.md` records the v0.2 scope, frozen on Oct 11, 2026, before either tool was built, and
+dated amendments since: on Oct 14 the seller signal it calls dormancy widened into two-sided
+market signals, and on Oct 18 the quantity check and coverage were added. The coverage bars the
+data had to clear were set on Oct 10, before the first data run.
 Two more signals in that scope, tenor and early termination, are not built yet. The early-warning
 thresholds are provisional until they have been backtested against public failures.
 
@@ -43,15 +44,18 @@ pytest
 ```
 
 `resolve_entity` works straight away: the repo includes everything it reads (the rosters, the
-alias seed built from FERC EQR, the hand-reviewed match decisions and FERC's filer identity
-table). Market signals need five quarters of trades, which you pull once (see below).
+alias seed built from FERC EQR and EIA Form 861, the hand-reviewed match decisions and FERC's
+filer identity table). Market signals need five quarters of trades, which you pull once (see
+below).
 
 ## Use it
 
 ### Market signals
 
-Pull five consecutive quarters of FERC EQR trades for PJM, MISO and NYISO delivery, then build.
-The pull is about 9 million rows and takes several minutes; reruns into the same folder reuse it.
+Pull five consecutive quarters of FERC EQR trades, then build. The pull keeps power delivered in
+PJM, MISO and NYISO, plus every roster company's purchases wherever they were delivered, and takes
+several minutes. Reruns into the same folder reuse it, unless a rerun adds buyer names (by
+accepting a match, say).
 
 ```bash
 python reality_check.py --roster pjm_members.csv --roster miso_members.csv --out rc_trades \
@@ -98,6 +102,8 @@ candidate list is a real answer: the name isn't on the PJM or MISO roster.
   operating in MISO on EIA Form 861 (2025, 253 rows). The MISO list is a proxy: it covers
   utilities, not every market participant. Together: 1,270 companies.
 - **EIA–PUDL utility crosswalk**, for EIA and PUDL IDs.
+- **EIA Form 861, schedule 2B** (sources and disposition of electricity), via PUDL: the name each
+  utility filed under each year, and its wholesale purchases, own generation and sales.
 
 PUDL keeps one version of its EQR tables and overwrites it on each build, and FERC filings get
 revised, so every run snapshots its inputs. `rc/manifest.json` holds the SHA-256 hash of each
@@ -126,8 +132,18 @@ fairly, and with the four quarters before it. A relationship is one seller and o
   they are at least half of them, and its energy volume fell by half or more. Sellers going quiet
   while their contracts stay in force can mean they are cutting credit exposure without
   terminating.
+- **Coverage:** how much of the company's buying EQR shows. EQR sees only bilateral sales by
+  sellers that file it, so for some companies it is most of their buying and for others a sliver.
+  The energy EQR shows over the last four quarters is compared with the wholesale purchases the
+  company reported on EIA Form 861 for its latest year, from every source: high (60% or more),
+  partial (25% to 60%), low (under 25%) or unknown (not tied to an EIA utility, no recent figure,
+  or EQR showing more than 150% of the EIA figure, as it does for some trading companies, where
+  the two don't measure the same thing). The periods differ, so the share is a guide, not a
+  measurement.
 - **In short:** one line that puts volume and sellers together, such as "Buying more, from more
-  sellers" or "Buying about the same, with a change of sellers". The summary gives the detail.
+  sellers" or "Buying about the same, with a change of sellers". When coverage is low it leads:
+  "EQR shows only about 3% of its power purchases. In that slice: buying about the same, from
+  the same seller." The summary gives the detail.
 
 Not counted as stopped or as new: a seller that stopped selling energy but still trades other
 products with the company (it is still exposed to it); a renamed buyer; and moves within the
@@ -142,18 +158,27 @@ under $0.50 a MWh, on at least 1,000 MWh as reported, can't be a full-price sale
 energy, so `reality_check.py` counts it at a thousandth, and every answer names the reports it
 corrected. Other reporting errors pass through as filed.
 
+Trades are pulled by buyer as well as by delivery area: a co-op in MISO can buy from the utility
+next door, delivered in that utility's area or with no area filled in, so every trade under a
+buyer name sellers use for a roster company in their contracts is kept, wherever it was delivered.
 Customers are tied to companies through `resolve_entity`'s exact name map and those agreement
-links only, so a trade under an unknown spelling is missed rather than misassigned. In the
-reference data, about 90% of 9.3 million trade rows (2025q2 to 2026q2) tie to a roster company,
-and in a given quarter only about 1 in 10 seller relationships under contract trades energy at
-all, which is why the seller tests rest on regular trading.
+links only, so a trade under an unknown spelling is missed rather than misassigned. The
+reference data keeps 13.8 million trade rows (2025q2 to 2026q2), 4.4 million of them roster
+companies' purchases outside PJM, MISO and NYISO. Of the energy delivered in PJM and MISO, 77% and
+82% ties to a roster company. In a given quarter only about 3 in 10 seller relationships under
+contract trade energy at all, which is why the seller tests rest on regular trading.
 
 ### resolve_entity
 
-Each roster company carries aliases from five sources: its roster name, the spellings EQR
-sellers use for it as a customer, its own name as an EQR filer, earlier names filed under the
-same FERC company ID, and its EIA utility name. A query is normalized (case, punctuation, legal
-suffixes, co-op shorthand, "&" and "and", a leading or trailing "The") and matched in tiers:
+Each roster company carries aliases from six sources: its roster name, the spellings EQR sellers
+use for it as a customer, its own name as an EQR filer, earlier names filed under the same FERC
+company ID, its EIA utility name, and every name its EIA utility has filed Form 861 under. That
+last one catches renamed companies that sellers still know by the old name. EIA abbreviates ("El
+Pwr Assn"), so each EIA name is also matched with the abbreviations spelled out. A company gets
+EIA names only when one of them matches it exactly and the match is one company to one utility,
+and they add exact matches only, never close spellings. A query is normalized (case,
+punctuation, legal suffixes, co-op shorthand, "&" and "and", a leading or trailing "The") and
+matched in tiers:
 
 1. Exact alias.
 2. The same once spaces are removed ("FirstEnergy" and "First Energy").
@@ -178,8 +203,10 @@ These are deliberate, and stated plainly.
 - **Not a credit rating.** Decision support from public data: no non-public information, no
   issuer engagement, no rating-agency methodology.
 - **What EQR can't see.** EQR covers bilateral sales by sellers that file with FERC. Purchases
-  from the ISO markets, exchange trades and sellers that don't file EQR are invisible, so a
-  company can look quiet in EQR while trading elsewhere.
+  from the ISO markets, exchange trades and sellers that don't file EQR (many co-ops, public
+  power and federal power agencies) are invisible, so a company can look quiet in EQR while
+  trading elsewhere. Each answer's coverage says how much of the company's buying that leaves
+  out, where it can be measured.
 - **Names are free text.** Each EQR seller types its customers' names its own way.
   `resolve_entity` reports close spellings as "possible" rather than guessing, and market signals
   use only exact known spellings and agreement-linked renames.

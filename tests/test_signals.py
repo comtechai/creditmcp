@@ -12,10 +12,12 @@ import json
 import duckdb
 import pytest
 
+from creditmcp import signals
 from creditmcp.names import normalize_name
 from creditmcp.resolve import DataError, EntityResolver
 from creditmcp.schema import (
     AffiliateGroup,
+    CoverageLevel,
     QuantityFix,
     ResultStatus,
     SellerSignal,
@@ -25,6 +27,7 @@ from creditmcp.schema import (
 )
 from creditmcp.signals import (
     BASIS_YOY,
+    NO_COVERAGE_CAVEAT,
     NO_QUANTITY_CAVEAT,
     REASON_AFFILIATE,
     REASON_AGREEMENT,
@@ -169,10 +172,15 @@ def _read(out):
             json.loads((out / "signals_manifest.json").read_text()))
 
 
+def _index(resolver, out):
+    read = lambda p: list(csv.DictReader(open(p, newline="", encoding="utf-8")))  # noqa: E731
+    return SignalsIndex(resolver, *_read(out), coverage=read(out / "signals_coverage.csv"))
+
+
 @pytest.fixture
 def idx(built):
     _, resolver, out = built
-    return SignalsIndex(resolver, *_read(out))
+    return _index(resolver, out)
 
 
 def _rel(result, seller):
@@ -190,7 +198,7 @@ def test_signals_read_both_directions(idx, built):
     assert idx.lookup("Foxtrot Power Marketing").volume.trend == VolumeTrend.NONE
     assert idx.lookup("Uniform Power Agency").status == ResultStatus.NO_ACTIVITY
     assert m["latest_quarter"] == "2026q2" and m["prior_quarters"] == Q[:4] and m["same_quarter_last_year"] == "2025q2"
-    assert m["methodology_version"] == "signals-0.4.0" and m["rules"]["agreement_check"]
+    assert m["methodology_version"] == "signals-0.5.0" and m["rules"]["agreement_check"]
     assert m["rules"]["quantity_check"] == {"applied": True, "max_price": 0.5, "min_mwh": 1000.0}
 
 
@@ -326,8 +334,9 @@ def test_sellers_trading_now_come_first_then_those_that_stopped(idx):
     alpha = idx.lookup("Alpha Municipal Power Agency")
     assert [x.status for x in alpha.relationships] == [SellerStatus.KEPT_TRADING, SellerStatus.STOPPED,
                                                        SellerStatus.STOPPED]
-    assert alpha.provenance and len(alpha.caveats) == 5 and "not a verdict" in alpha.disclaimer
-    assert "counts at a thousandth" in alpha.caveats[-1] and alpha.quantity_fixes == []
+    assert alpha.provenance and len(alpha.caveats) == 6 and "not a verdict" in alpha.disclaimer
+    assert "counts at a thousandth" in alpha.caveats[-2] and alpha.quantity_fixes == []
+    assert alpha.caveats[-1] == NO_COVERAGE_CAVEAT     # this fixture run has no EIA-861 purchases
 
 
 def test_the_market_baseline_counts_both_directions(built):
@@ -389,8 +398,8 @@ def test_a_run_without_charges_says_the_check_was_not_applied(tmp_path):
     resolver = EntityResolver(ROWS, groups=GROUPS)
     m = build(_db(tmp_path, quantity=False), tmp_path / "out", resolver, {"contract_window": ["2023q3", "2026q2"]})
     assert m["rules"]["quantity_check"]["applied"] is False and m["coverage"]["kwh_rows"] == 0
-    r = SignalsIndex(resolver, *_read(tmp_path / "out")).lookup("Xray Power Cooperative")
-    assert r.caveats[-1] == NO_QUANTITY_CAVEAT and r.quantity_fixes == []
+    r = _index(resolver, tmp_path / "out").lookup("Xray Power Cooperative")
+    assert r.caveats[-2] == NO_QUANTITY_CAVEAT and r.quantity_fixes == []
     assert r.volume.mwh_latest == 100_000.0      # counted as filed: this is what the check exists to catch
     assert "Quantity check not applied" in (tmp_path / "out" / "signals_report.md").read_text()
 
@@ -404,3 +413,123 @@ def test_corrections_from_several_sellers_are_named_together():
         "reported MWh: Seller A LLC (2025q2 and 2025q3), Seller B Co. (2026q2).")
     assert _quantity_sentence(fixes[:2], 0.5).startswith("Seller A LLC's reports for 2025q2 and 2025q3 were priced")
     assert _quantity_sentence([], 0.5) == ""
+
+
+# --- coverage: how much of a company's buying EQR shows ------------------------------------------------------------
+EIA = [  # company, EIA utility, year, purchases from every source, own generation (MWh)
+    ("E1", 101, 2025, 100_000.0, 0.0),     # Alpha: 1,000 MWh in EQR over the last four quarters: about 1%
+    ("E3", 103, 2024, 8_000.0, 0.0),       # Charlie: an older year is passed over...
+    ("E3", 103, 2025, 10_000.0, 2_500.0),  # ...for the latest: 500 / 10,000 = 5% (Lima's agreement adds 100)
+    ("E2", 102, 2025, 2_000.0, 0.0),       # Bravo: 1,100 / 2,000 = 55%: partial
+    ("E17", 117, 2025, 700.0, 0.0),        # Papa: 600 / 700 = 86%: high
+    ("E21", 121, 2025, 80.0, 0.0),         # Tango: EQR shows a little more than it reported buying (125%)
+    ("E19", 119, 2025, 100.0, 0.0),        # Romeo: EQR shows four times as much: the two don't compare
+    ("E22", 122, 2024, 5_000.0, 1_000.0),  # Uniform: no EQR contracts or trades at all
+    ("E15", 115, 2021, 900.0, 0.0),        # November: too old to compare with 2026
+    ("E16", 116, 2025, 0.0, 300.0),        # Oscar: reported no purchases
+]
+
+
+def _with_eia(path):
+    """What a run with EIA-861 adds: the roster, and each tied company's yearly sources of power. The run numbers its
+    companies its own way (R...); the roster name ties them to the resolver's."""
+    con = duckdb.connect(str(path))
+    con.execute("CREATE TABLE roster_entities (entity_id VARCHAR, entity_name VARCHAR, name_norm VARCHAR)")
+    con.execute("CREATE TABLE entity_eia861 (entity_id VARCHAR, utility_id_eia BIGINT, year INTEGER, "
+                "purchases_mwh DOUBLE, net_generation_mwh DOUBLE, retail_sales_mwh DOUBLE, "
+                "sales_for_resale_mwh DOUBLE)")
+    rid = {e: f"R{i:03d}" for i, e in enumerate(COMPANIES)}
+    for e, n in COMPANIES.items():
+        con.execute("INSERT INTO roster_entities VALUES (?, ?, ?)", [rid[e], n, normalize_name(n)])
+    for e, uid, y, purchases, gen in EIA:
+        con.execute("INSERT INTO entity_eia861 VALUES (?, ?, ?, ?, ?, ?, ?)",
+                    [rid[e], uid, y, purchases, gen, 1.0, 0.0])
+    con.close()
+    return path
+
+
+@pytest.fixture
+def eia_idx(tmp_path, monkeypatch):
+    monkeypatch.setattr(signals, "COVER_LIST_MIN_MWH", 0.0)    # list every company in the report's coverage tables
+    resolver = EntityResolver(ROWS, groups=GROUPS)
+    m = build(_with_eia(_db(tmp_path)), tmp_path / "out", resolver, {"contract_window": ["2023q3", "2026q2"]})
+    return _index(resolver, tmp_path / "out"), m, tmp_path / "out"
+
+
+def test_low_coverage_leads_the_one_line_answer(eia_idx):
+    idx, _, _ = eia_idx
+    charlie = idx.lookup("Charlie Energy LLC")
+    assert charlie.coverage.level == CoverageLevel.LOW and charlie.coverage.share == 0.05
+    cov = charlie.coverage
+    assert (cov.eia_year, cov.eia_purchases_mwh, cov.eqr_mwh) == (2025, 10_000, 500)
+    assert charlie.coverage.eqr_quarters == Q[1:] and charlie.coverage.eia_utility_id == 103
+    assert charlie.in_short == ("EQR shows only about 5% of its power purchases. In that slice: buying more, from the "
+                                "same seller.")
+    assert ("Over the four quarters to 2026q2, EQR shows only 500 MWh of energy bought, about 5% of the 10,000 MWh it "
+            "reported buying from all sources for 2025 (EIA-861), and it generated 2,500 MWh of its own. The rest is "
+            "out of view: bought from the ISO market") in charlie.summary
+    alpha = idx.lookup("Alpha Municipal Power Agency")
+    assert alpha.in_short == ("EQR shows only about 1% of its power purchases. In that slice: buying less, from fewer "
+                              "sellers. Meets the early-warning bar.")
+
+
+def test_partial_and_high_coverage(eia_idx):
+    idx, _, _ = eia_idx
+    bravo = idx.lookup("Bravo Electric Cooperative")
+    assert bravo.coverage.level == CoverageLevel.PARTIAL and bravo.coverage.share == 0.55
+    assert bravo.in_short.endswith(". EQR shows about 55% of its power purchases.")
+    papa = idx.lookup("Papa Power Cooperative")
+    assert papa.coverage.level == CoverageLevel.HIGH and papa.in_short == "Buying more, from more sellers."
+    assert ("EQR shows 600 MWh of energy bought, about 86% of the 700 MWh it reported buying from all sources for 2025 "
+            "(EIA-861), so these signals see most of its buying.") in papa.summary
+    tango = idx.lookup("Tango Power LLC")
+    assert tango.coverage.share == 1.25 and "more than the 80 MWh it reported buying" in tango.summary
+    romeo = idx.lookup("Romeo Utility")
+    assert romeo.coverage.level == CoverageLevel.UNKNOWN and romeo.coverage.share is None
+    assert ("EQR shows 400 MWh of energy bought over the four quarters to 2026q2, far more than the 100 MWh it "
+            "reported buying for 2025 (EIA-861), so the two don't measure the same thing") in romeo.summary
+    assert not romeo.in_short.startswith("EQR shows")
+
+
+def test_a_company_with_no_eqr_activity_shows_none_of_its_buying(eia_idx):
+    r = eia_idx[0].lookup("Uniform Power Agency")
+    assert r.status == ResultStatus.NO_ACTIVITY and r.coverage.level == CoverageLevel.LOW and r.coverage.share == 0
+    assert r.in_short == "EQR shows none of its power purchases (5,000 MWh in 2024)."
+    assert ("EQR shows none of the 5,000 MWh it reported buying from all sources for 2024 (EIA-861), and it generated "
+            "1,000 MWh of its own: it buys from the ISO market") in r.summary
+
+
+def test_coverage_is_unknown_without_a_recent_eia_figure(eia_idx):
+    idx, _, _ = eia_idx
+    november, oscar, delta = (idx.lookup(n) for n in ("November Power Cooperative", "Oscar Municipal Utility",
+                                                       "Delta Power Authority"))
+    assert all(r.coverage.level == CoverageLevel.UNKNOWN and r.coverage.share is None for r in (november, oscar, delta))
+    assert "its latest EIA-861 purchases are for 2021, too old to compare" in november.summary
+    assert "It reported no wholesale purchases to EIA for 2025" in oscar.summary
+    assert "hasn't tied it to an EIA-861 utility" in delta.coverage.note and delta.coverage.note in delta.summary
+    assert delta.in_short == idx.lookup("Delta Power Authority").in_short and "EQR shows" not in delta.in_short
+    assert november.caveats[-1].startswith("Coverage compares the energy EQR shows")
+
+
+def test_the_build_counts_coverage_and_lists_sample_picks(eia_idx):
+    _, m, out = eia_idx
+    ec = m["eia_coverage"]
+    assert ec["available"] and ec["companies_linked"] == 9 and ec["eia_years"] == {"2021": 1, "2024": 1, "2025": 7}
+    assert ec["levels"] == {"high": 2, "partial": 1, "low": 2, "unknown": 20} and ec["median_share"] == 0.55
+    assert ec["linked_without_activity"] == 1 and ec["quarters"] == Q[1:] and ec["not_comparable"] == 1
+    report = (out / "signals_report.md").read_text()
+    picks, low = report.split("### EQR shows 25% or more")[1].split("### Largest buyers where EQR shows under 25%")
+    assert picks.index("Papa Power Cooperative") < picks.index("Tango Power LLC") < picks.index("Bravo Electric")
+    assert "Charlie Energy LLC" not in picks
+    assert "| Papa Power Cooperative | PJM | 600 | 700 (2025) | 86% | +200% | 3 (1) |" in picks
+    low, over = low.split("### EQR shows more than 150%")
+    assert low.index("Alpha Municipal Power Agency") < low.index("Charlie Energy LLC")
+    assert "| Romeo Utility | PJM | 400 | 100 (2025) | 400% |" in over and "Romeo Utility" not in picks
+
+
+def test_a_build_without_eia_says_coverage_is_unknown(idx, built):
+    r = idx.lookup("Charlie Energy LLC")
+    assert r.coverage.level == CoverageLevel.UNKNOWN and "this build has no EIA-861 purchases" in r.coverage.note
+    assert "EIA-861" not in r.summary           # said once, in the caveats, not in every summary
+    assert built[0]["eia_coverage"]["available"] is False
+    assert "Not available: this run has no EIA-861 purchases" in (built[2] / "signals_report.md").read_text()

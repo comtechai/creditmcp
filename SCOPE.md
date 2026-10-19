@@ -88,3 +88,39 @@ and the Oct 14 amendment are unchanged.
 - **Coverage, recomputed with the check.** 2026q2 traded energy tied to a roster company: MISO
   80.6% (91.7% before, because the 38-million-MWh row was a roster company's) and PJM 83.7%
   (unchanged). Both clear the 60% bar set on Oct 10.
+
+## Amendment, Oct 18, 2026: coverage
+
+Recorded the same day as the quantity check, after comparing one company's answer with its own
+published figures, and before publication. The frozen text and the earlier amendments are unchanged.
+
+- **What the comparison found.** For a MISO generation and transmission co-op, CreditMCP saw about 3%
+  of the power the co-op reported buying. Two of the gaps were CreditMCP's own. Trades were kept only
+  when delivered in PJM, MISO or NYISO, so a neighboring utility's sales delivered in that utility's
+  own area, and a solar project's sales with no area filled in, were dropped. And the co-op had
+  renamed itself while sellers kept using its old name.
+- **Trades by buyer.** `reality_check.py` now also keeps every trade under a buyer name that sellers use
+  for a roster company in their contracts, wherever it was delivered. The 2025q2 to 2026q2 pull grew
+  from 9.4 million to 13.8 million rows. 4.4 million of them are roster companies' purchases outside
+  the three ISOs, mostly by national traders on PJM's member list, whose signals now cover their
+  buying across the country. In a given quarter about 3 in 10 seller relationships under contract
+  now trade energy, up from about 1 in 10, because their trades elsewhere count.
+- **Former names.** A roster company tied to exactly one EIA-861 utility by an exact name gets every
+  name that utility has filed under, as filed and with EIA's abbreviations spelled out ("El Pwr
+  Assn"). They add exact matches only. 445 companies are tied, 132 of them gained 151 names, and 46
+  more EQR customer names now resolve. Methodology `resolve-0.2.0`.
+- **Coverage in every answer.** Each market signals answer compares the energy EQR shows over the
+  last four quarters with the wholesale purchases the company reported to EIA for its latest year:
+  high (60% or more), partial (25% to 60%), low (under 25%, which leads the one-line answer) or
+  unknown. Where EQR shows more than 150% of the EIA figure, as it does for some trading companies,
+  the two don't measure the same thing and no coverage is given. Of 523 companies with signals, 51
+  are high, 51 partial, 139 low and 282 unknown (8 of them over 150%); the median is 12%. The co-op
+  above went from about 3% to about 12%; most of the rest it buys from the MISO market and from
+  sellers that don't file EQR. Methodology `signals-0.5.0`.
+- **Gates, rerun.** Roster resolution 40.4% (40.3% before). Contracts: PJM 76.3% (76.2%), MISO 63.9%
+  (63.3%). Traded energy in 2026q2: PJM 83.7% (unchanged), MISO 81.7% (80.6%). All clear the bars
+  set on Oct 10.
+- **Open, before publication.** The wider pull brings more reporting errors. The price test counted
+  60 rows from 14 sellers at a thousandth (3.2 billion MWh as reported). Most are plainly kWh, but a
+  few are small trades in the West that may really be priced near zero. Some sellers report a
+  month's energy as a lump sum with a nominal quantity, which understates their volume.

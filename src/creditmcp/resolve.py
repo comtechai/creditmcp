@@ -44,7 +44,7 @@ from creditmcp.schema import (
     ResolveResult,
 )
 
-METHODOLOGY_VERSION = "resolve-0.1.0"
+METHODOLOGY_VERSION = "resolve-0.2.0"
 CAVEATS = [
     "EQR customer names are free text typed by each seller, so one company appears under many "
     "spellings and some are wrong. A match is evidence of identity, not proof.",
@@ -328,7 +328,7 @@ class EntityResolver:
         conf = Confidence.MATCH if is_match else Confidence.POSSIBLE
         rosters = " and ".join(ROSTER_LABEL.get(i, i) for i in ent["isos"]) or "roster"
         snap = next(iter(self.provenance.snapshots.values()), "")[:12]
-        src = (f"{rosters}; matched on {AliasSource(source).value.replace('_', ' ')} name '{alias}'; "
+        src = (f"{rosters}; matched on {SOURCE_LABEL.get(source, source)} name '{alias}'; "
                f"FERC EQR via PUDL, contracts {self.provenance.contract_window}"
                + (f", snapshot {snap}" if snap else ""))
         return Candidate(
@@ -385,6 +385,15 @@ SOURCE_PHRASE = {
     "eqr_seller": "its own EQR filer name",
     "eqr_seller_history": "an earlier name filed under its FERC company ID",
     "eia_utility": "its EIA utility name",
+    "eia_name_history": "a name in its EIA filing history",
+}
+SOURCE_LABEL = {
+    "roster": "roster",
+    "eqr_customer": "EQR customer",
+    "eqr_seller": "EQR seller",
+    "eqr_seller_history": "EQR seller history",
+    "eia_utility": "EIA utility",
+    "eia_name_history": "EIA filing history",
 }
 
 

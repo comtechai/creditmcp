@@ -1,10 +1,11 @@
 {
-  "run_at": "2026-10-10T22:14:53",
+  "run_at": "2026-10-18T22:07:41",
   "duckdb": "1.5.6",
   "python": "3.12.14",
   "source": {
     "eqr_root": "s3://pudl.catalyst.coop/ferceqr",
-    "eia_utilities": "s3://pudl.catalyst.coop/stable/core_pudl__assn_eia_pudl_utilities.parquet"
+    "eia_utilities": "s3://pudl.catalyst.coop/stable/core_pudl__assn_eia_pudl_utilities.parquet",
+    "eia861": "s3://pudl.catalyst.coop/stable/core_eia861__yearly_operational_data_misc.parquet"
   },
   "contract_window": [
     "2023q3",
@@ -85,13 +86,21 @@
       "reused": true,
       "source": "s3://pudl.catalyst.coop/stable/core_pudl__assn_eia_pudl_utilities.parquet"
     },
-    "core_ferceqr__transactions_2026q2_1d1ed14a": {
-      "file": "core_ferceqr__transactions_2026q2_1d1ed14a.parquet",
-      "sha256": "e53ca75008193b397a9a2a0e7eaaa502382576945e9402d014ac5e3ba88ca2d7",
-      "rows": 2591766,
-      "taken_at": "2026-10-10T21:23:36",
-      "reused": true,
-      "columns": "subset used by this check; filtered to PJM/MISO/NYISO bilateral power"
+    "core_eia861__yearly_operational_data_misc": {
+      "file": "core_eia861__yearly_operational_data_misc.parquet",
+      "sha256": "745edd5c914111e4161d9be0e1be855797962cca8827ef40332f2b4b845c0753",
+      "rows": 66329,
+      "taken_at": "2026-10-18T22:07:28",
+      "reused": false,
+      "source": "s3://pudl.catalyst.coop/stable/core_eia861__yearly_operational_data_misc.parquet"
+    },
+    "core_ferceqr__transactions_2026q2_2fe37951": {
+      "file": "core_ferceqr__transactions_2026q2_2fe37951.parquet",
+      "sha256": "fa5193f80e4983780148caac5c99573ff8cbc50c2abc8d8645c717cfdd2239b7",
+      "rows": 3442267,
+      "taken_at": "2026-10-18T22:08:53",
+      "reused": false,
+      "columns": "subset used by this check; bilateral power delivered in PJM, MISO or NYISO, plus roster companies' purchases wherever delivered"
     }
   },
   "missing_columns": {},
@@ -116,7 +125,9 @@
     "REPAPER_WINDOW_DAYS": [
       -30,
       120
-    ]
+    ],
+    "KWH_MAX_PRICE": 0.5,
+    "KWH_MIN_QTY": 1000.0
   },
   "roster": {
     "files": [
@@ -136,5 +147,14 @@
     "accepted": 166,
     "rejected": 748,
     "not_found": 0
+  },
+  "tx_buyer_spellings": 2279,
+  "quantity_check": {
+    "kwh_rows": 25,
+    "kwh_sellers": 10,
+    "kwh_reported": 1631644527.5756998,
+    "kwh_counted": 1631644.5275757,
+    "charge_rows": 1996545,
+    "energy_rows": 1996545
   }
 }

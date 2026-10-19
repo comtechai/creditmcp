@@ -252,6 +252,33 @@ MISSING_COLUMNS: dict[str, set[str]] = {}
 EQR_SNAPSHOTS = {"core_ferceqr__contracts": CONTRACT_COLS, "core_ferceqr__quarterly_identity": IDENTITY_COLS}
 EIA_SNAPSHOT = "core_pudl__assn_eia_pudl_utilities"
 EIA_COLS = ("utility_id_eia", "utility_name_eia", "utility_id_pudl")
+# EIA Form 861, schedule 2B: each utility's name as filed each year, and where its power came from. The names
+# give renamed utilities their former names; the purchases show how much of a company's buying EQR can see.
+EIA861_OPS = "core_eia861__yearly_operational_data_misc"
+EIA861_OPS_COLS = {
+    "report_date": "DATE",
+    "utility_id_eia": "BIGINT",
+    "utility_name_eia": "VARCHAR",
+    "nerc_region": "VARCHAR",
+    "wholesale_power_purchases_mwh": "DOUBLE",
+    "net_generation_mwh": "DOUBLE",
+    "retail_sales_mwh": "DOUBLE",
+    "sales_for_resale_mwh": "DOUBLE",
+}
+# EIA abbreviates utility names ("South Mississippi El Pwr Assn"); sellers spell them out. A spelled-out
+# copy of each EIA name is matched too. "EL" means Electric only before these words ("El Paso" stays).
+EIA_SPELL_OUT = {
+    "MUN": "MUNICIPAL", "MUNI": "MUNICIPAL", "AGNY": "AGENCY", "AGCY": "AGENCY", "AUTH": "AUTHORITY",
+    "DIST": "DISTRICT", "DEPT": "DEPARTMENT", "UTIL": "UTILITY", "UTILS": "UTILITIES", "COMM": "COMMISSION",
+    "SYS": "SYSTEM", "MEMB": "MEMBERSHIP", "PUB": "PUBLIC", "TWP": "TOWNSHIP", "CNTY": "COUNTY", "LT": "LIGHT",
+    "SERV": "SERVICE", "BD": "BOARD", "COMMN": "COMMISSION", "ADMIN": "ADMINISTRATION",
+}
+EIA_REDACTED_ID = 88888   # utilities that keep their data private file under this ID: many companies in one
+EIA_EL_BEFORE = {
+    "PWR", "POWER", "COOP", "CO-OP", "COOPERATIVE", "MEMB", "MEMBERSHIP", "ASSN", "ASSOC", "ASSOCIATION", "CO",
+    "CORP", "SYS", "SYSTEM", "LT", "LIGHT", "DEPT", "DEPARTMENT", "UTIL", "UTILITY", "UTILITIES", "AUTH",
+    "AUTHORITY", "DIST", "DISTRICT", "COMM", "COMMISSION", "SVC", "SERVICE", "SERVICES", "&", "AND", "PLANT",
+}
 
 
 def window_snapshot(snap_dir: Path, name: str, window: list[str]) -> Path:
@@ -270,10 +297,13 @@ def snapshot_usable(path: Path, cols) -> bool:
 
 
 def tx_filter_sql() -> str:
-    """Rows kept from the transactions table: bilateral power delivered in PJM, MISO or NYISO."""
+    """Rows kept from the transactions table: bilateral power delivered in PJM, MISO or NYISO, plus every trade
+    whose buyer is a roster company (by the raw spellings in tx_buyers), wherever it was delivered. A co-op in
+    MISO can buy from a utility next door, delivered in that utility's area or with no area filled in."""
     geo = scope_case("point_of_delivery_balancing_authority", "point_of_delivery_specific_location")
     return (f"upper(coalesce(product_name, '')) IN {sql_tuple(TX_PRODUCTS)} "
-            f"AND upper(coalesce(type_of_rate, '')) <> 'RTO/ISO' AND {geo} IS NOT NULL")
+            f"AND upper(coalesce(type_of_rate, '')) <> 'RTO/ISO' "
+            f"AND ({geo} IS NOT NULL OR upper(trim(customer_company_name)) IN (SELECT raw_key FROM tx_buyers))")
 
 
 def kwh_sql(t: str = "t") -> str:
@@ -281,6 +311,83 @@ def kwh_sql(t: str = "t") -> str:
     q, charge = f"{t}.standardized_quantity", f"{t}.total_transaction_charge"
     return (f"coalesce(upper({t}.product_name) = 'ENERGY' AND {q} >= {KWH_MIN_QTY} AND {charge} > 0 "
             f"AND {charge} / {q} < {KWH_MAX_PRICE}, false)")
+
+
+def spell_out_eia(raw) -> str:
+    """EIA's abbreviations spelled out: "South Mississippi El Pwr Assn" -> "SOUTH MISSISSIPPI ELECTRIC PWR ASSN".
+    normalize_name then turns PWR, ASSN and the rest into words as it does for every name."""
+    toks = str(raw or "").upper().replace("&", " & ").replace(",", " ").split()
+    keys = [t.strip(".") for t in toks]
+    out = []
+    for i, k in enumerate(keys):
+        nxt = keys[i + 1] if i + 1 < len(keys) else ""
+        prev = keys[i - 1] if i else ""
+        if k == "EL" and nxt in EIA_EL_BEFORE:
+            out.append("ELECTRIC")
+        elif k == "P" and prev in ("MUN", "MUNI", "MUNICIPAL") and nxt in ("AGNY", "AGCY", "AGENCY"):
+            out.append("POWER")
+        else:
+            out.append(EIA_SPELL_OUT.get(k, toks[i]))
+    return " ".join(out)
+
+
+def link_eia_history(con) -> dict:
+    """Tie roster companies to EIA-861 utilities, then give each tied company the names its utility has filed
+    under (as filed and spelled out) and its yearly sources of power. A company is tied only by an exact name
+    (any year, either form), and only when the tie is one company to one utility: a name shared by several
+    utilities ("City of Columbia") ties nothing, and neither does the ID that utilities keeping their data private
+    share. A name that is another roster company's never becomes an alias."""
+    hist = con.execute(f"""
+        SELECT utility_id_eia, utility_name_eia, min(year(report_date)) AS first_year,
+               max(year(report_date)) AS last_year
+        FROM eia861_raw WHERE utility_id_eia IS NOT NULL AND utility_id_eia <> {EIA_REDACTED_ID}
+          AND coalesce(trim(utility_name_eia), '') <> '' AND report_date IS NOT NULL
+        GROUP BY 1, 2""").fetchall()
+    recs = []
+    for uid, raw, first, last in hist:
+        as_filed, spelled = normalize_name(raw), normalize_name(spell_out_eia(raw))
+        if as_filed:
+            recs.append((int(uid), raw, "eia_as_filed", as_filed, int(first), int(last)))
+        if spelled and spelled != as_filed:
+            recs.append((int(uid), raw, "eia_spelled_out", spelled, int(first), int(last)))
+    con.register("_eh", pd.DataFrame(recs, columns=["utility_id_eia", "utility_name_eia", "variant", "name_norm",
+                                                    "first_year", "last_year"]))
+    con.execute("CREATE OR REPLACE TABLE eia_hist_names AS SELECT * FROM _eh")
+    con.unregister("_eh")
+    build_candidates(con, "roster_entities", "eia_hist_names", "cand_eia_hist", fuzzy=False)
+    con.execute("""
+    CREATE OR REPLACE TABLE eia_links AS
+    WITH m AS (SELECT DISTINCT c.entity_id, h.utility_id_eia
+               FROM cand_eia_hist c JOIN eia_hist_names h ON h.name_norm = c.target_norm WHERE c.tier <= 2),
+         e AS (SELECT entity_id FROM m GROUP BY 1 HAVING count(*) = 1),
+         u AS (SELECT utility_id_eia FROM m GROUP BY 1 HAVING count(*) = 1)
+    SELECT m.entity_id, m.utility_id_eia FROM m JOIN e USING (entity_id) JOIN u USING (utility_id_eia)""")
+    con.execute("""
+    CREATE OR REPLACE TABLE entity_eia_names AS
+    WITH n AS (
+      SELECT l.entity_id, l.utility_id_eia, h.name_norm AS alias_norm, h.variant,
+             h.utility_name_eia || ' (' || h.first_year ||
+               CASE WHEN h.last_year > h.first_year THEN '-' || h.last_year ELSE '' END || ')' AS example
+      FROM eia_links l JOIN eia_hist_names h USING (utility_id_eia)
+      WHERE h.name_norm NOT IN (SELECT name_norm FROM roster_entities)),
+         shared AS (SELECT alias_norm FROM n GROUP BY 1 HAVING count(DISTINCT entity_id) > 1)
+    SELECT entity_id, utility_id_eia, alias_norm, min(variant) AS variant,
+           string_agg(DISTINCT example, ' ; ') AS raw_examples
+    FROM n WHERE alias_norm NOT IN (SELECT alias_norm FROM shared)
+    GROUP BY 1, 2, 3""")
+    con.execute("""
+    CREATE OR REPLACE TABLE entity_eia861 AS
+    SELECT l.entity_id, l.utility_id_eia, year(r.report_date) AS year,
+           sum(r.wholesale_power_purchases_mwh) AS purchases_mwh, sum(r.net_generation_mwh) AS net_generation_mwh,
+           sum(r.retail_sales_mwh) AS retail_sales_mwh, sum(r.sales_for_resale_mwh) AS sales_for_resale_mwh
+    FROM eia_links l JOIN eia861_raw r USING (utility_id_eia)
+    WHERE r.report_date IS NOT NULL
+    GROUP BY 1, 2, 3""")
+    links = one(con, "SELECT count(*) FROM eia_links")[0]
+    aliases, named = one(con, "SELECT count(*), count(DISTINCT entity_id) FROM entity_eia_names")
+    latest = one(con, "SELECT max(year) FROM entity_eia861 WHERE purchases_mwh IS NOT NULL")[0]
+    return {"status": "ok", "links": links, "aliases": aliases, "companies_with_aliases": named,
+            "latest_purchases_year": latest}
 
 
 def mtime_iso(path: Path) -> str:
@@ -529,10 +636,17 @@ def extend_name_map(con, source_sql: str) -> int:
 NUM_TOKEN_RE = r"\b([0-9]+|[IVX]+)\b"  # digits or roman numerals: "Solar 1" vs "Solar 2", "Ridge II" vs "IV"
 
 
-def build_candidates(con, left: str, right: str, out: str) -> None:
+def build_candidates(con, left: str, right: str, out: str, fuzzy: bool = True) -> None:
     """left(entity_id, name_norm) x right(name_norm) -> out(entity_id, target_norm, method, score, tier, confidence).
-    Fuzzy matches must carry the same numbers: numbered project companies look alike but are different entities."""
+    Fuzzy matches must carry the same numbers: numbered project companies look alike but are different entities.
+    fuzzy=False keeps exact matches only (EIA names: a former name is either the same name or not used)."""
     nums = f"list_sort(regexp_extract_all(name_norm, {sql_str(NUM_TOKEN_RE)}))"
+    fuzzy_sql = f"""
+           UNION ALL
+           SELECT l.entity_id, r.name_norm, 'fuzzy', jaro_winkler_similarity(l.name_norm, r.name_norm), 3
+           FROM l JOIN r ON left(l.name_norm, 1) = left(r.name_norm, 1) AND l.ns <> r.ns AND l.nums = r.nums
+           WHERE length(l.name_norm) >= {FUZZY_MIN_LEN} AND length(r.name_norm) >= {FUZZY_MIN_LEN}
+             AND jaro_winkler_similarity(l.name_norm, r.name_norm) >= {FUZZY_REVIEW}""" if fuzzy else ""
     con.execute(f"""
     CREATE OR REPLACE TABLE {out} AS
     WITH l AS (SELECT entity_id, name_norm, replace(name_norm, ' ', '') AS ns, {nums} AS nums
@@ -544,12 +658,7 @@ def build_candidates(con, left: str, right: str, out: str) -> None:
            FROM l JOIN r ON l.name_norm = r.name_norm
            UNION ALL
            SELECT l.entity_id, r.name_norm, 'exact_nospace', 0.995, 2
-           FROM l JOIN r ON l.ns = r.ns AND l.name_norm <> r.name_norm
-           UNION ALL
-           SELECT l.entity_id, r.name_norm, 'fuzzy', jaro_winkler_similarity(l.name_norm, r.name_norm), 3
-           FROM l JOIN r ON left(l.name_norm, 1) = left(r.name_norm, 1) AND l.ns <> r.ns AND l.nums = r.nums
-           WHERE length(l.name_norm) >= {FUZZY_MIN_LEN} AND length(r.name_norm) >= {FUZZY_MIN_LEN}
-             AND jaro_winkler_similarity(l.name_norm, r.name_norm) >= {FUZZY_REVIEW})
+           FROM l JOIN r ON l.ns = r.ns AND l.name_norm <> r.name_norm{fuzzy_sql})
     SELECT *, CASE WHEN tier < 3 OR score >= {FUZZY_HIGH} THEN 'high' ELSE 'review' END AS confidence
     FROM c""")
 
@@ -576,6 +685,7 @@ def parse_args(argv=None):
     p.add_argument("--eqr-root", help="Local mirror of s3://pudl.catalyst.coop/ferceqr (same layout).")
     p.add_argument("--pudl-release", default="stable", help="PUDL release for the EIA crosswalk (default: stable).")
     p.add_argument("--eia-utilities", help="Path to core_pudl__assn_eia_pudl_utilities.parquet (overrides release).")
+    p.add_argument("--eia861", help=f"Path to {EIA861_OPS}.parquet (overrides release).")
     p.add_argument("--skip-eia", action="store_true", help="Skip the EIA utility name leg.")
     p.add_argument("--bar-roster", type=float, help="Override BARS['roster_resolution'].")
     p.add_argument("--bar-volume", type=float, help="Override BARS['volume_coverage'].")
@@ -674,6 +784,7 @@ def main(argv=None) -> None:
     snap_dir.mkdir(parents=True, exist_ok=True)
     eqr_root = args.eqr_root.rstrip("/") if args.eqr_root else EQR_ROOT_S3
     eia_path = args.eia_utilities or f"{PUDL_ROOT_S3}/{args.pudl_release}/core_pudl__assn_eia_pudl_utilities.parquet"
+    eia861_path = args.eia861 or f"{PUDL_ROOT_S3}/{args.pudl_release}/{EIA861_OPS}.parquet"
 
     # ---------------------------------------------------------------- window + snapshot reuse
     # A rerun into the same --out reuses that run's snapshot, so only your decisions move the numbers.
@@ -699,17 +810,17 @@ def main(argv=None) -> None:
         window = None  # the old window's files are gone; list what's available now
     eia_snap = snap_dir / f"{EIA_SNAPSHOT}.parquet"
     reuse_eia = not args.refresh and not args.skip_eia and snapshot_usable(eia_snap, EIA_COLS)
-    tx_sig = hashlib.sha256((tx_filter_sql() + json.dumps(TX_COLS, sort_keys=True)).encode()).hexdigest()[:8]
+    eia861_snap = snap_dir / f"{EIA861_OPS}.parquet"
+    reuse_eia861 = not args.refresh and not args.skip_eia and snapshot_usable(eia861_snap, EIA861_OPS_COLS)
 
-    def tx_plan(win):
-        tq = [q.strip().lower() for q in args.tx_quarters.split(",")] if args.tx_quarters else [win[-1]]
-        paths = {q: snap_dir / f"core_ferceqr__transactions_{q}_{tx_sig}.parquet" for q in tq}
-        reuse = not args.refresh and all(snapshot_usable(p, TX_COLS) for p in paths.values())
-        return tq, paths, reuse
+    def tx_quarters_for(win):
+        return [q.strip().lower() for q in args.tx_quarters.split(",")] if args.tx_quarters else [win[-1]]
 
-    reuse_tx = tx_plan(window)[2] if window else False
-    needs_s3 = ((eqr_root.startswith("s3://") and (not reuse_eqr or (not args.skip_transactions and not reuse_tx)))
-                or (not args.skip_eia and not reuse_eia and eia_path.startswith("s3://")))
+    # The trades slice depends on which buyer names resolve to roster companies, so whether its snapshot can be
+    # reused is settled after resolution; S3 is set up whenever a pull may be needed.
+    needs_s3 = ((eqr_root.startswith("s3://") and (not reuse_eqr or not args.skip_transactions))
+                or (not args.skip_eia and not reuse_eia and eia_path.startswith("s3://"))
+                or (not args.skip_eia and not reuse_eia861 and eia861_path.startswith("s3://")))
     con = connect(out, needs_s3, args)
     con.execute("CREATE OR REPLACE TABLE name_map (raw_name VARCHAR, name_norm VARCHAR)")
 
@@ -724,7 +835,7 @@ def main(argv=None) -> None:
             raise SystemExit(f"No quarterly Parquet files found at {pattern}")
         window = [q_name(k) for k in ks if k > ks[-1] - args.last_n]
     min_qk, max_qk = q_key(window[0]), q_key(window[-1])
-    tx_quarters, tx_paths, reuse_tx = tx_plan(window)
+    tx_quarters = tx_quarters_for(window)
     if reuse_eqr:
         taken = (prev_snaps.get("core_ferceqr__contracts", {}).get("taken_at")
                  or mtime_iso(window_snapshot(snap_dir, "core_ferceqr__contracts", window)))
@@ -859,9 +970,43 @@ def main(argv=None) -> None:
             eia_status = f"unavailable ({str(exc).splitlines()[0][:160]})"
             log(f"EIA leg skipped: {eia_status}")
 
+    # ---------------------------------------------------------------- EIA-861: former names and purchases
+    eia_hist: dict = {"status": "skipped (--skip-eia)"}
+    con.execute("CREATE OR REPLACE TABLE entity_eia_names (entity_id VARCHAR, utility_id_eia BIGINT, "
+                "alias_norm VARCHAR, variant VARCHAR, raw_examples VARCHAR)")
+    con.execute("CREATE OR REPLACE TABLE entity_eia861 (entity_id VARCHAR, utility_id_eia BIGINT, year INTEGER, "
+                "purchases_mwh DOUBLE, net_generation_mwh DOUBLE, retail_sales_mwh DOUBLE, "
+                "sales_for_resale_mwh DOUBLE)")
+    if not args.skip_eia:
+        try:
+            src = eia861_snap.as_posix() if reuse_eia861 else eia861_path
+            con.execute(f"CREATE OR REPLACE TABLE eia861_raw AS "
+                        f"{select_from_files(con, 'eia861', [('', src)], EIA861_OPS_COLS)}")
+            if not reuse_eia861:
+                con.execute(f"COPY eia861_raw TO {sql_str(eia861_snap.as_posix())} (FORMAT parquet, COMPRESSION zstd)")
+            snap[EIA861_OPS] = {"file": eia861_snap.name, "sha256": sha256(eia861_snap),
+                                "rows": one(con, "SELECT count(*) FROM eia861_raw")[0],
+                                "taken_at": (prev_snaps.get(EIA861_OPS, {}).get("taken_at") or mtime_iso(eia861_snap))
+                                if reuse_eia861 else taken_now, "reused": reuse_eia861, "source": eia861_path}
+            eia_hist = link_eia_history(con)
+            log(f"EIA-861: {eia_hist['links']:,} roster companies tied to an EIA utility; {eia_hist['aliases']:,} "
+                f"former or spelled-out names added for {eia_hist['companies_with_aliases']:,}.")
+        except (duckdb.Error, SystemExit) as exc:
+            eia_hist = {"status": f"unavailable ({str(exc).splitlines()[0][:160]})"}
+            log(f"EIA-861 leg skipped: {eia_hist['status']}")
+    con.execute("CREATE OR REPLACE VIEW eia_alias_names AS "
+                "SELECT entity_id, alias_norm AS name_norm FROM entity_eia_names")
+
     # ---------------------------------------------------------------- Q1 resolution
     log("Resolving roster names against EQR customers, EQR sellers and EIA utilities...")
     build_candidates(con, "roster_entities", "eqr_customers", "cand_customers")
+    # Former and spelled-out EIA names add exact matches only; fuzzy matching stays on roster names.
+    build_candidates(con, "eia_alias_names", "eqr_customers", "cand_customers_eia", fuzzy=False)
+    eia_hist["new_customer_names"] = one(con, """
+        SELECT count(DISTINCT target_norm) FROM cand_customers_eia
+        WHERE tier <= 2 AND target_norm NOT IN (SELECT target_norm FROM cand_customers WHERE confidence = 'high')""")[0]
+    con.execute("INSERT INTO cand_customers SELECT entity_id, target_norm, 'eia_' || method, score, tier, confidence "
+                "FROM cand_customers_eia WHERE tier <= 2")
     build_candidates(con, "roster_entities", "eqr_sellers", "cand_sellers")
     build_candidates(con, "roster_entities", "eia_names", "cand_eia")
     con.execute("CREATE OR REPLACE TABLE cand_customers_auto AS SELECT * FROM cand_customers")
@@ -875,7 +1020,8 @@ def main(argv=None) -> None:
     con.execute("""
     CREATE OR REPLACE TABLE eqr_resolved AS
     SELECT target_norm, entity_id, method, score FROM cand_customers WHERE confidence = 'high'
-    QUALIFY row_number() OVER (PARTITION BY target_norm ORDER BY tier, score DESC, entity_id) = 1""")
+    QUALIFY row_number() OVER (PARTITION BY target_norm
+                               ORDER BY tier, method LIKE 'eia_%', score DESC, entity_id) = 1""")
     con.execute("""
     CREATE OR REPLACE TABLE roster_matches AS
     WITH bc AS (SELECT * FROM cand_customers
@@ -908,7 +1054,7 @@ def main(argv=None) -> None:
         SELECT count(*), count(*) FILTER (WHERE found_as_power_buyer),
                count(*) FILTER (WHERE customer_confidence = 'high'),
                count(*) FILTER (WHERE customer_confidence = 'review'),
-               count(*) FILTER (WHERE customer_method IN ('exact', 'exact_nospace')),
+               count(*) FILTER (WHERE customer_method IN ('exact', 'exact_nospace', 'eia_exact', 'eia_exact_nospace')),
                count(*) FILTER (WHERE seller_cid IS NOT NULL), count(*) FILTER (WHERE utility_id_eia IS NOT NULL),
                count(*) FILTER (WHERE customer_confidence = 'high' OR seller_cid IS NOT NULL)
         FROM roster_matches""")
@@ -1025,7 +1171,10 @@ def main(argv=None) -> None:
       UNION ALL
       SELECT c.entity_id, c.target_norm, 'eia_utility', c.method, c.score, NULL, e.utility_id_eia, e.utility_id_pudl,
              e.utility_name_eia
-      FROM cand_eia c JOIN eia_names e ON e.name_norm = c.target_norm WHERE c.confidence = 'high')
+      FROM cand_eia c JOIN eia_names e ON e.name_norm = c.target_norm WHERE c.confidence = 'high'
+      UNION ALL
+      SELECT entity_id, alias_norm, 'eia_name_history', variant, 1.0, NULL, utility_id_eia, NULL, raw_examples
+      FROM entity_eia_names)
     SELECT re.entity_id, re.entity_name, re.isos, a.source, a.alias_norm, a.method, round(a.score, 3) AS score,
            a.seller_cid, a.utility_id_eia, a.utility_id_pudl,
            CASE WHEN a.source = 'eqr_customer' THEN e.buys_power END AS buys_power,
@@ -1262,7 +1411,8 @@ def main(argv=None) -> None:
     manifest = {
         "run_at": dt.datetime.now().isoformat(timespec="seconds"),
         "duckdb": duckdb.__version__, "python": platform.python_version(),
-        "source": {"eqr_root": eqr_root, "eia_utilities": None if args.skip_eia else eia_path},
+        "source": {"eqr_root": eqr_root, "eia_utilities": None if args.skip_eia else eia_path,
+                   "eia861": None if args.skip_eia else eia861_path},
         "contract_window": [window[0], window[-1]], "quarters": window, "tx_quarters": None,
         "files": {"contracts": [f for _, f in files_c], "identity": [f for _, f in files_i]},
         "snapshots": snap, "missing_columns": {k: sorted(v) for k, v in MISSING_COLUMNS.items()},
@@ -1284,7 +1434,8 @@ def main(argv=None) -> None:
                tenor=tenor, buckets=buckets, carries_tenor=carries_tenor, ev=ev, ev_by_year=ev_by_year,
                net_signal_events=net_signal_events, net_signal_entities=net_signal_entities,
                disappeared=disappeared, van_n=van_n, van_rekey=van_rekey, top_ba=top_ba, top_loc=top_loc,
-               eia_status=eia_status, snap=snap, n_contract_rows=n_contract_rows, tx=None, con=con,
+               eia_status=eia_status, eia_hist=eia_hist, snap=snap, n_contract_rows=n_contract_rows, tx=None,
+               con=con,
                decision_stats=decision_stats, review_counts=review_counts, reuse_eqr=reuse_eqr,
                n_power=n_power, n_found_any=n_found_any, not_buyer_why=not_buyer_why,
                stale_terminations=stale_terminations, window_start=window_start, net_recontracted=net_recontracted,
@@ -1296,7 +1447,29 @@ def main(argv=None) -> None:
     if args.skip_transactions:
         log("Transactions skipped (--skip-transactions).")
     else:
+        # Every raw spelling that resolves to a roster company: their trades are kept wherever delivered.
+        con.execute("""
+        CREATE OR REPLACE TABLE tx_buyers AS
+        SELECT DISTINCT upper(trim(c.customer_company_name)) AS raw_key
+        FROM contracts c JOIN eqr_resolved r ON r.target_norm = c.customer_norm
+        WHERE coalesce(trim(c.customer_company_name), '') <> ''""")
+        buyers = [r[0] for r in rows(con, "SELECT raw_key FROM tx_buyers ORDER BY 1")]
+        tx_sig = hashlib.sha256((tx_filter_sql() + json.dumps(TX_COLS, sort_keys=True)).encode()).hexdigest()[:8]
+        tx_paths = {q: snap_dir / f"core_ferceqr__transactions_{q}_{tx_sig}.parquet" for q in tx_quarters}
+        # A snapshot pulled for a list of buyer spellings serves any run whose list it covers (the rows are
+        # filtered again on reuse), so accepting or rejecting a match only forces a new pull when it adds a buyer.
+        buyers_file = snap_dir / f"tx_buyers_{tx_sig}_{tx_quarters[0]}_{tx_quarters[-1]}.txt"
+        pulled_for = set(buyers_file.read_text(encoding="utf-8").splitlines()) if buyers_file.exists() else set()
+        new_buyers = set(buyers) - pulled_for
+        reuse_tx = (not args.refresh and buyers_file.exists() and not new_buyers
+                    and all(snapshot_usable(p, TX_COLS) for p in tx_paths.values()))
+        if buyers_file.exists() and new_buyers and not args.refresh:
+            log(f"Buyer spellings that resolve to roster companies since the trades were pulled: {len(new_buyers):,} "
+                f"new. Pulling the trades again.")
+        manifest["tx_buyer_spellings"] = len(buyers)
         ctx["tx"], tx_snap = run_transactions(con, eqr_root, tx_quarters, out, tx_paths, reuse_tx, prev_snaps)
+        if not reuse_tx:
+            buyers_file.write_text("\n".join(buyers) + "\n", encoding="utf-8")
         snap.update(tx_snap)
         manifest["tx_quarters"] = tx_quarters
         manifest["files"]["transactions"] = [f"{eqr_root}/core_ferceqr__transactions/{q}.parquet" for q in tx_quarters]
@@ -1315,11 +1488,12 @@ def run_transactions(con, eqr_root: str, tx_quarters: list[str], out: Path, tx_p
     if reuse:
         log(f"Reusing the transactions slice for {', '.join(tx_quarters)} from the snapshot.")
         union = " UNION ALL ".join(f"SELECT * FROM read_parquet({sql_str(p.as_posix())})" for p in tx_paths.values())
-        con.execute(f"CREATE OR REPLACE TEMP TABLE tx_raw AS {union}")
+        con.execute(f"CREATE OR REPLACE TEMP TABLE tx_raw AS SELECT * FROM ({union}) WHERE {tx_filter_sql()}")
     else:
         files_t = [(q, f"{eqr_root}/core_ferceqr__transactions/{q}.parquet") for q in tx_quarters]
-        log(f"Reading EQR transactions for {', '.join(tx_quarters)} (the big table; filtered to PJM/MISO/NYISO "
-            f"bilateral power, ~13 columns). This is the slow step...")
+        log(f"Reading EQR transactions for {', '.join(tx_quarters)} (the big table; bilateral power delivered in "
+            f"PJM, MISO or NYISO, plus every roster company's purchases wherever delivered; ~14 columns). "
+            f"This is the slow step...")
         con.execute(f"CREATE OR REPLACE TEMP TABLE tx_raw AS "
                     f"{select_from_files(con, 'transactions', files_t, TX_COLS, tx_filter_sql())}")
         for q, p in tx_paths.items():
@@ -1331,7 +1505,8 @@ def run_transactions(con, eqr_root: str, tx_quarters: list[str], out: Path, tx_p
         snap[key] = {"file": p.name, "sha256": sha256(p),
                      "rows": one(con, f"SELECT count(*) FROM read_parquet({sql_str(p.as_posix())})")[0],
                      "taken_at": (prev_snaps.get(key, {}).get("taken_at") or mtime_iso(p)) if reuse else taken_now,
-                     "reused": reuse, "columns": "subset used by this check; filtered to PJM/MISO/NYISO bilateral power"}
+                     "reused": reuse, "columns": "subset used by this check; bilateral power delivered in PJM, MISO "
+                                                "or NYISO, plus roster companies' purchases wherever delivered"}
     log(f"Transaction rows kept: {one(con, 'SELECT count(*) FROM tx_raw')[0]:,}")
     extend_name_map(con, "SELECT customer_company_name AS raw_name FROM tx_raw")
     con.execute(f"""
@@ -1351,13 +1526,17 @@ def run_transactions(con, eqr_root: str, tx_quarters: list[str], out: Path, tx_p
                    SELECT DISTINCT customer_norm AS name_norm FROM tx
                    WHERE coalesce(customer_norm, '') <> '' AND customer_norm NOT IN (SELECT name_norm FROM eqr_customers)""")
     build_candidates(con, "roster_entities", "tx_only_names", "cand_tx")
+    build_candidates(con, "eia_alias_names", "tx_only_names", "cand_tx_eia", fuzzy=False)
+    con.execute("INSERT INTO cand_tx SELECT entity_id, target_norm, 'eia_' || method, score, tier, confidence "
+                "FROM cand_tx_eia WHERE tier <= 2")
     con.execute("""
     CREATE OR REPLACE TABLE resolved_all AS
     SELECT target_norm, entity_id FROM eqr_resolved
     UNION ALL
     SELECT target_norm, entity_id FROM (
       SELECT * FROM cand_tx WHERE confidence = 'high'
-      QUALIFY row_number() OVER (PARTITION BY target_norm ORDER BY tier, score DESC, entity_id) = 1)""")
+      QUALIFY row_number() OVER (PARTITION BY target_norm
+                                 ORDER BY tier, method LIKE 'eia_%', score DESC, entity_id) = 1)""")
     con.execute(f"""
     CREATE OR REPLACE TABLE tx_base AS
     SELECT t.*, r.entity_id, (upper(t.product_name) = 'ENERGY') AS is_energy, {kwh_sql()} AS kwh_fixed,
@@ -1497,7 +1676,7 @@ def write_report(out: Path, c: dict, manifest: dict) -> None:
             w(f"- **Tenor:** contract dates carry exposure tenor for {fp(ct)} of roster-linked contracts; "
               f"contract-level tenor compression is viable, with transactions as a refinement.")
     if tx:
-        w(f"- **Trade dates:** usable on {fp(tx['trade_ok_rows'])} of in-scope trade rows "
+        w(f"- **Trade dates:** usable on {fp(tx['trade_ok_rows'])} of the trade rows kept "
           f"({fp(pct(tx['mwh_trade_ok'] or 0, tx['mwh'] or 0))} of energy MWh). "
           f"{fi(tx['ent_enough'])} of {fi(tx['ent_any'])} trading roster entities have >= {MIN_DATED_TRADES} dated "
           f"trades this quarter, which is the per-entity tenor universe.")
@@ -1523,7 +1702,7 @@ def write_report(out: Path, c: dict, manifest: dict) -> None:
                    "Seller CID + customer name joins better; use it as the fallback key."
                    if jc >= 0.8 and jc > jr else
                    "The join is weak; dormancy needs key work before it ships.")
-        w(f"- **Dormancy join:** {fp(jr)} of in-scope trade rows match an active contract on "
+        w(f"- **Dormancy join:** {fp(jr)} of the trade rows kept match an active contract on "
           f"(seller CID, service agreement ID), {fp(jc)} on (seller CID, customer name). {verdict} "
           f"Of active roster-linked PJM/MISO contracts, {fp(ar)} traded this quarter under their own agreement and "
           f"{fp(arc)} counting any agreement with the same seller. Measure dormancy per seller-customer "
@@ -1551,10 +1730,20 @@ def write_report(out: Path, c: dict, manifest: dict) -> None:
     w(f"Eligible = power sales (MB/CB/NPU, no transmission products), not affiliate, not sold to an RTO/ISO. "
       f"{fp(c['scoped_share'])} of eligible contracts carry delivery info that maps to any scope; the rest can "
       f"only be scoped through the counterparty. EIA leg: {c['eia_status']}.\n")
+    eh = c.get("eia_hist") or {}
+    if eh.get("status") == "ok":
+        w(f"EIA-861 name history: {fi(eh['links'])} roster companies tied to one EIA utility each by an exact name; "
+          f"{fi(eh['aliases'])} former or spelled-out EIA names added as aliases for "
+          f"{fi(eh['companies_with_aliases'])} of them; EQR customer names newly matched through them: "
+          f"{fi(eh.get('new_customer_names'))}. "
+          f"Purchases from EIA-861 through {eh.get('latest_purchases_year') or 'n/a'}.\n")
+    else:
+        w(f"EIA-861 name history: {eh.get('status', 'not run')}.\n")
     if tx:
         w(md_table(["Trade scope (" + ", ".join(tx["quarters"]) + ")", "Energy MWh", "MWh resolved", "MWh coverage",
                     "Rows", "Row coverage"],
-                   [[s or "(none)", fi(m or 0), fi(mr or 0), fp(pct(mr or 0, m or 0)), fi(n), fp(pct(nr, n))]
+                   [[s or "Elsewhere (roster buyers only)", fi(m or 0), fi(mr or 0), fp(pct(mr or 0, m or 0)), fi(n),
+                     fp(pct(nr, n))]
                     for s, m, mr, n, nr in tx["cov"]]) + "\n")
     med, mx, n3 = c["spell_stats"] or (None, None, None)
     w(f"**The spelling problem, measured:** resolved entities appear under a median of {f'{med:g}' if med is not None else 'n/a'} "

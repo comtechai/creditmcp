@@ -151,3 +151,18 @@ def _main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(_main())
+
+
+def test_a_former_eia_name_resolves_to_the_renamed_company():
+    rows = FIXTURE + [
+        _row("R13", "Northwind Energy Cooperative", "MISO", "roster", None),
+        _row("R13", "Northwind Energy Cooperative", "MISO", "eia_name_history", "NORTHWIND ELECTRIC POWER ASSOCIATION",
+             method="eia_spelled_out", utility_id_eia=90001, raw_examples="Northwind El Pwr Assn (2001-2016)"),
+    ]
+    res = EntityResolver(rows, groups=GROUPS).resolve("Northwind Electric Power Association")
+    top = res.candidates[0]
+    assert top.entity_id == "R13" and top.confidence == Confidence.MATCH and top.method.value == "exact"
+    assert top.alias_source.value == "eia_name_history" and top.identifiers.eia_utility_ids == [90001]
+    assert res.summary == ("Matches Northwind Energy Cooperative (MISO): exact match on a name in its EIA filing "
+                           "history.")
+    assert "matched on EIA filing history name 'NORTHWIND ELECTRIC POWER ASSOCIATION'" in top.source
