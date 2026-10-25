@@ -81,8 +81,13 @@ def market_signals(name: str) -> MarketSignalsResult:
         half of them, and volume fell by half or more. Provisional thresholds.
       - every seller relationship with its status and volume by quarter, a market-wide comparison,
         a plain-language summary, provenance and caveats.
-      - quantity_fixes: seller reports priced so low they only make sense as kWh entered in EQR's MWh
-        field. Those count at a thousandth, and the summary names them.
+      - quantity_fixes: seller reports that can't be real sales at the size reported: kWh entered in
+        EQR's MWh field, or adjustment rows that repeat a month's MWh. Those count at a thousandth, and
+        the summary names them.
+      - placeholder_bills: sellers that reported their sales to it as monthly bills with a placeholder
+        quantity of a few MWh. That energy can't be counted. placeholder_billing_share sizes those
+        bills against everything EQR sellers billed it for energy, and the summary says whether they
+        make its volume and coverage read low.
       - coverage: how much of the company's buying EQR shows, comparing the energy here over the last
         four quarters with the wholesale purchases it reported to EIA (Form 861), as a level (high,
         partial, low, unknown), a share and a sentence. When EQR shows under a quarter of its buying,

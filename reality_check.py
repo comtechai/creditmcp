@@ -117,9 +117,14 @@ NON_POWER_PRODUCTS = (
 TX_PRODUCTS = ("ENERGY", "CAPACITY", "BOOKED OUT POWER", "REQUIREMENTS SERVICE")
 # Some sellers enter kWh in EQR's MWh field, and some bill an adjustment as a row that repeats a month's MWh. An energy
 # row whose total charge works out under KWH_MAX_PRICE dollars per MWh, on at least KWH_MIN_QTY MWh as reported, is
-# too cheap for that much energy (usually one or the other): it counts at a thousandth.
+# cheap enough to be one or the other. It counts at a thousandth when it is KWH_SURE_QTY MWh or more (no real sale that
+# big is that cheap), when the same seller reported that buyer in kWh in the same quarter, or, delivered in PJM, MISO
+# or NYISO, when it is priced at least KWH_PRICE_RATIO times below that seller's usual price to that buyer. Other
+# cheap rows count as filed: a price that low is not proof of an error, since energy does trade near zero at times.
 KWH_MAX_PRICE = 0.5
 KWH_MIN_QTY = 1000.0
+KWH_SURE_QTY = 100_000.0
+KWH_PRICE_RATIO = 300
 
 FUZZY_HIGH = 0.97        # Jaro-Winkler at/above this counts as a high-confidence match
 FUZZY_REVIEW = 0.90      # between REVIEW and HIGH lands in review_queue.csv for hand checks
@@ -307,10 +312,34 @@ def tx_filter_sql() -> str:
 
 
 def kwh_sql(t: str = "t") -> str:
-    """True for an energy row priced so low it only makes sense as kWh entered in the MWh field."""
+    """True for an energy row priced so low it may be kWh entered in the MWh field (the price test alone)."""
     q, charge = f"{t}.standardized_quantity", f"{t}.total_transaction_charge"
     return (f"coalesce(upper({t}.product_name) = 'ENERGY' AND {q} >= {KWH_MIN_QTY} AND {charge} > 0 "
             f"AND {charge} / {q} < {KWH_MAX_PRICE}, false)")
+
+
+def quantity_check_sql(src: str) -> str:
+    """Every row of `src` with kwh_fixed and mwh added (see KWH_SURE_QTY above). `src` needs year_quarter,
+    seller_company_id_ferc, customer_norm, product_name, standardized_quantity, total_transaction_charge and
+    geo_scope."""
+    price = "total_transaction_charge / nullif(standardized_quantity, 0)"
+    return f"""
+    WITH f AS (SELECT s.*, {kwh_sql('s')} AS cheap FROM {src} s),
+    usual AS (SELECT seller_company_id_ferc, customer_norm, median({price}) AS usual_price
+              FROM f WHERE upper(coalesce(product_name, '')) = 'ENERGY' AND standardized_quantity > 0
+                AND {price} >= {KWH_MAX_PRICE}
+              GROUP BY 1, 2),
+    g AS (SELECT f.*, u.usual_price,
+                 bool_or(f.cheap AND f.standardized_quantity >= {KWH_SURE_QTY})
+                   OVER (PARTITION BY f.year_quarter, f.seller_company_id_ferc, f.customer_norm) AS seller_used_kwh
+          FROM f LEFT JOIN usual u ON u.seller_company_id_ferc IS NOT DISTINCT FROM f.seller_company_id_ferc
+                                  AND u.customer_norm IS NOT DISTINCT FROM f.customer_norm),
+    h AS (SELECT g.* EXCLUDE (cheap, usual_price, seller_used_kwh),
+                 coalesce(cheap AND (standardized_quantity >= {KWH_SURE_QTY} OR seller_used_kwh
+                                     OR (geo_scope IS NOT NULL AND {price} * {KWH_PRICE_RATIO} <= usual_price)),
+                          false) AS kwh_fixed
+          FROM g)
+    SELECT *, CASE WHEN kwh_fixed THEN standardized_quantity / 1000 ELSE standardized_quantity END AS mwh FROM h"""
 
 
 def spell_out_eia(raw) -> str:
@@ -1421,7 +1450,8 @@ def main(argv=None) -> None:
                      "EVERGREEN_RE": EVERGREEN_RE, "FUZZY_HIGH": FUZZY_HIGH, "FUZZY_REVIEW": FUZZY_REVIEW,
                      "EARLY_TOLERANCE_DAYS": EARLY_TOLERANCE_DAYS, "OPEN_ENDED_YEAR": OPEN_ENDED_YEAR,
                      "REPAPER_WINDOW_DAYS": [-REPAPER_DAYS_BEFORE, REPAPER_DAYS_AFTER],
-                     "KWH_MAX_PRICE": KWH_MAX_PRICE, "KWH_MIN_QTY": KWH_MIN_QTY},
+                     "KWH_MAX_PRICE": KWH_MAX_PRICE, "KWH_MIN_QTY": KWH_MIN_QTY, "KWH_SURE_QTY": KWH_SURE_QTY,
+                     "KWH_PRICE_RATIO": KWH_PRICE_RATIO},
         "roster": {"files": args.roster, "rows": len(roster), "entities": len(entities), "isos": roster_isos},
         "decisions": None if decisions is None else {"file": str(Path(args.decisions).expanduser()),
                                                      "sha256": decisions_sha, **decision_stats},
@@ -1475,7 +1505,8 @@ def main(argv=None) -> None:
         manifest["files"]["transactions"] = [f"{eqr_root}/core_ferceqr__transactions/{q}.parquet" for q in tx_quarters]
         manifest["missing_columns"] = {k: sorted(v) for k, v in MISSING_COLUMNS.items()}
         manifest["quantity_check"] = {k: ctx["tx"][k] for k in ("kwh_rows", "kwh_sellers", "kwh_reported", "kwh_counted",
-                                                                "charge_rows", "energy_rows")}
+                                                                "charge_rows", "energy_rows", "cheap_as_filed_rows",
+                                                                "cheap_as_filed_mwh")}
         write_report(out, ctx, manifest)
         log(f"Report updated with transactions ({time.time() - t_start:.0f}s).")
     con.close()
@@ -1537,16 +1568,20 @@ def run_transactions(con, eqr_root: str, tx_quarters: list[str], out: Path, tx_p
       SELECT * FROM cand_tx WHERE confidence = 'high'
       QUALIFY row_number() OVER (PARTITION BY target_norm
                                  ORDER BY tier, method LIKE 'eia_%', score DESC, entity_id) = 1)""")
-    con.execute(f"""
-    CREATE OR REPLACE TABLE tx_base AS
-    SELECT t.*, r.entity_id, (upper(t.product_name) = 'ENERGY') AS is_energy, {kwh_sql()} AS kwh_fixed,
-           CASE WHEN {kwh_sql()} THEN t.standardized_quantity / 1000 ELSE t.standardized_quantity END AS mwh
+    con.execute("""
+    CREATE OR REPLACE TEMP TABLE tx_kept AS
+    SELECT t.*, r.entity_id, (upper(t.product_name) = 'ENERGY') AS is_energy
     FROM tx t LEFT JOIN resolved_all r ON r.target_norm = t.customer_norm
     WHERE t.dup_rank = 1 AND NOT coalesce(t.customer_is_mo, false)""")
-    kwh = one(con, """
+    con.execute(f"CREATE OR REPLACE TABLE tx_base AS {quantity_check_sql('tx_kept')}")
+    con.execute("DROP TABLE tx_kept")
+    kwh = one(con, f"""
         SELECT count(*) FILTER (WHERE kwh_fixed), count(DISTINCT seller_company_id_ferc) FILTER (WHERE kwh_fixed),
                coalesce(sum(standardized_quantity) FILTER (WHERE kwh_fixed), 0), coalesce(sum(mwh) FILTER (WHERE kwh_fixed), 0),
-               count(*) FILTER (WHERE is_energy AND total_transaction_charge IS NOT NULL), count(*) FILTER (WHERE is_energy)
+               count(*) FILTER (WHERE is_energy AND total_transaction_charge IS NOT NULL),
+               count(*) FILTER (WHERE is_energy),
+               count(*) FILTER (WHERE {kwh_sql('tx_base')} AND NOT kwh_fixed),
+               coalesce(sum(standardized_quantity) FILTER (WHERE {kwh_sql('tx_base')} AND NOT kwh_fixed), 0)
         FROM tx_base""")
 
     rows_all, rows_dup = one(con, "SELECT count(*), count(*) FILTER (WHERE dup_rank > 1) FROM tx")
@@ -1615,7 +1650,7 @@ def run_transactions(con, eqr_root: str, tx_quarters: list[str], out: Path, tx_p
                 join_rows=j[0] or 0, join_csa=j[1] or 0, join_cust=j[2] or 0,
                 active=d[0] or 0, active_tx_csa=d[1] or 0, active_tx_cust=d[2] or 0,
                 kwh_rows=kwh[0], kwh_sellers=kwh[1], kwh_reported=kwh[2], kwh_counted=kwh[3],
-                charge_rows=kwh[4], energy_rows=kwh[5]), snap
+                charge_rows=kwh[4], energy_rows=kwh[5], cheap_as_filed_rows=kwh[6], cheap_as_filed_mwh=kwh[7]), snap
 
 
 # =============================================================================
@@ -1794,13 +1829,17 @@ def write_report(out: Path, c: dict, manifest: dict) -> None:
         w(f"LT share of energy MWh: {fp(pct(tx['mwh_lt'] or 0, tx['mwh_term'] or 0))}. "
           f"Duplicate transaction rows (same quarter, seller CID, transaction ID): "
           f"{fi(tx['rows_dup'])} of {fi(tx['rows_all'])} ({fp(pct(tx['rows_dup'], tx['rows_all']))}); deduplicated above.\n")
-        w(f"Quantity check: {fi(tx['kwh_rows'])} energy rows from {fi(tx['kwh_sellers'])} sellers were priced under "
-          f"${KWH_MAX_PRICE:.2f} a MWh on at least {KWH_MIN_QTY:,.0f} MWh as reported, too little for that much energy "
-          f"(usually kWh entered as MWh, or an adjustment to energy billed in another row), so they count at a "
-          f"thousandth: "
-          f"{fi(tx['kwh_reported'])} MWh as reported, "
-          f"{fi(tx['kwh_counted'])} counted. All MWh figures above use the corrected quantities. Total charge is filled "
-          f"in on {fp(pct(tx['charge_rows'], tx['energy_rows']))} of energy rows; rows without it can't be checked.\n")
+        rnd = lambda v: None if v is None else round(v)  # fi() truncates, and these are sums of thousandths
+        w(f"Quantity check: {fi(tx['kwh_rows'])} energy rows from {fi(tx['kwh_sellers'])} sellers count at a "
+          f"thousandth ({fi(rnd(tx['kwh_reported']))} MWh as reported, {fi(rnd(tx['kwh_counted']))} counted). Each "
+          f"was priced under ${KWH_MAX_PRICE:.2f} a MWh on at least {KWH_MIN_QTY:,.0f} MWh as reported, and was "
+          f"{KWH_SURE_QTY:,.0f} MWh or more, came from a seller that reported that buyer in kWh that quarter, or was "
+          f"delivered in PJM, MISO or NYISO at least {KWH_PRICE_RATIO} times below that seller's usual price to that "
+          f"buyer (usually kWh entered as MWh, or an adjustment to energy billed in another row). The other "
+          f"{fi(tx['cheap_as_filed_rows'])} rows that cheap ({fi(rnd(tx['cheap_as_filed_mwh']))} MWh) met none of "
+          f"these tests and count as filed. All MWh figures above use the corrected quantities. Total charge is "
+          f"filled in on {fp(pct(tx['charge_rows'], tx['energy_rows']))} of energy rows; rows without it can't be "
+          f"checked.\n")
 
     # ---- Q4
     w("## Q4. Signal sizing\n")

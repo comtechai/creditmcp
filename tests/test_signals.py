@@ -18,6 +18,7 @@ from creditmcp.resolve import DataError, EntityResolver
 from creditmcp.schema import (
     AffiliateGroup,
     CoverageLevel,
+    PlaceholderBill,
     QuantityFix,
     ResultStatus,
     SellerSignal,
@@ -51,7 +52,7 @@ COMPANIES = {"E1": "Alpha Municipal Power Agency", "E2": "Bravo Electric Coopera
              "E16": "Oscar Municipal Utility", "E17": "Papa Power Cooperative", "E18": "Quebec Energy LLC",
              "E19": "Romeo Utility", "E20": "Sierra Electric Cooperative", "E21": "Tango Power LLC",
              "E22": "Uniform Power Agency", "E23": "Victor Electric", "E24": "Whiskey Power",
-             "E25": "Xray Power Cooperative", "E26": "Yankee Power Coop"}
+             "E25": "Xray Power Cooperative", "E26": "Yankee Power Coop", "E27": "Zulu Energy Cooperative"}
 ROWS = [{"entity_id": e, "entity_name": n, "isos": "PJM", "source": "roster", "alias_norm": normalize_name(n)}
         for e, n in COMPANIES.items()]
 ROWS.append({"entity_id": "E2", "entity_name": COMPANIES["E2"], "isos": "PJM", "source": "eqr_customer",
@@ -63,10 +64,10 @@ NOW = Q[4:]
 
 
 def case(seller, cust, traded, *, under=Q, actual=None, energy=True, mwh=None, csa=None, latest_as=None,
-         latest_other=False, early_as=None, kwh=None):
+         latest_other=False, early_as=None, kwh=None, bill=None):
     return dict(seller=seller, cust=cust, traded=traded, under=under, actual=actual, energy=energy,
                 mwh=mwh or {}, csa=csa, latest_as=latest_as, latest_other=latest_other, early_as=early_as,
-                kwh=kwh or {})
+                kwh=kwh or {}, bill=bill)
 
 
 CASES = [
@@ -116,6 +117,8 @@ CASES = [
     case("S3", "Some Other Buyer Inc", Q, csa="W-1"),
     case("S7", "Xray Power Cooperative", Q, kwh={"2026q2": 100_000.0}),          # E25: one quarter entered in kWh
     case("S8", "Yankee Power Coop", Q, mwh={"2025q2": 100_000.0}),                 # E26: MWh and dollars both scaled
+    case("S3", "Zulu Energy Cooperative", Q),                                        # E27: one seller trades as usual,
+    case("S9", "Zulu Energy Cooperative", Q, bill=250_000.0),                        # one bills a month as 1 MWh
 ]                                                                # E22: no trades or contracts at all
 
 
@@ -133,9 +136,10 @@ def _db(tmp_path, quarters=Q, quantity=True):
                 + (", total_transaction_charge DOUBLE, mwh DOUBLE, kwh_fixed BOOLEAN)" if quantity else ")"))
     for q in Q:
         con.execute("INSERT INTO quarters VALUES (?, ?, ?, ?)", [QK[q], q, QSTART[q], QSTART[q]])
-    def tx(row, kwh=False):  # row ends with the quantity as reported; reality_check counts kWh rows at 1/1000
+    def tx(row, kwh=False, usd=None):  # row ends with the quantity as reported; reality_check counts kWh rows at 1/1000
         price = 0.04 if kwh else 40.0  # $40 a MWh, or the same sale's dollars spread over kWh
-        extra = [row[-1] * price, row[-1] / 1000 if kwh else row[-1], kwh] if quantity else []
+        charge = usd if usd is not None else row[-1] * price
+        extra = [charge, row[-1] / 1000 if kwh else row[-1], kwh] if quantity else []
         con.execute(f"INSERT INTO tx_base VALUES ({', '.join(['?'] * (len(row) + len(extra)))})", row + extra)
 
     last = Q[-1]
@@ -149,8 +153,8 @@ def _db(tmp_path, quarters=Q, quantity=True):
         for q in c["traded"]:
             if q in quarters:
                 name = normalize_name(c["early_as"]) if c["early_as"] and q != last else cust
-                tx([QK[q], q, c["seller"], name, csa, c["energy"], c["kwh"].get(q, c["mwh"].get(q, 100.0))],
-                   kwh=q in c["kwh"])
+                qty = 1.0 if c["bill"] else c["kwh"].get(q, c["mwh"].get(q, 100.0))
+                tx([QK[q], q, c["seller"], name, csa, c["energy"], qty], kwh=q in c["kwh"], usd=c["bill"])
         if last in quarters and c["latest_as"]:
             tx([QK[last], last, c["seller"], normalize_name(c["latest_as"]), csa, True, 100.0])
         if last in quarters and c["latest_other"]:
@@ -198,8 +202,9 @@ def test_signals_read_both_directions(idx, built):
     assert idx.lookup("Foxtrot Power Marketing").volume.trend == VolumeTrend.NONE
     assert idx.lookup("Uniform Power Agency").status == ResultStatus.NO_ACTIVITY
     assert m["latest_quarter"] == "2026q2" and m["prior_quarters"] == Q[:4] and m["same_quarter_last_year"] == "2025q2"
-    assert m["methodology_version"] == "signals-0.5.0" and m["rules"]["agreement_check"]
-    assert m["rules"]["quantity_check"] == {"applied": True, "max_price": 0.5, "min_mwh": 1000.0}
+    assert m["methodology_version"] == "signals-0.6.0" and m["rules"]["agreement_check"]
+    assert m["rules"]["quantity_check"] == {"applied": True, "max_price": 0.5, "min_mwh": 1000.0,
+                                            "sure_mwh": 100_000.0, "price_ratio": 300}
 
 
 def test_in_short_says_more_or_less_and_from_whom(idx):
@@ -389,6 +394,7 @@ def test_energy_entered_in_kwh_counts_at_a_thousandth(idx, built):
     assert (c["kwh_rows"], c["kwh_sellers"], c["kwh_mwh_reported"], c["kwh_mwh_counted"]) == (1, 1, 100_000.0, 100.0)
     report = (out / "signals_report.md").read_text()
     assert "1 row from 1 seller; 100,000 MWh as reported, 100 counted." in report
+    assert "### Energy reports counted at a thousandth (1, by MWh as reported)" in report   # not "top 15 of 1"
     assert "| Seller S7 LLC | Xray Power Cooperative | 2026q2 | 1 | 100,000 | 100 |" in report
     assert "### Thousandfold jumps within one seller relationship (1)" in report
     assert "| Seller S8 LLC | Yankee Power Coop | 100 | 100,000 | 1,000x |" in report   # passes the price test
@@ -515,7 +521,7 @@ def test_the_build_counts_coverage_and_lists_sample_picks(eia_idx):
     _, m, out = eia_idx
     ec = m["eia_coverage"]
     assert ec["available"] and ec["companies_linked"] == 9 and ec["eia_years"] == {"2021": 1, "2024": 1, "2025": 7}
-    assert ec["levels"] == {"high": 2, "partial": 1, "low": 2, "unknown": 20} and ec["median_share"] == 0.55
+    assert ec["levels"] == {"high": 2, "partial": 1, "low": 2, "unknown": 21} and ec["median_share"] == 0.55
     assert ec["linked_without_activity"] == 1 and ec["quarters"] == Q[1:] and ec["not_comparable"] == 1
     report = (out / "signals_report.md").read_text()
     picks, low = report.split("### EQR shows 25% or more")[1].split("### Largest buyers where EQR shows under 25%")
@@ -533,3 +539,64 @@ def test_a_build_without_eia_says_coverage_is_unknown(idx, built):
     assert "EIA-861" not in r.summary           # said once, in the caveats, not in every summary
     assert built[0]["eia_coverage"]["available"] is False
     assert "Not available: this run has no EIA-861 purchases" in (built[2] / "signals_report.md").read_text()
+
+
+# --- reading the record: placeholder bills and moves inside the steady band ---------------------------------------
+def test_bills_with_a_placeholder_quantity_are_named(idx, built):
+    m, _, out = built
+    zulu = idx.lookup("Zulu Energy Cooperative")
+    assert zulu.placeholder_bills == [PlaceholderBill(seller_name="Seller S9 LLC", quarters=Q[1:], rows=4,
+                                                      billed_usd=1_000_000.0)]
+    assert _rel(zulu, "S9").status == SellerStatus.KEPT_TRADING        # a bill is still a sale
+    # $1.0 million of bills against $16,000 of energy billed at real prices by its other seller
+    assert zulu.placeholder_billing_share == round(1_000_000 / 1_016_000, 4)
+    assert ("Seller S9 LLC reported its sales to it over the last four quarters as bills with a placeholder quantity "
+            "of a few MWh ($1.0 million billed, about 98% of what EQR sellers billed it for energy over that time), so "
+            "that energy isn't counted and its volumes here understate its buying.") in zulu.summary
+    charlie = idx.lookup("Charlie Energy LLC")
+    assert charlie.placeholder_bills == [] and charlie.placeholder_billing_share is None
+    c = m["coverage"]
+    assert (c["placeholder_rows"], c["placeholder_sellers"], c["placeholder_usd"]) == (5, 1, 1_250_000.0)
+    assert m["rules"]["placeholder_check"] == {"applied": True, "max_mwh": 10.0, "min_price": 10_000.0,
+                                               "small_share": 0.02}
+    report = (out / "signals_report.md").read_text()
+    assert "5 rows from 1 seller, $1.2 million billed ($1.2 million to roster companies)" in report
+    assert "### Bills with a placeholder quantity (1, by dollars)" in report
+    assert ("| Seller S9 LLC | Zulu Energy Cooperative | 2025q2, 2025q3, 2025q4, 2026q1, 2026q2 | 5 | $1.2 million "
+            "| 98% |" in report)
+
+
+def test_a_small_placeholder_bill_reads_as_small():
+    bills = [PlaceholderBill(seller_name="Solar A LLC", quarters=["2026q1"], rows=2, billed_usd=184_508.0),
+             PlaceholderBill(seller_name="Solar B LLC", quarters=["2026q2"], rows=1, billed_usd=20_000.0)]
+    span = "the four quarters to 2026q2"
+    small = signals._placeholder_sentence(bills[:1], span, False, 0.0002)
+    assert small == ("Solar A LLC reported its sales to it over the four quarters to 2026q2 as bills with a placeholder "
+                     "quantity of a few MWh ($184,508 billed, under 1% of what EQR sellers billed it for energy over "
+                     "that time). That energy isn't counted, but at that size it hardly changes its volumes.")
+    large = signals._placeholder_sentence(bills, span, True, 0.22)
+    assert large == ("2 sellers reported sales to it over the four quarters to 2026q2 as bills with a placeholder "
+                     "quantity of a few MWh (Solar A LLC and Solar B LLC: $204,508 billed in all, about 22% of what EQR "
+                     "sellers billed it for energy over that time), so that energy isn't counted and its volumes and "
+                     "coverage here understate its buying.")
+    unsized = signals._placeholder_sentence(bills[:1], span, False)        # a build with no billing to compare with
+    assert unsized.endswith("($184,508 billed), so that energy isn't counted and its volumes here understate its "
+                            "buying.")
+    assert signals._placeholder_sentence([], span, True, 0.5) == ""
+
+
+def test_a_run_without_charges_has_no_placeholder_check(tmp_path):
+    resolver = EntityResolver(ROWS, groups=GROUPS)
+    m = build(_db(tmp_path, quantity=False), tmp_path / "out", resolver, {"contract_window": ["2023q3", "2026q2"]})
+    assert m["rules"]["placeholder_check"]["applied"] is False and m["coverage"]["placeholder_rows"] == 0
+    assert _index(resolver, tmp_path / "out").lookup("Zulu Energy Cooperative").placeholder_bills == []
+
+
+def test_moves_inside_the_steady_band_read_as_a_little_more_or_less(idx):
+    oscar = idx.lookup("Oscar Municipal Utility")                     # -17% against the same quarter last year
+    assert oscar.volume.trend == VolumeTrend.STEADY
+    assert oscar.in_short == "Buying a little less, from fewer sellers."
+    assert ("bought 100 MWh of energy from EQR sellers in 2026q2, down 17% on the same quarter last year (market "
+            "median:") in oscar.summary
+    assert "inside the 25% band CreditMCP counts as steady." in oscar.summary
+    assert idx.lookup("Juliet Utility").in_short == "Buying about the same, from the same seller."

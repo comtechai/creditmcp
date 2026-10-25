@@ -237,6 +237,13 @@ class QuantityFix(BaseModel):
     counted_mwh: float = Field(..., description="What CreditMCP counts: a thousandth of the reported figure")
 
 
+class PlaceholderBill(BaseModel):
+    seller_name: str = Field(..., description="The seller that reported the bills")
+    quarters: list[str] = Field(..., description="Quarters with such bills, among the last four")
+    rows: int = Field(..., description="Energy rows billed this way")
+    billed_usd: float = Field(..., description="What the bills charged, as reported")
+
+
 class MarketSignalsResult(BaseModel):
     """Return shape of counterparty.market_signals."""
 
@@ -251,6 +258,14 @@ class MarketSignalsResult(BaseModel):
                                                    "under a quarter of what the company buys")
     coverage: Coverage | None = Field(None, description="How much of the company's buying EQR shows: the energy in "
                                                         "these signals against the purchases it reported to EIA")
+    placeholder_bills: list[PlaceholderBill] = Field(
+        default_factory=list,
+        description="Sellers that reported energy sales to it over the last four quarters as bills with a placeholder "
+                    "quantity (a few MWh billed at over $10,000 a MWh). That energy can't be counted, so volumes and "
+                    "coverage understate its buying")
+    placeholder_billing_share: float | None = Field(
+        None, description="Those bills as a share of everything EQR sellers billed it for energy over the same four "
+                          "quarters: a guide to how far its volumes read low. Under 2% hardly changes them")
     summary: str = Field(..., description="Plain-language read of the signals")
     volume: VolumeSignal | None = None
     sellers: SellerSignal | None = None
@@ -261,8 +276,8 @@ class MarketSignalsResult(BaseModel):
                     "sellers that stopped, then the rest")
     quantity_fixes: list[QuantityFix] = Field(
         default_factory=list,
-        description="Energy reports priced so low they only make sense as kWh entered in EQR's MWh field, counted at "
-                    "a thousandth of the reported figure")
+        description="Energy reports that can't be real sales at the size reported (kWh entered in EQR's MWh field, or "
+                    "adjustment rows that repeat a month's MWh), counted at a thousandth of the reported figure")
     market: str = Field(..., description="The same measures across all roster companies, for comparison")
     methodology_version: str
     as_of: str

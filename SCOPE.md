@@ -124,3 +124,30 @@ published figures, and before publication. The frozen text and the earlier amend
   60 rows from 14 sellers at a thousandth (3.2 billion MWh as reported). Most are plainly kWh, but a
   few are small trades in the West that may really be priced near zero. Some sellers report a
   month's energy as a lump sum with a nominal quantity, which understates their volume.
+
+## Amendment, Oct 24, 2026: quantity check, refined
+
+Recorded after the repo went public, to settle the two items the coverage amendment left open. The
+frozen text and the earlier amendments are unchanged.
+
+- **The price test alone was too broad.** Across the 2025q2 to 2026q2 trades it counted 60 rows from
+  14 sellers at a thousandth. A cheap row now counts at a thousandth only when it can't be a real
+  sale: it is 100,000 MWh or more, the same seller reported that buyer in kWh that quarter, or it
+  was delivered in PJM, MISO or NYISO at least 300 times below that seller's usual price to that
+  buyer. That leaves 43 rows from 5 sellers (3.2 billion MWh as reported, 3.2 million counted). The
+  other 17 count as filed: 14 small trades in the West and 3 solar sales in the Midwest, all priced
+  near zero. A price that low is not proof of an error.
+- **Placeholder bills.** An energy row of 10 MWh or less billed at more than $10,000 a MWh is a bill
+  with a placeholder quantity: no market prices energy that high. The same trades hold 266 such rows
+  from 19 sellers ($66.7 million billed, $53.3 million of it to roster companies), and that energy
+  can't be counted. Each answer names the sellers that billed the company this way and sizes their
+  bills against everything EQR sellers billed it for energy over the same four quarters: under 2%
+  hardly changes its volumes, and more means its volumes and coverage read low. Rows of tens of MWh
+  billed at those prices are not placeholder bills. Their MWh count as filed, and their dollars,
+  which look scaled by mistake, stay out of that comparison.
+- **Wording.** A volume change of 10% to 25% now reads as buying a little more or a little less,
+  and the summary says it is inside the 25% band counted as steady. The bands are unchanged.
+  Methodology `signals-0.6.0`.
+- **Unchanged:** the gates, rerun with the refined check (roster resolution 40.4%; contracts PJM
+  76.3%, MISO 63.9%; 2026q2 traded energy PJM 83.7%, MISO 81.7%), the coverage thresholds, the
+  early-warning bar and the volume bands.

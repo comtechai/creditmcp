@@ -43,11 +43,16 @@ Signals for each company:
     they are backtested against public failures.
 
 Quantities. Some sellers enter kWh in EQR's MWh field, which makes a quarter look a thousand times too
-big, and some bill an adjustment as a separate row that repeats a month's MWh. An energy row priced
-under $0.50 a MWh (on at least 1,000 MWh as reported) can't be a full-price sale of that much energy,
-so reality_check.py counts it at a thousandth; every answer names the reports it corrected. A seller that scales both
-the MWh and the dollars passes that test, so the build report lists thousandfold jumps within a
-seller relationship for a check by hand.
+big, and some bill an adjustment as a separate row that repeats a month's MWh. reality_check.py counts
+an energy row priced under $0.50 a MWh (on at least 1,000 MWh as reported) at a thousandth when it
+can't be a real sale: 100,000 MWh or more, a seller that reported that buyer in kWh that quarter, or,
+in PJM, MISO or NYISO, a price hundreds of times below the seller's usual price to that buyer. Every
+answer names the reports it corrected. Other cheap rows count as filed: a price that low is not proof
+of an error, since energy does trade near zero at times. A seller that scales both the MWh and the
+dollars passes the price test, so the build report lists thousandfold jumps within a seller
+relationship for a check by hand. Some sellers report a month's sales as a bill with a placeholder
+quantity of a few MWh; that energy can't be counted. Every answer names the sellers that did and sizes
+their bills against what EQR sellers billed the company for energy, so a small bill reads as small.
 
 Coverage. EQR shows only bilateral sales by sellers that file it, so for some companies it is most
 of their buying and for others a sliver. reality_check.py ties each roster company it can to one
@@ -88,6 +93,7 @@ from creditmcp.schema import (
     CoverageLevel,
     EarlyWarning,
     MarketSignalsResult,
+    PlaceholderBill,
     Provenance,
     QuantityFix,
     ResultStatus,
@@ -99,17 +105,22 @@ from creditmcp.schema import (
     VolumeTrend,
 )
 
-METHODOLOGY_VERSION = "signals-0.5.0"
+METHODOLOGY_VERSION = "signals-0.6.0"
 PRIOR_N = 4                  # prior quarters the "regular" test looks back over
 REGULAR_MIN = 3              # quarters with energy trades, out of PRIOR_N, for a relationship to count as regular
 VOLUME_BAND = 0.25           # a volume change of at least this share is up or down; anything less is steady
+SLIGHT_BAND = 0.10           # inside the steady band, a change of at least this share reads as a little more or less
 SELLER_MIN_CHANGE = 2        # broader or narrower needs at least this many more or fewer sellers...
 SELLER_BAND = 0.25           # ...and at least this share more or fewer
 TURNOVER_MIN = 2             # new sellers, and regular sellers lost, each at least this many: "a change of sellers"
 WARN_MIN_STOPPED = 2         # provisional early-warning bar, to be set by backtests on public failures
 WARN_MIN_SHARE = 0.5
 WARN_MIN_VOLUME_DROP = 0.5
-KWH_RULE = {"KWH_MAX_PRICE": 0.5, "KWH_MIN_QTY": 1000.0}  # reality_check.py's defaults; a run records its own
+KWH_RULE = {"KWH_MAX_PRICE": 0.5, "KWH_MIN_QTY": 1000.0, "KWH_SURE_QTY": 100_000.0,  # reality_check.py's defaults;
+            "KWH_PRICE_RATIO": 300}                                                 # a run records its own
+PLACEHOLDER_MAX_MWH = 10.0   # an energy row of this many MWh or fewer, billed at more than PLACEHOLDER_MIN_PRICE a MWh,
+PLACEHOLDER_MIN_PRICE = 10_000.0  # is a bill with a placeholder quantity: no market prices energy that high
+PLACEHOLDER_SMALL = 0.02     # placeholder bills under this share of a company's energy billing hardly change its volumes
 JUMP_RATIO = 300             # the build report lists relationships whose largest quarter is this many times
 JUMP_MIN_MWH = 100_000.0     # their smallest, when the largest is at least this big
 COVER_LOW = 0.25             # EQR shows under this share of the purchases a company reported to EIA: low coverage
@@ -147,9 +158,14 @@ CAVEATS = [
     "snapshot hashes in provenance.",
 ]
 QUANTITY_CAVEAT = ("Some sellers enter kWh in EQR's MWh field, and some bill adjustments as rows that repeat a "
-                   "month's MWh. An energy row priced under ${price:.2f} a MWh can't be a full-price sale of that "
-                   "much energy, so it counts at a thousandth, and each answer names any report it corrected. Other "
-                   "reporting errors pass through as filed.")
+                   "month's MWh. An energy row priced under ${price:.2f} a MWh counts at a thousandth when it can't be "
+                   "a real sale: when it is 100,000 MWh or more, when the same seller reported that buyer in kWh that "
+                   "quarter, or, in PJM, MISO or NYISO, when it is priced hundreds of times below that seller's usual "
+                   "price. Each answer names any report it corrected. Other cheap rows count as filed, since energy "
+                   "does trade near zero at times. Some sellers report a month's sales as a bill with a placeholder "
+                   "quantity of a few MWh; that energy can't be counted, and each answer names the sellers that did "
+                   "and sizes their bills against what EQR sellers billed the company for energy. Other reporting "
+                   "errors pass through as filed.")
 COVERAGE_CAVEAT = ("Coverage compares the energy EQR shows over the last four quarters with the wholesale purchases "
                    "the company reported on EIA Form 861 for its latest year, from every source. The periods differ "
                    "and EIA counts what EQR can't see, so the share is a guide to how much of its buying these "
@@ -265,6 +281,7 @@ def build(db_path: str | Path, out_dir: str | Path, resolver: EntityResolver,
     has_qty = {"mwh", "kwh_fixed", "total_transaction_charge"} <= tx_cols and con.execute(
         "SELECT count(*) > 0 FROM rc.tx_base WHERE total_transaction_charge IS NOT NULL").fetchone()[0]
     qty, kwh = ("t.mwh", "coalesce(t.kwh_fixed, false)") if has_qty else ("t.standardized_quantity", "false")
+    usd = "t.total_transaction_charge" if has_qty else "NULL::DOUBLE"
 
     qrows = con.execute("SELECT DISTINCT year_quarter, qk FROM rc.tx_base ORDER BY qk").fetchall()
     if len(qrows) < PRIOR_N + 1:
@@ -290,7 +307,8 @@ def build(db_path: str | Path, out_dir: str | Path, resolver: EntityResolver,
     con.execute(f"""
         CREATE VIEW x0 AS
         SELECT t.qk, t.seller_company_id_ferc AS s, {csa} AS csa, t.customer_norm AS buyer, n.entity_id AS e,
-               coalesce(t.is_energy, false) AS energy, {qty} AS q, {kwh} AS kwh, t.standardized_quantity AS q_reported
+               coalesce(t.is_energy, false) AS energy, {qty} AS q, {kwh} AS kwh, t.standardized_quantity AS q_reported,
+               {usd} AS usd
         FROM rc.tx_base t LEFT JOIN names n ON n.alias_norm = t.customer_norm
         WHERE t.qk IN ({ks})""")
     # Buyer names linked by agreement: a seller's agreement ID used with exactly one known company and
@@ -310,7 +328,7 @@ def build(db_path: str | Path, out_dir: str | Path, resolver: EntityResolver,
     con.execute("""
         CREATE VIEW x AS
         SELECT x0.qk, x0.s, x0.csa, x0.buyer, coalesce(x0.e, l.e) AS e, (x0.e IS NULL AND l.e IS NOT NULL) AS linked,
-               x0.energy, x0.q, x0.kwh, x0.q_reported
+               x0.energy, x0.q, x0.kwh, x0.q_reported, x0.usd
         FROM x0 LEFT JOIN links l ON l.s = x0.s AND l.csa = x0.csa AND l.buyer = x0.buyer""")
 
     active = con.execute(f"""
@@ -332,6 +350,23 @@ def build(db_path: str | Path, out_dir: str | Path, resolver: EntityResolver,
     kwh_all = con.execute("""
         SELECT count(*), count(DISTINCT s), coalesce(sum(q_reported), 0), coalesce(sum(q), 0)
         FROM x WHERE kwh""").fetchone()
+    # Bills with a placeholder quantity: a month's sales reported as a few MWh at a price no market reaches.
+    bill = (f"energy AND q_reported > 0 AND q_reported <= {PLACEHOLDER_MAX_MWH} "
+            f"AND usd / q_reported > {PLACEHOLDER_MIN_PRICE}")
+    bill_by = {(k, s, e): [int(n), round(b, 2)] for k, s, e, n, b in con.execute(f"""
+        SELECT qk, s, e, count(*), sum(usd) FROM x
+        WHERE {bill} AND s IS NOT NULL AND e IS NOT NULL GROUP BY 1, 2, 3""").fetchall()}
+    bill_all = con.execute(f"""
+        SELECT count(*), count(DISTINCT s), coalesce(sum(usd), 0), count(e),
+               coalesce(sum(usd) FILTER (WHERE e IS NOT NULL), 0)
+        FROM x WHERE {bill}""").fetchone()
+    # The yardstick for those bills: what EQR sellers billed each company for energy at a price no higher than that
+    # (so placeholder bills, and dollars a seller scaled by mistake, stay out of it).
+    billed_by = {(k, e): float(b) for k, e, b in con.execute(f"""
+        SELECT qk, e, sum(usd) FROM x
+        WHERE energy AND s IS NOT NULL AND e IS NOT NULL AND q_reported > 0
+          AND usd / q_reported <= {PLACEHOLDER_MIN_PRICE}
+        GROUP BY 1, 2""").fetchall() if b is not None}
     # Same agreement, new buyer name, where the name didn't link (for instance, more than one new name): an
     # agreement ID a seller used in the prior quarters with one roster company and no other buyer name, carrying
     # energy trades in the latest quarter with a buyer name the name map doesn't know, or an affiliate's.
@@ -414,6 +449,7 @@ def build(db_path: str | Path, out_dir: str | Path, resolver: EntityResolver,
             "mwh_prior_avg": round(sum(mwh_q[labels[k]] for k in prior_ks) / PRIOR_N, 1),
             "traded_last_year": (last_year_k, s, e) in energy, "share_latest": None,
             "kwh_fixes": {labels[k]: kwh_by[(k, s, e)] for k in order if (k, s, e) in kwh_by},
+            "placeholder_bills": {labels[k]: bill_by[(k, s, e)] for k in order if (k, s, e) in bill_by},
         })
 
     ent_rows = []
@@ -454,6 +490,11 @@ def build(db_path: str | Path, out_dir: str | Path, resolver: EntityResolver,
             "kwh_fixes": sorted(({"seller_name": r["seller_name"], "quarter": q, "rows": v[0], "reported_mwh": v[1],
                                   "counted_mwh": v[2]} for r in rels for q, v in r["kwh_fixes"].items()),
                                 key=lambda f: (f["quarter"], -f["reported_mwh"], f["seller_name"])),
+            "placeholder_bills": sorted(({"seller_name": r["seller_name"], "quarter": q, "rows": v[0],
+                                          "billed_usd": v[1]} for r in rels for q, v in r["placeholder_bills"].items()),
+                                        key=lambda f: (f["quarter"], -f["billed_usd"], f["seller_name"])),
+            "energy_usd_by_quarter": ({labels[k]: round(billed_by.get((k, e), 0.0), 2) for k in order}
+                                      if has_qty else {}),
         })
 
     # Coverage: how much of each company's buying EQR shows. reality_check.py ties a roster company to one EIA-861
@@ -542,7 +583,9 @@ def build(db_path: str | Path, out_dir: str | Path, resolver: EntityResolver,
     snaps = run_manifest.get("snapshots", {})
     tun = run_manifest.get("tunables") or {}
     kwh_rule = {"applied": has_qty, "max_price": tun.get("KWH_MAX_PRICE", KWH_RULE["KWH_MAX_PRICE"]),
-                "min_mwh": tun.get("KWH_MIN_QTY", KWH_RULE["KWH_MIN_QTY"])}
+                "min_mwh": tun.get("KWH_MIN_QTY", KWH_RULE["KWH_MIN_QTY"]),
+                "sure_mwh": tun.get("KWH_SURE_QTY", KWH_RULE["KWH_SURE_QTY"]),
+                "price_ratio": tun.get("KWH_PRICE_RATIO", KWH_RULE["KWH_PRICE_RATIO"])}
     manifest = {
         "built_at": dt.datetime.now().isoformat(timespec="seconds"),
         "methodology_version": METHODOLOGY_VERSION,
@@ -553,7 +596,10 @@ def build(db_path: str | Path, out_dir: str | Path, resolver: EntityResolver,
                   "WARN_MIN_STOPPED": WARN_MIN_STOPPED, "WARN_MIN_SHARE": WARN_MIN_SHARE,
                   "WARN_MIN_VOLUME_DROP": WARN_MIN_VOLUME_DROP, "regular_counts_products": ["ENERGY"],
                   "stopped_means": "no trades of any kept product", "volume_basis": [BASIS_YOY, BASIS_AVG],
-                  "early_warning_rule": WARN_RULE, "agreement_check": has_csa, "quantity_check": kwh_rule},
+                  "early_warning_rule": WARN_RULE, "agreement_check": has_csa, "quantity_check": kwh_rule,
+                  "placeholder_check": {"applied": has_qty, "max_mwh": PLACEHOLDER_MAX_MWH,
+                                        "min_price": PLACEHOLDER_MIN_PRICE, "small_share": PLACEHOLDER_SMALL},
+                  "slight_band": SLIGHT_BAND},
         "inputs": {
             "run_db": db_path.name,
             "contract_window": run_manifest.get("contract_window"),
@@ -567,7 +613,10 @@ def build(db_path: str | Path, out_dir: str | Path, resolver: EntityResolver,
                      "energy_mwh": round(mapped[3], 1), "energy_mwh_mapped": round(mapped[4], 1),
                      "names_in_map": len(names), "agreement_links": len(links),
                      "kwh_rows": kwh_all[0], "kwh_sellers": kwh_all[1], "kwh_mwh_reported": round(kwh_all[2], 1),
-                     "kwh_mwh_counted": round(kwh_all[3], 1)},
+                     "kwh_mwh_counted": round(kwh_all[3], 1),
+                     "placeholder_rows": bill_all[0], "placeholder_sellers": bill_all[1],
+                     "placeholder_usd": round(bill_all[2], 2), "placeholder_rows_roster": bill_all[3],
+                     "placeholder_usd_roster": round(bill_all[4], 2)},
         "eia_coverage": eia_coverage,
         "per_quarter": per_quarter,
         "baseline": baseline,
@@ -592,8 +641,17 @@ def _count(n: int, word: str) -> str:
     return f"{n:,} {word}{'' if n == 1 else 's'}"
 
 
+def _top15(n: int) -> str:
+    """How much of a list a 15-row table shows: the count, or "top 15 of" it."""
+    return f"top 15 of {n:,}" if n > 15 else f"{n:,}"
+
+
 def _pct(n, d) -> str:
     return f"{100 * n / d:.1f}%" if d else "n/a"
+
+
+def _usd(x: float) -> str:
+    return f"${x / 1e6:,.1f} million" if abs(x) >= 1e6 else f"${x:,.0f}"
 
 
 def _change(x) -> str:
@@ -652,10 +710,10 @@ def _coverage_lines(m: dict, ents: list[dict], cov: list[dict]) -> list[str]:
     over = sorted((r for r in cov if r["why_unknown"] == "not_comparable" and r["entity_id"] in by_id),
                   key=lambda r: -r["eqr_mwh"])
     for title, rows in ((f"EQR shows {COVER_LOW:.0%} or more, buying at least {COVER_LIST_MIN_MWH:,.0f} MWh in EQR "
-                         f"(sample picks: high coverage first, then by volume; top 15 of {len(top)})", top),
-                        (f"Largest buyers where EQR shows under {COVER_LOW:.0%} (top 15 of {len(low)})", low),
-                        (f"EQR shows more than {COVER_MAX:.0%} of reported purchases, so no coverage is given (top 15 "
-                         f"of {len(over)})", over)):
+                         f"(sample picks: high coverage first, then by volume; {_top15(len(top))})", top),
+                        (f"Largest buyers where EQR shows under {COVER_LOW:.0%} ({_top15(len(low))})", low),
+                        (f"EQR shows more than {COVER_MAX:.0%} of reported purchases, so no coverage is given "
+                         f"({_top15(len(over))})", over)):
         lines += [f"### {title}", ""] + (_coverage_table(rows, by_id) if rows else ["None."]) + [""]
     return lines
 
@@ -664,13 +722,20 @@ def _report(m: dict, ents: list[dict], rels: list[dict], cov: list[dict] | None 
     b, c, r = m["baseline"], m["coverage"], m["rules"]
     kr = r["quantity_check"]
     qty_line = (f"- Energy rows counted at a thousandth (kWh entered as MWh, or adjustments: priced under "
-                f"${kr['max_price']:.2f} a MWh on at least "
-                f"{kr['min_mwh']:,.0f} MWh as reported): {_count(c['kwh_rows'], 'row')} from "
-                f"{_count(c['kwh_sellers'], 'seller')}; {c['kwh_mwh_reported']:,.0f} MWh as reported, "
-                f"{c['kwh_mwh_counted']:,.0f} counted."
+                f"${kr['max_price']:.2f} a MWh on at least {kr['min_mwh']:,.0f} MWh as reported, and one of: "
+                f"{kr['sure_mwh']:,.0f} MWh or more; a seller that reported that buyer in kWh that quarter; in PJM, "
+                f"MISO or NYISO, at least {kr['price_ratio']} times below the seller's usual price): "
+                f"{_count(c['kwh_rows'], 'row')} from {_count(c['kwh_sellers'], 'seller')}; "
+                f"{c['kwh_mwh_reported']:,.0f} MWh as reported, {c['kwh_mwh_counted']:,.0f} counted."
                 if kr["applied"] else
                 "- Quantity check not applied: this run's trades have no total charges, so energy entered in kWh "
                 "counts as MWh. Rerun reality_check.py, then rebuild.")
+    pc = r.get("placeholder_check") or {}
+    bill_line = (f"- Energy rows billed with a placeholder quantity ({pc['max_mwh']:,.0f} MWh or less at over "
+                 f"${pc['min_price']:,.0f} a MWh): {_count(c['placeholder_rows'], 'row')} from "
+                 f"{_count(c['placeholder_sellers'], 'seller')}, {_usd(c['placeholder_usd'])} billed "
+                 f"({_usd(c['placeholder_usd_roster'])} to roster companies). That energy isn't counted."
+                 if pc.get("applied") else "")
     rel, nc, vt, st = b["relationships"], b["not_counted"], b["volume_trend"], b["seller_trend"]
     q, ly = m["latest_quarter"], m["same_quarter_last_year"]
     exact = c["trade_rows_mapped"] - c["trade_rows_linked"]
@@ -688,6 +753,7 @@ def _report(m: dict, ents: list[dict], rels: list[dict], cov: list[dict] | None 
         f"tied: "
         f"{_pct(c['energy_mwh_mapped'], c['energy_mwh'])}.",
         qty_line,
+        *([bill_line] if bill_line else []),
         f"- Relationships (seller and roster company): {m['counts']['relationships']:,}, across "
         f"{m['counts']['companies']:,} companies. {b['relationships_linked_by_agreement']:,} include trades under a "
         "linked buyer name.",
@@ -730,15 +796,33 @@ def _report(m: dict, ents: list[dict], rels: list[dict], cov: list[dict] | None 
               "backtests on public failures.", ""]
     for title, rows in ((f"Meets the early-warning bar ({len(warn)})", warn),
                         (f"Enough sellers stopped for the bar, but volume held ({len(held)})", held),
-                        (f"Buying more: largest increases in MWh (top 15 of {len(more)})", more[:15]),
-                        (f"Most new sellers (top 15 of {len(new)})", new[:15])):
+                        (f"Buying more: largest increases in MWh ({_top15(len(more))})", more[:15]),
+                        (f"Most new sellers ({_top15(len(new))})", new[:15])):
         lines += [f"### {title}", ""] + (_company_table(rows) if rows else ["None."]) + [""]
     names = {e["entity_id"]: e["name"] for e in ents}
     fixes = sorted(((f, e["name"]) for e in ents for f in e["kwh_fixes"]), key=lambda x: -x[0]["reported_mwh"])
-    lines += [f"### Energy reports counted at a thousandth (top 15 of {len(fixes)}, by MWh as reported)", ""]
+    lines += [f"### Energy reports counted at a thousandth ({_top15(len(fixes))}, by MWh as reported)", ""]
     lines += (["| Seller | Company | Quarter | Rows | MWh as reported | Counted |", "|---|---|---|---|---|---|"]
               + [f"| {f['seller_name']} | {n} | {f['quarter']} | {f['rows']:,} | {f['reported_mwh']:,.0f} | "
                  f"{f['counted_mwh']:,.0f} |" for f, n in fixes[:15]] if fixes else ["None."]) + [""]
+    bills: dict[tuple[str, str], list] = {}
+    for e in ents:
+        for f in e["placeholder_bills"]:
+            agg = bills.setdefault((f["seller_name"], e["entity_id"]), [set(), 0, 0.0])
+            agg[0].add(f["quarter"])
+            agg[1] += f["rows"]
+            agg[2] += f["billed_usd"]
+    by_id = {e["entity_id"]: e for e in ents}
+    billing = {e["entity_id"]: sum(f["billed_usd"] for f in e["placeholder_bills"])
+               + sum((e.get("energy_usd_by_quarter") or {}).values()) for e in ents}
+    bill_rows = sorted(bills.items(), key=lambda kv: -kv[1][2])
+    lines += [f"### Bills with a placeholder quantity ({_top15(len(bill_rows))}, by dollars)", "",
+              ("Energy reported as a few MWh at a price no market reaches: the volume of these relationships is "
+               "understated. Share: of everything EQR sellers billed the company for energy in these quarters."), ""]
+    lines += (["| Seller | Company | Quarters | Rows | Billed | Share |", "|---|---|---|---|---|---|"]
+              + [f"| {sn} | {by_id[e]['name']} | {', '.join(sorted(v[0]))} | {v[1]:,} | {_usd(v[2])} | "
+                 f"{format(v[2] / billing[e], '.0%') if billing[e] > 0 else 'n/a'} |"
+                 for (sn, e), v in bill_rows[:15]] if bill_rows else ["None."]) + [""]
     jumps = []
     for x in rels:
         vals = [v for v in x["mwh_by_quarter"].values() if v > 0]
@@ -910,12 +994,38 @@ class SignalsIndex:
         reasons = Counter(_json(c.get("not_counted_reasons"), {}))
         linked = sorted({n for r in rels for n in r.other_buyer_names})
         fixes = [QuantityFix(**f) for f in _json(c.get("kwh_fixes"), [])]
+        bills = self._placeholder_bills(_json(c.get("placeholder_bills"), []))
+        bill_share = self._placeholder_share(bills, _json(c.get("energy_usd_by_quarter"), {}))
         return MarketSignalsResult(
             **base, status=ResultStatus.OK, company=top, volume=volume, sellers=sellers, early_warning=warning,
-            relationships=rels, quantity_fixes=fixes, coverage=cov,
+            relationships=rels, quantity_fixes=fixes, coverage=cov, placeholder_bills=bills,
+            placeholder_billing_share=bill_share,
             in_short=_in_short(volume, sellers, warning, self.latest_q, cov),
             summary=_summary(top.name, self.latest_q, self.last_year_q, volume, sellers, warning, reasons, linked,
-                             fixes, self.kwh_price, cov if self._cover_on else None))
+                             fixes, self.kwh_price, cov if self._cover_on else None, bills, bill_share))
+
+    def _placeholder_bills(self, rows: list[dict]) -> list[PlaceholderBill]:
+        """Bills with a placeholder quantity over the last four quarters, one entry per seller, largest first."""
+        qs = set(self._cover_qs) or {r["quarter"] for r in rows}
+        by: dict[str, list] = {}
+        for r in rows:
+            if r["quarter"] in qs:
+                agg = by.setdefault(r["seller_name"], [[], 0, 0.0])
+                agg[0].append(r["quarter"])
+                agg[1] += int(r["rows"])
+                agg[2] += float(r["billed_usd"])
+        return [PlaceholderBill(seller_name=sn, quarters=sorted(set(v[0])), rows=v[1], billed_usd=round(v[2], 2))
+                for sn, v in sorted(by.items(), key=lambda kv: -kv[1][2])]
+
+    def _placeholder_share(self, bills: list[PlaceholderBill], billed: dict) -> float | None:
+        """The placeholder bills' share of everything EQR sellers billed the company for energy over the same four
+        quarters. None without bills, or when the build has no billing to compare with."""
+        if not bills or not billed:
+            return None
+        qs = self._cover_qs or list(billed)
+        total = sum(b.billed_usd for b in bills)
+        usual = sum(float(billed.get(q) or 0) for q in qs)
+        return round(total / (total + usual), 4) if usual >= 0 and total + usual > 0 else None
 
     @staticmethod
     def _relationship(r: dict) -> SellerRelationship:
@@ -961,6 +1071,8 @@ def _in_short_signals(v: VolumeSignal, s: SellerSignal, q: str) -> str:
         text = f"Bought no energy from EQR sellers in {q}."
     else:
         verb = {VolumeTrend.UP: "Buying more", VolumeTrend.DOWN: "Buying less"}.get(v.trend, "Buying about the same")
+        if v.trend == VolumeTrend.STEADY and v.change is not None and abs(v.change) >= SLIGHT_BAND:
+            verb = "Buying a little more" if v.change > 0 else "Buying a little less"
         lost = s.stopped + s.contract_ended
         tail = ("from more sellers" if s.trend == SellerTrend.BROADER else
                 "from fewer sellers" if s.trend == SellerTrend.NARROWER else
@@ -993,6 +1105,10 @@ def _volume_sentence(name: str, q: str, ly: str, v: VolumeSignal, other_products
         then = "a year earlier" if yoy else "its prior-quarter average"
         if abs(v.change) < 0.005:
             return f"{head}, unchanged from {then}{market}."
+        if abs(v.change) >= SLIGHT_BAND:
+            word = "up" if v.change > 0 else "down"
+            return (f"{head}, {word} {abs(v.change):.0%} on {BASIS_YOY if yoy else 'its prior-quarter average'}"
+                    f"{market}, inside the {VOLUME_BAND:.0%} band CreditMCP counts as steady.")
         detail = f"{v.change:+.0%}" + ("" if median is None else f"; market median {median:+.0%}")
         return f"{head}, about the same as {then} ({detail})."
     word = "up" if v.trend == VolumeTrend.UP else "down"
@@ -1077,6 +1193,27 @@ def _quantity_sentence(fixes: list[QuantityFix], price: float) -> str:
             f"{', '.join(items)}{more}.")
 
 
+def _placeholder_sentence(bills: list[PlaceholderBill], span: str, coverage_known: bool,
+                          share: float | None = None) -> str:
+    """Name the sellers that billed the company with a placeholder quantity, and size their bills against what EQR
+    sellers billed it for energy: a large share means its volumes read low, a small one hardly matters."""
+    if not bills:
+        return ""
+    total = sum(b.billed_usd for b in bills)
+    sized = "" if share is None else f", {_share_words(share)} of what EQR sellers billed it for energy over that time"
+    if len(bills) == 1:
+        head = (f"{bills[0].seller_name.rstrip('.')} reported its sales to it over {span} as bills with a placeholder "
+                f"quantity of a few MWh ({_usd(total)} billed{sized})")
+    else:
+        names = [b.seller_name for b in bills[:3]] + ([f"{len(bills) - 3} more"] if len(bills) > 3 else [])
+        head = (f"{len(bills)} sellers reported sales to it over {span} as bills with a placeholder quantity of a few "
+                f"MWh ({_join(names)}: {_usd(total)} billed in all{sized})")
+    if share is not None and share < PLACEHOLDER_SMALL:
+        return f"{head}. That energy isn't counted, but at that size it hardly changes its volumes."
+    what = "its volumes and coverage" if coverage_known else "its volumes"
+    return f"{head}, so that energy isn't counted and {what} here understate its buying."
+
+
 def _coverage_sentence(cov: Coverage, why: str = "") -> str:
     """How much of the company's buying EQR shows, in words."""
     span = f"the four quarters to {cov.eqr_quarters[-1]}" if cov.eqr_quarters else "the last four quarters"
@@ -1115,11 +1252,15 @@ def _coverage_sentence(cov: Coverage, why: str = "") -> str:
 
 def _summary(name: str, q: str, ly: str, v: VolumeSignal, s: SellerSignal, w: EarlyWarning, reasons: Counter,
              linked: list[str], fixes: list[QuantityFix] | None = None,
-             price: float = KWH_RULE["KWH_MAX_PRICE"], cov: Coverage | None = None) -> str:
+             price: float = KWH_RULE["KWH_MAX_PRICE"], cov: Coverage | None = None,
+             bills: list[PlaceholderBill] | None = None, bill_share: float | None = None) -> str:
     known = cov is not None and cov.share is not None
+    span = (f"the four quarters to {cov.eqr_quarters[-1]}" if cov is not None and cov.eqr_quarters
+            else "the last four quarters")
     parts = [_volume_sentence(name, q, ly, v, s.other_products_latest), cov.note if known else "",
-             _quantity_sentence(fixes or [], price), _sellers_sentence(q, ly, s), _regular_sentence(s, reasons),
-             _concentration_sentence(s), _warning_sentence(s, w)]
+             _quantity_sentence(fixes or [], price), _placeholder_sentence(bills or [], span, known, bill_share),
+             _sellers_sentence(q, ly, s), _regular_sentence(s, reasons), _concentration_sentence(s),
+             _warning_sentence(s, w)]
     if linked:
         shown = ", ".join(f'"{n}"' for n in linked[:3]) + (f" and {len(linked) - 3} more" if len(linked) > 3 else "")
         parts.append(f"Trades reported under another buyer name on the same agreement count toward {name} ({shown}).")

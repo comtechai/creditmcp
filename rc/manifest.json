@@ -1,5 +1,5 @@
 {
-  "run_at": "2026-10-18T22:07:41",
+  "run_at": "2026-10-24T22:32:20",
   "duckdb": "1.5.6",
   "python": "3.12.14",
   "source": {
@@ -91,14 +91,14 @@
       "sha256": "745edd5c914111e4161d9be0e1be855797962cca8827ef40332f2b4b845c0753",
       "rows": 66329,
       "taken_at": "2026-10-18T22:07:28",
-      "reused": false,
+      "reused": true,
       "source": "s3://pudl.catalyst.coop/stable/core_eia861__yearly_operational_data_misc.parquet"
     },
     "core_ferceqr__transactions_2026q2_2fe37951": {
       "file": "core_ferceqr__transactions_2026q2_2fe37951.parquet",
-      "sha256": "fa5193f80e4983780148caac5c99573ff8cbc50c2abc8d8645c717cfdd2239b7",
+      "sha256": "5076d1ff5894f99163a9590b68d73029a985270c0b0176d9c401d26543fdb78d",
       "rows": 3442267,
-      "taken_at": "2026-10-18T22:08:53",
+      "taken_at": "2026-10-24T22:33:44",
       "reused": false,
       "columns": "subset used by this check; bilateral power delivered in PJM, MISO or NYISO, plus roster companies' purchases wherever delivered"
     }
@@ -127,7 +127,9 @@
       120
     ],
     "KWH_MAX_PRICE": 0.5,
-    "KWH_MIN_QTY": 1000.0
+    "KWH_MIN_QTY": 1000.0,
+    "KWH_SURE_QTY": 100000.0,
+    "KWH_PRICE_RATIO": 300
   },
   "roster": {
     "files": [
@@ -150,11 +152,13 @@
   },
   "tx_buyer_spellings": 2279,
   "quantity_check": {
-    "kwh_rows": 25,
-    "kwh_sellers": 10,
-    "kwh_reported": 1631644527.5756998,
-    "kwh_counted": 1631644.5275757,
+    "kwh_rows": 16,
+    "kwh_sellers": 4,
+    "kwh_reported": 1631629587.0,
+    "kwh_counted": 1631629.5870000003,
     "charge_rows": 1996545,
-    "energy_rows": 1996545
+    "energy_rows": 1996545,
+    "cheap_as_filed_rows": 9,
+    "cheap_as_filed_mwh": 14940.575700000001
   }
 }

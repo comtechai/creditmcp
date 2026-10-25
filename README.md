@@ -22,7 +22,7 @@ Two tools ship:
 
 | Tool | Question it answers | Methodology |
 |---|---|---|
-| `counterparty.market_signals` | What does the trading record show about this company? Buying more or less than a year ago, from which sellers, who is new, who stopped, how concentrated, against the market, and how much of its buying EQR shows. | `signals-0.5.0` |
+| `counterparty.market_signals` | What does the trading record show about this company? Buying more or less than a year ago, from which sellers, who is new, who stopped, how concentrated, against the market, and how much of its buying EQR shows. | `signals-0.6.0` |
 | `counterparty.resolve_entity` | Which company is this name, and what are its FERC, EIA and PUDL IDs? | `resolve-0.2.0` |
 
 `SCOPE.md` records the v0.2 scope, frozen on Oct 11, 2026, before either tool was built, and
@@ -119,7 +119,8 @@ fairly, and with the four quarters before it. A relationship is one seller and o
 
 - **Volume:** energy MWh bought from all EQR sellers, by quarter, against the same quarter a year
   earlier (the prior-quarter average when that quarter is empty). Up or down means a change of 25%
-  or more. Every result also carries the market's median change.
+  or more; a change of 10% to 25% reads as buying a little more or a little less. Every result
+  also carries the market's median change.
 - **Sellers:** how many sellers traded energy with the company in the latest quarter and a year
   earlier (broader or narrower means at least 2 and 25% more or fewer), and how many are new:
   trading with it after no trades in the prior four quarters.
@@ -153,10 +154,19 @@ toward the company. Agreement IDs used with two known companies, placeholder IDs
 buyer names never count as renames.
 
 Some sellers enter kWh in EQR's MWh field, which makes a quarter look a thousand times too big,
-and some bill an adjustment as a separate row that repeats a month's MWh. An energy row priced
-under $0.50 a MWh, on at least 1,000 MWh as reported, can't be a full-price sale of that much
-energy, so `reality_check.py` counts it at a thousandth, and every answer names the reports it
-corrected. Other reporting errors pass through as filed.
+and some bill an adjustment as a separate row that repeats a month's MWh. `reality_check.py` counts
+an energy row priced under $0.50 a MWh, on at least 1,000 MWh as reported, at a thousandth when it
+can't be a real sale: when it is 100,000 MWh or more, when the same seller reported that buyer in
+kWh that quarter, or, in PJM, MISO or NYISO, when it is priced at least 300 times below that
+seller's usual price to that buyer. Every answer names the reports it corrected. Other cheap rows
+count as filed: a price that low is not proof of an error, since energy does trade near zero at
+times. Some sellers report a month's sales as a bill with a placeholder quantity of a few MWh (10
+MWh or less, billed at over $10,000 a MWh), and that energy can't be counted. Every answer names
+the sellers that did and sizes their bills against what EQR sellers billed the company for energy:
+under 2% hardly changes its volumes, and more means they read low. In the reference data (2025q2 to
+2026q2), 43 rows from 5 sellers count at a thousandth, 17 other cheap rows count as filed, and 266
+rows from 19 sellers are placeholder bills ($66.7 million). Other reporting errors pass through as
+filed.
 
 Trades are pulled by buyer as well as by delivery area: a co-op in MISO can buy from the utility
 next door, delivered in that utility's area or with no area filled in, so every trade under a
